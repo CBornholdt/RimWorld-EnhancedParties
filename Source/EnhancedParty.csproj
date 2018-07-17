@@ -70,6 +70,8 @@
     <Compile Include="Roles\LordPawnRole.cs" />
     <Compile Include="Roles\LordJob_JoinableRoles.cs" />
     <Compile Include="Roles\LordPawnRole_Organizer.cs" />
+    <Compile Include="Roles\LordToil_Roles.cs" />
+    <Compile Include="Roles\ReasonPawnLeftRole.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Patches\" />

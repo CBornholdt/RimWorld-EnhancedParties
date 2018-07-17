@@ -22,7 +22,7 @@ namespace EnhancedParty
     public class LordPawnRole
     {
 		public LordJob_JoinableRoles lordJob;
-		public int order = -1;
+		public int priority = -1;
         public string name;
         public List<Pawn> currentPawns;
 		public Func<Pawn, bool> pawnValidator;
