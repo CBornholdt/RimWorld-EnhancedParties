@@ -1,10 +1,13 @@
 ﻿using System;
-namespace EnhancedParty
+using System.Collections.Generic;
+using System.Linq;
+using Verse;
+
+namespace RimWorld
 {
-    public class RoomExt
+    static public class RoomExt
     {
-        public RoomExt()
-        {
-        }
+		static public IEnumerable<Thing> ThingsInside(this Room room) =>
+					room.Cells.SelectMany(cell => cell.GetThingList(room.Map));
     }
 }

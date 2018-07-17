@@ -1,10 +1,9 @@
 ﻿using System;
 namespace EnhancedParty
 {
-    public class EnhancedPartyJoinPriorities
+    static public class EnhancedPartyJoinPriorities
     {
-        public EnhancedPartyJoinPriorities()
-        {
-        }
+		static readonly public float organizer = 100f;
+		static readonly public float normalGuest = 20f;
     }
 }

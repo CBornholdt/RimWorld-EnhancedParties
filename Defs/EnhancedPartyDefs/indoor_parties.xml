@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+	<EnhancedPartyDef>
+		<defName>RecRoom_Basic</defName>
+		<label>Party in the recRoom</label>
+		<dutyHook>MediumPriority</dutyHook>
+		<prepareDuty>EP_RecRoom_Prepare</prepareDuty>
+		<partyDuty>EP_RecRoom_Party</partyDuty>
+		<workerClass>EnhancedParty.PartyWorker_RecRoom</workerClass>
+		<partyPreparationStartLetterTitle>Starting Preparation</partyPreparationStartLetterTitle>
+	</EnhancedPartyDef>
+</Defs>
