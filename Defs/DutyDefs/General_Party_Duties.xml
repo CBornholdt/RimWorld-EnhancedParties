@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+  <DutyDef>
+  	<defName>EP_MakeThingsToFocus</defName>
+  	<socialModeMax>Off</socialModeMax>
+  	<hook>MediumPriority</hook>
+  	<thinkNode Class="ThinkNode_Priority">
+  		<subNodes>
+
+  			<li Class="EnhancedParty.ThinkNodeConditional_Duty_HasEnoughThingsAvailable">
+  				<subNodes>
+
+  					<li Class="EnhancedParty.ThinkNodeConditional_Duty_HasEnoughThingsAtFocus">
+  						<subNodes>
+  							<li Class="EnhancedParty.ThinkNode_DutyTaskComplete">
+  							</li>
+  						</subNodes>
+  					</li>
+
+  					<li Class="EnhancedParty.ThinkNodeConditional_Duty_HasEnoughThingsAtFocus">
+  						<invert>true</invert>
+  						<subNodes>
+  							<li Class="EnhancedParty.JobGiver_Duty_BringThingsToFocus">
+  							</li>
+  						</subNodes>
+  					</li>
+
+  				</subNodes>
+  			</li>
+
+  			<li Class="EnhancedParty.ThinkNodeConditional_Duty_HasEnoughThingsAvailable">
+  				<invert>true</invert>
+  				<subNodes>
+  					<li Class="EnhancedParty.JobGiver_Duty_PerformDutyRecipe">
+  					</li>
+  				</subNodes>
+  			</li>
+
+  			<li Class="EnhancedParty.ThinkNode_Logger">
+  				<subNodes>
+  					<li Class="EnhancedParty.JobGiver_Duty_WanderNearFocus">
+  					</li>
+  				</subNodes>
+  			</li>
+
+  		</subNodes>
+  	</thinkNode>
+  </DutyDef>
+</Defs>

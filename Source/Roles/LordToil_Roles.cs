@@ -22,11 +22,14 @@ namespace EnhancedParty
 			LordJob.CheckAndUpdateRoles();
 		}
 
-		public virtual void Notify_PawnJoinedRole(LordPawnRole role, Pawn pawn, LordPawnRole prevPawnRole) { }
+		public virtual void Notify_PawnJoinedRole(LordPawnRole role, Pawn pawn, LordPawnRole prevPawnRole) =>
+				LordJob.Notify_PawnJoinedRole(role, pawn, prevPawnRole);
 
-		public virtual void Notify_PawnLeftRole(LordPawnRole role, Pawn pawn, LordPawnRole newPawnRole) { }
+		public virtual void Notify_PawnLeftRole(LordPawnRole role, Pawn pawn, LordPawnRole newPawnRole) =>
+				LordJob.Notify_PawnLeftRole(role, pawn, newPawnRole);
 
 		public virtual void Notify_PawnReplacedPawnInRole(LordPawnRole role, Pawn newPawn, Pawn oldPawn
-							, LordPawnRole newPawnOldRole, LordPawnRole oldPawnNewRole) { }
+							, LordPawnRole newPawnOldRole, LordPawnRole oldPawnNewRole) =>
+				LordJob.Notify_PawnReplacedPawnInRole(role, newPawn, oldPawn, newPawnOldRole, oldPawnNewRole);
 	}
 }

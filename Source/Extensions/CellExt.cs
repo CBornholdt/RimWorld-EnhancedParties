@@ -1,4 +1,7 @@
-﻿using Verse;
+﻿using System;
+
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Verse
 {
@@ -14,5 +17,18 @@ namespace Verse
 			}
 			return false;
 		}
+
+		static public bool HasTableAt(this IntVec3 cell, Map map) =>
+			cell.GetThingList(map).Any(thing => thing.def.surfaceType == SurfaceType.Eat);
+
+		static public IEnumerable<Thing> AllTablesWithin(this IEnumerable<IntVec3> cells, Map map) =>
+			cells.Select(cell => cell.GetThingList(map)
+										.FirstOrDefault(thing => thing.def.surfaceType == SurfaceType.Eat))
+				 .Where(thing => thing != null)
+                 .Distinct();
+
+		static public IEnumerable<IntVec3> PassableCellsInRadiusAround(this IntVec3 center, Map map, float radius) =>
+			GenRadial.RadialCellsAround(center, radius, true)
+                     .Where(cell => cell.InBounds(map) && cell.Walkable(map));
     }
 }

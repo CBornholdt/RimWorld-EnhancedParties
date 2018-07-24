@@ -19,30 +19,30 @@ namespace EnhancedParty
 		NeedsLess = 0x0040  */
 	}
     
-    public class LordPawnRole
+    public class LordPawnRole : IExposable
     {
 		public LordJob_JoinableRoles lordJob;
 		public int priority = -1;
         public string name;
         public List<Pawn> currentPawns;
 		public Func<Pawn, bool> pawnValidator;
+		public bool enabled = true;
         
-        
-		public bool isReassignableFrom = true;
+		public bool isReassignableFrom = false;
 		public bool shouldSeekReplacement = true;
-		public bool seekReplacementWithPriority = true; //Look for replacement before normal replenishment
+	//	public bool seekReplacementWithPriority = true; //Look for replacement before normal replenishment
 		public bool opportunisticallyReplenish = false;
         public Func<Pawn, float> pawnReplenishPriority;
 		public Func<List<Pawn>, bool> replenishCompleter;
-        
-		/*public Func<LordJob_JoinableRoles, IEnumerable<Pawn>> pawnSelector;
-		public Func<List<Pawn>, LordPawnRoleStatus> statusValidator;
 
-		public void ReselectFor(LordJob job)
+		public void ExposeData()
 		{
-			currentPawns = new List<Pawn>(pawnSelector(job));
+			Scribe_Values.Look<bool>(ref this.enabled, "Enabled", true);
+			Scribe_Values.Look<int>(ref this.priority, "Priority", -1);
+			Scribe_Collections.Look<Pawn>(ref this.currentPawns, "CurrentPawns", LookMode.Reference);
+			Scribe_Values.Look<bool>(ref this.isReassignableFrom, "IsReassignableFrom", false);
+			Scribe_Values.Look<bool>(ref this.shouldSeekReplacement, "ShouldSeekReplacement", true);
+			Scribe_Values.Look<bool>(ref this.opportunisticallyReplenish, "OpportunisticallyReplenish", false);
 		}
-
-		public LordPawnRoleStatus CurrentStatus => statusValidator(currentPawns);   */
-    }
+	}
 }
