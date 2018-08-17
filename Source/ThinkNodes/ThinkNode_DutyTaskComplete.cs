@@ -1,10 +1,10 @@
 ﻿using System;
 using Verse;
 using Verse.AI;
-using RimWorld;
+using EnhancedParty;
 using Verse.AI.Group;
 
-namespace EnhancedParty
+namespace RimWorld
 {
     public class ThinkNode_DutyTaskComplete : ThinkNode
     {

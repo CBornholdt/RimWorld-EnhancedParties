@@ -4,18 +4,19 @@ using Verse;
 using Verse.AI;
 using Verse.AI.Group;
 using RimWorld;
+using EnhancedParty;
 
-namespace EnhancedParty
+namespace RimWorld
 {
-    public class ThinkNodeConditional_Duty_HasEnoughThingsAvailable : ThinkNode_Conditional
+    public class DutyConditional_HasEnoughThingsAvailable : ThinkNode_Conditional
     {
-        public ThinkNodeConditional_Duty_HasEnoughThingsAvailable()
+        public DutyConditional_HasEnoughThingsAvailable()
         {
         }
 
 		public override ThinkNode DeepCopy(bool resolve = true)
 		{
-			return new ThinkNodeConditional_Duty_HasEnoughThingsAvailable();
+			return new DutyConditional_HasEnoughThingsAvailable();
 		}
 
 		protected override bool Satisfied(Pawn pawn)
@@ -23,7 +24,7 @@ namespace EnhancedParty
 			EnhancedPawnDuty duty = pawn.mindState?.duty as EnhancedPawnDuty;
 
 			if(duty == null || duty.dutyThingDef == null) {
-				Log.ErrorOnce($"ThinkNodeConditional_Duty_HasEnoughThingsAvailable without either an enhancedDuty, or a dutyThingDef", -92373);
+				Log.ErrorOnce($"DutyConditional_HasEnoughThingsAvailable without either an enhancedDuty, or a dutyThingDef", -92373);
 				return false;
 			}
 

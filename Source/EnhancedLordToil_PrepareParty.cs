@@ -7,16 +7,11 @@ using RimWorld;
 
 namespace EnhancedParty
 {
-    public class LordToil_EnhancedParty_Prepare : LordToil
+    public abstract class EnhancedLordToil_PrepareParty : EnhancedLordToil
     {
-		public LordJob_EnhancedParty LordJob => (LordJob_EnhancedParty)this.lord.LordJob;
+		public new EnhancedLordJob_Party LordJob => (EnhancedLordJob_Party)this.lord.LordJob;
         
-        public EnhancedParty_PrepareData Data => (EnhancedParty_PrepareData)this.data;
-    
-        public LordToil_EnhancedParty_Prepare()
-        {
-			this.data = new EnhancedParty_PrepareData();
-        }
+        public PreparePartyToilData PrepareData => (PreparePartyToilData)this.data;
 
 		public override ThinkTreeDutyHook VoluntaryJoinDutyHookFor(Pawn p) => LordJob.Def.dutyHook;
 
@@ -27,15 +22,21 @@ namespace EnhancedParty
 						, LordJob.PartySpot, radius: -1f);
 		}
 
+		protected virtual bool TryGivePreparationMemory(Pawn pawn, out ThoughtDef memory)
+		{
+			memory = null;
+			return false;
+		}
+
 		public override void LordToilTick()
 		{
-			if(--this.Data.ticksToNextPulse <= 0) {
-				this.Data.ticksToNextPulse = LordJob.Def.ticksPerPreparationPulse;
+			if(--this.PrepareData.ticksToNextPulse <= 0) {
+				this.PrepareData.ticksToNextPulse = LordJob.Def.ticksPerPreparationPulse;
 
 				List<Pawn> ownedPawns = this.lord.ownedPawns;
 				for(int i = 0; i < ownedPawns.Count; i++) {
 					if(LordJob.IsAttendingParty(ownedPawns[i])) {
-                        if(LordJob.Worker.TryGivePreparationMemory(ownedPawns[i], out ThoughtDef memory))
+                        if(TryGivePreparationMemory(ownedPawns[i], out ThoughtDef memory))
                             ownedPawns[i].needs.mood.thoughts.memories.TryGainMemory(memory, otherPawn: null);
                             
 						TaleRecorder.RecordTale(TaleDefOf.AttendedParty, new object[]

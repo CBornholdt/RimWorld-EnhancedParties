@@ -21,7 +21,7 @@ namespace EnhancedParty
     
     public class LordPawnRole : IExposable
     {
-		public LordJob_JoinableRoles lordJob;
+		public EnhancedLordJob lordJob;
 		public int priority = -1;
         public string name;
         public List<Pawn> currentPawns;

@@ -6,25 +6,27 @@ using Verse.AI.Group;
 
 namespace RimWorld
 {
-    public class ThinkNode_RoleDutyTaskComplete : ThinkNode
+    public class ThinkNode_DutyTaskIncompletable : ThinkNode
     {
         static readonly public string MemoBegin = "Duty";
-		static readonly public string MemoEnd = "Complete";
+        static readonly public string MemoEnd = "Complete";
     
+        public string taskName;
         public bool addPawnNameToMemo = false;
         public bool repeatProtection = true;
 
         bool alreadyTriggered = false;
     
-        public ThinkNode_RoleDutyTaskComplete()
+        public ThinkNode_DutyTaskIncompletable()
         {
         }
 
         public override ThinkNode DeepCopy(bool resolve = true)
         {
-            ThinkNode node = new ThinkNode_RoleDutyTaskComplete() {
+            ThinkNode node = new ThinkNode_DutyTaskComplete() {
                 addPawnNameToMemo = this.addPawnNameToMemo,
-                repeatProtection = this.repeatProtection
+                repeatProtection = this.repeatProtection,
+                taskName = this.taskName
             };
             return node;
         }
@@ -35,7 +37,6 @@ namespace RimWorld
                 return ThinkResult.NoJob;
 
             string pawnNamePart = (addPawnNameToMemo) ? pawn.NameStringShort + "." : string.Empty;
-			string taskName = (pawn.mindState.duty as EnhancedPawnDuty)?.taskName;
             string taskNamePart = (taskName != null) ? taskName + "." : string.Empty;
             string memo = MemoBegin + "." + pawnNamePart + taskNamePart + MemoEnd;
             pawn.GetLord().ReceiveMemo(memo);

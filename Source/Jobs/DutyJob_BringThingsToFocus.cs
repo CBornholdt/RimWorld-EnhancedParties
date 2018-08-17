@@ -6,10 +6,11 @@ using Verse;
 using RimWorld;
 using Verse.AI;
 using Verse.AI.Group;
+using EnhancedParty;
 
-namespace EnhancedParty
+namespace RimWorld
 {
-    public class JobGiver_Duty_BringThingsToFocus : ThinkNode_JobGiver
+    public class DutyJob_BringThingsToFocus : ThinkNode_JobGiver
     {
         protected override Job TryGiveJob(Pawn pawn)
         {

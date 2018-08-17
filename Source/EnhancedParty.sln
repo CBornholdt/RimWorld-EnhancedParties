@@ -14,4 +14,8 @@ Global
 		{3A153A8E-A71E-4C23-9B8F-0C6FB8B19CC2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3A153A8E-A71E-4C23-9B8F-0C6FB8B19CC2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		Policies = $0
+		$0.DotNetNamingPolicy = $1
+	EndGlobalSection
 EndGlobal

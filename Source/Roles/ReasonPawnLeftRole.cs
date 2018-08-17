@@ -5,7 +5,9 @@ namespace EnhancedParty
     {
         LeftLord,
         Invalid,
-        Reassigned,
+        RoleDisabled,
+        InNewRole,
+        Replacement,
         Replenished
     }
 }

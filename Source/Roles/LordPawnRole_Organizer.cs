@@ -11,7 +11,7 @@ namespace EnhancedParty
     {
         static public readonly string Name = "Organizer";
 
-        static public bool IsOrganizer(LordJob_JoinableRoles job, Pawn pawn)
+        static public bool IsOrganizer(EnhancedLordJob job, Pawn pawn)
         {
             var dJob = Traverse.Create(job);
             return (dJob.Property("Organizer")?.GetValue<Pawn>()

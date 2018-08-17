@@ -8,10 +8,9 @@ using Verse.AI.Group;
 
 namespace EnhancedParty
 {
-    public abstract class EnhancedPartyWorker : IExposable
+ /*   public abstract class EnhancedPartyWorker : IExposable
     {   
         //Will be set by containing LordJob on re-load
-		public LordJob_EnhancedParty lordJob;
 
 		public EnhancedPartyDef def;
 
@@ -19,12 +18,6 @@ namespace EnhancedParty
 		public enum PartyStatus { NotStarted, Ongoing, Interrupted, Interrupted_Continuable, Continued, Finished };
 
 		public EnhancedPartyWorker() { }    //Will be created to use PartyCanBeHadWith
-
-		public EnhancedPartyWorker(EnhancedPartyDef def, LordJob_EnhancedParty partyLordJob)
-		{
-			this.def = def;
-			this.lordJob = partyLordJob;
-		}
 
 		public abstract PreparationStatus CurrentPreparationStatus();
 
@@ -38,7 +31,7 @@ namespace EnhancedParty
 
 		virtual public float PreparationScore() => 1f;
         
-        virtual public bool IsInvited(Pawn pawn) => this.lordJob.lord.faction != null && pawn.Faction == this.lordJob.lord.faction;
+        virtual public bool IsInvited(Pawn pawn) => this.LordJob.lord.faction != null && pawn.Faction == this.LordJob.lord.faction;
 
 		virtual public bool IsAttendingParty(Pawn pawn) =>
 			PartyUtility.InPartyArea(pawn.Position, lordJob.PartySpot, pawn.Map);
@@ -85,5 +78,5 @@ namespace EnhancedParty
 		{
 			Scribe_Defs.Look<EnhancedPartyDef>(ref this.def, "Def");
 		}
-    }
+    }   */
 }

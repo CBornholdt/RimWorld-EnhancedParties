@@ -11,11 +11,8 @@ namespace Verse
     {
 		public DutyDef partyDuty;
 		public DutyDef prepareDuty;
-
-		public Type lordToilPartyClass = typeof(LordToil_EnhancedParty_Party);
-		public Type lordToilPrepareClass = typeof(LordToil_EnhancedParty_Prepare);
     
-		public Type workerClass;
+		public Type enhancedLordJobClass;
 		public int minNumOfPartiers = 4;
 		public int maxNumOfPartiers = 1000;
 		public bool allowCrossFaction = false;
@@ -34,50 +31,34 @@ namespace Verse
 		public int ticksPerPreparationPulse = 1200;
 		public int ticksPerPartyPulse = 600;
 
-		private EnhancedPartyWorker workerInternal;
+		private EnhancedLordJob_Party intLordJob;
+		private EnhancedLordJob_Party IntLordJob => intLordJob;
+
+		public EnhancedLordJob_Party CreateLordJob(Pawn organizer, IntVec3 startingSpot) =>
+			(EnhancedLordJob_Party)Activator.CreateInstance(enhancedLordJobClass
+														, new object[2] { organizer, startingSpot }); 
 
 		public bool PartyCanBeHadWith(Faction faction, Map map)
 		{
-			return (workerInternal ?? CreatePrivateWorker()).PartyCanBeHadWith(faction, map);
+			return IntLordJob.PartyCanBeHadWith(faction, map);
 		}
 
 		public bool TryGetOrganizerAndStartingSpot(Faction faction, Map map, out Pawn organizer, out IntVec3 startingSpot)
 		{
 			organizer = null;
 			startingSpot = default(IntVec3);
-			return (workerInternal ?? CreatePrivateWorker())
-                .TryGetOrganizerAndStartingSpot(faction, map, out organizer, out startingSpot);
-		}
-
-		public EnhancedPartyWorker CreateWorker(LordJob_EnhancedParty lordJob = null)
-		{
-			EnhancedPartyWorker newWorker = (EnhancedPartyWorker)Activator
-                                                .CreateInstance(workerClass, new object[2] { this, lordJob });
-			newWorker.def = this;
-			return newWorker;
-		}   
-
-		private EnhancedPartyWorker CreatePrivateWorker()
-		{
-			workerInternal = CreateWorker();
-			return workerInternal;
+			return IntLordJob.TryGetOrganizerAndStartingSpot(faction, map, out organizer, out startingSpot);
 		}
 
 		public override IEnumerable<string> ConfigErrors()
 		{
 			foreach(var error in base.ConfigErrors())
 				yield return error;
-        
-			if(!typeof(EnhancedPartyWorker).IsAssignableFrom(workerClass))
-				yield return $"<workerClass> configured in EnhancedPartyDef {this.label} is not a sub-class of EnhancedPartyWorker";
-            if(!typeof(LordToil_EnhancedParty_Prepare).IsAssignableFrom(lordToilPrepareClass))
-                yield return $"<lordToilPrepareClass> configured in EnhancedPartyDef {this.label} is not a sub-class of LordToil_EnhancedParty_Prepare";
-            if(!typeof(LordToil_EnhancedParty_Party).IsAssignableFrom(lordToilPartyClass))
-                yield return $"<lordToilPartyClass> configured in EnhancedPartyDef {this.label} is not a sub-class of LordToil_EnhancedParty_Party";
-            if(prepareDuty == null && lordToilPrepareClass == typeof(LordToil_EnhancedParty_Prepare))
-                yield return $"<prepareDuty> configured in EnhancedPartyDef {this.label} is null without a change in lordToilPrepareClass. This is a requirement";
-            if(partyDuty == null && lordToilPartyClass == typeof(LordToil_EnhancedParty_Party))
-                yield return $"<partyDuty> configured in EnhancedPartyDef {this.label} is null without a change in lordToilPartyClass. This is a requirement";
+
+			if (!typeof(EnhancedLordJob_Party).IsAssignableFrom(enhancedLordJobClass))
+				yield return $"<enhancedLordJobClass> configured in EnhancedPartyDef {this.label} is not a sub-class of EnhancedLordJob_Party";
+			else
+				intLordJob = (EnhancedLordJob_Party)Activator.CreateInstance(enhancedLordJobClass);
 		}
 	}
 }

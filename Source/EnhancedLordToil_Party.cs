@@ -7,16 +7,11 @@ using RimWorld;
 
 namespace EnhancedParty
 {
-    public class LordToil_EnhancedParty_Party : LordToil
+    public abstract class EnhancedLordToil_Party : LordToil
     {
-        public LordJob_EnhancedParty LordJob => (LordJob_EnhancedParty)this.lord.LordJob;
+        public EnhancedLordJob_Party LordJob => (EnhancedLordJob_Party)this.lord.LordJob;
         
-        public EnhancedParty_PartyData Data => (EnhancedParty_PartyData)this.data;
-    
-        public LordToil_EnhancedParty_Party()
-        {
-            this.data = new EnhancedParty_PartyData();
-        }
+        public PartyToilData Data => (PartyToilData)this.data;
         
         virtual public float PreparationScore {
 			get => Data.preparationScore;
@@ -32,6 +27,12 @@ namespace EnhancedParty
                         , LordJob.PartySpot, radius: -1f);
         }
 
+		public virtual bool TryGivePartyMemory(Pawn pawn, out ThoughtDef memory)
+		{
+			memory = null;
+			return false;
+		}
+
         public override void LordToilTick()
         {
             if(--this.Data.ticksToNextPulse <= 0) {
@@ -40,7 +41,7 @@ namespace EnhancedParty
                 List<Pawn> ownedPawns = this.lord.ownedPawns;
                 for(int i = 0; i < ownedPawns.Count; i++) {
                     if(LordJob.IsAttendingParty(ownedPawns[i])) {
-                        if(LordJob.Worker.TryGivePartyMemory(ownedPawns[i], out ThoughtDef memory))
+                        if(TryGivePartyMemory(ownedPawns[i], out ThoughtDef memory))
                             ownedPawns[i].needs.mood.thoughts.memories.TryGainMemory(memory, otherPawn: null);
                             
                         TaleRecorder.RecordTale(TaleDefOf.AttendedParty, new object[]

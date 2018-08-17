@@ -9,11 +9,8 @@ using RimWorld;
 
 namespace EnhancedParty
 {
-    public class PartyWorker_RecRoom : EnhancedPartyWorker
-    {
-        public PartyWorker_RecRoom(EnhancedPartyDef def, LordJob_EnhancedParty lordJob) 
-            : base(def, lordJob) { }
-    
+ /*   public class PartyWorker_RecRoom : EnhancedPartyWorker
+    {  
         override public bool PartyCanBeHadWith(Faction faction, Map map)
         {   
             bool value = PartyUtility.AcceptableGameConditionsToStartParty(map)
@@ -88,5 +85,5 @@ namespace EnhancedParty
         {
             base.ExposeData();
         }
-    }
+    }   */
 }

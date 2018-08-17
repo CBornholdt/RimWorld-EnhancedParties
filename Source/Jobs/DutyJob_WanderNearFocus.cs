@@ -1,12 +1,13 @@
 ﻿using System;
 using Verse;
 using Verse.AI;
+using EnhancedParty;
 
-namespace EnhancedParty
+namespace RimWorld
 {
-    public class JobGiver_Duty_WanderNearFocus : JobGiver_Wander
+    public class DutyJob_WanderNearFocus : JobGiver_Wander
     {
-        public JobGiver_Duty_WanderNearFocus()
+        public DutyJob_WanderNearFocus()
         {
             this.wanderRadius = 7f; //From JobGiver_WanderCurrentRoom
             this.locomotionUrgency = LocomotionUrgency.Amble;

@@ -21,7 +21,7 @@ namespace EnhancedParty
             if(signal.type != TriggerSignalType.Tick)
                 return false;
 
-            LordJob_JoinableRoles lordJob = lord.LordJob as LordJob_JoinableRoles;
+            EnhancedLordJob lordJob = lord.LordJob as EnhancedLordJob;
             if(lordJob == null) {
                 Log.ErrorOnce($"Set Trigger_RoleEmpty but LordJob is not of type LordJob_JoinableRoles. It is a {lord.LordJob.GetType().Name}", 2323896);
                 return false;
