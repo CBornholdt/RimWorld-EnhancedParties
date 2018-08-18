@@ -5,7 +5,7 @@ using Verse.AI.Group;
 
 namespace EnhancedParty
 {
-    public class EnhancedLordToilData : LordToilData
+    public class ComplexLordToilData : LordToilData
     {
         protected int currentIndex = 0;
 

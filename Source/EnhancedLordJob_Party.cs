@@ -74,10 +74,10 @@ namespace EnhancedParty
         virtual public int PreparationTimeoutTicks() => def.preparationTimeout;
         virtual public int PartyTimeoutTicks() => def.partyTimeout;
 
-        public override StateGraph CreateGraph()
-        {
-			return new StateGraph();
-        }
+		virtual public IEnumerable<Func<IntVec3>> PartySpotProgression()
+		{
+			yield return () => startingSpot;
+		} 
 
 		public void CancelJobsForAttendees()
 		{
@@ -86,6 +86,80 @@ namespace EnhancedParty
 				pawn.jobs.EndCurrentJob(JobCondition.InterruptForced);
 			}
 		}   
+        
+        public override StateGraph CreateGraph()
+        {
+            partySpotGenerators = new List<Func<IntVec3>>(PartySpotProgression());
+            UpdatePartySpot();
+            
+            StateGraph stateGraph = new StateGraph();
+
+            EnhancedLordToil_PrepareParty prepareToil = PrepareToil;
+            stateGraph.AddToil(prepareToil);
+
+			EnhancedLordToil_Party partyToil = PartyToil;
+            stateGraph.AddToil(partyToil);
+
+            LordToil_End endToil = new LordToil_End();
+            stateGraph.AddToil(endToil);
+            
+            Log.Message($"PreparationScore: {partyToil.PreparationScore}");
+
+            this.preparationTimeout = new Trigger_TicksPassed(Def.preparationTimeout);
+            this.partyTimeout = new Trigger_TicksPassed(Def.partyTimeout);
+
+            Transition preparationSucceeded = new Transition(prepareToil, partyToil);
+            preparationSucceeded.AddTrigger(new Trigger_Memo("PreparationComplete"));
+            preparationSucceeded.AddPreAction(new TransitionAction_Custom(
+                () => partyToil.PreparationScore = prepareToil.CalculatePreparationScore()));
+            preparationSucceeded.AddPostAction(new TransitionAction_Custom(() => {
+                this.CancelJobsForAttendees();
+                this.partyHasStarted = true;
+            }));
+
+            PreparationStatus successStatus = def.progressToPartyWhenPreparationComplete
+                                                        ? PreparationStatus.Complete
+                                                        : PreparationStatus.Maximal;
+            preparationSucceeded.AddTrigger(new Trigger_TickCondition(
+                    () => prepareToil.CurrentPreparationStatus() >= successStatus));
+
+            Transition preparationFailed = new Transition(prepareToil, endToil);
+            preparationFailed.AddTrigger(new Trigger_Memo("PreparationFailed"));
+            preparationFailed.AddTrigger(new Trigger_PawnLostViolently());
+            preparationFailed.AddPreAction(new TransitionAction_Message("EP.PreparationFailed.TransitionMessage".Translate()
+                                                , MessageTypeDefOf.NegativeEvent, new TargetInfo(PartySpot, Map)));  //TODO make PartySpot lazily updatable
+
+            if(Def.failOnPreparationTimeout)
+                preparationFailed.AddTrigger(preparationTimeout);
+            else
+                preparationSucceeded.AddTrigger(preparationTimeout);
+
+            stateGraph.AddTransition(preparationSucceeded);
+            stateGraph.AddTransition(preparationFailed);
+
+            Transition partyOverFail = new Transition(partyToil, endToil);
+            partyOverFail.AddTrigger(new Trigger_Memo("PartyFailed"));
+            partyOverFail.AddTrigger(new Trigger_PawnLostViolently());
+            partyOverFail.AddPreAction(new TransitionAction_Message("EP.PartyFailed.TransitionMessage".Translate()
+                                                , MessageTypeDefOf.NegativeEvent, new TargetInfo(PartySpot, Map)));
+            partyOverFail.AddTrigger(new Trigger_TickCondition(
+                                () => partyToil.CurrentPartyStatus() == PartyStatus.Interrupted)); 
+                                                               
+
+            Transition partyOverSuccess = new Transition(partyToil, endToil);
+            partyOverSuccess.AddTrigger(new Trigger_Memo("PartySuccess"));
+            partyOverSuccess.AddTrigger(new Trigger_TickCondition(
+                                () => partyToil.CurrentPartyStatus() == PartyStatus.Finished));
+
+            if(Def.failOnPartyTimeout)
+                partyOverFail.AddTrigger(this.partyTimeout);
+            else
+                partyOverSuccess.AddTrigger(this.partyTimeout);
+
+            stateGraph.AddTransition(partyOverFail);
+            stateGraph.AddTransition(partyOverSuccess);
+            return stateGraph;
+        }   
 
         public bool IsPartyAboutToEnd() => false;
 

@@ -4,7 +4,7 @@ using RimWorld;
 
 namespace EnhancedParty
 {
-    public class PartyToilData : EnhancedLordToilData
+    public class PartyToilData : ComplexLordToilData
     {
         public int ticksToNextPulse = 0;
         public float preparationScore = 0f;

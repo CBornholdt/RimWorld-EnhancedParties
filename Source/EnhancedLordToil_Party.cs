@@ -18,6 +18,8 @@ namespace EnhancedParty
 			set => Data.preparationScore = value;
 		}
 
+		virtual public PartyStatus CurrentPartyStatus() => PartyStatus.Ongoing;
+
         public override ThinkTreeDutyHook VoluntaryJoinDutyHookFor(Pawn p) => LordJob.Def.dutyHook;
 
         public override void UpdateAllDuties()

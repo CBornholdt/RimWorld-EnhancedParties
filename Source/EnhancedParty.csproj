@@ -79,11 +79,16 @@
     <Compile Include="Jobs\DutyJob_PerformDutyRecipe.cs" />
     <Compile Include="EnhancedLordToil.cs" />
     <Compile Include="EnhancedLordJob.cs" />
-    <Compile Include="EnhancedLordToilData.cs" />
+    <Compile Include="ComplexLordToilData.cs" />
     <Compile Include="ThinkNodes\ThinkNode_DutyTaskIncompletable.cs" />
     <Compile Include="Utilities\ReflectTools.cs" />
     <Compile Include="PreparePartyToilData.cs" />
     <Compile Include="PartyToilData.cs" />
+    <Compile Include="PreparationStatus.cs" />
+    <Compile Include="PartyStatus.cs" />
+    <Compile Include="SimpleLordToil.cs" />
+    <Compile Include="NestableLordToil.cs" />
+    <Compile Include="ComplexLordToil.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Patches\" />
@@ -94,6 +99,7 @@
     <Folder Include="Triggers\" />
     <Folder Include="PartyWorkers\" />
     <Folder Include="Utilities\" />
+    <Folder Include="LordJobs\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

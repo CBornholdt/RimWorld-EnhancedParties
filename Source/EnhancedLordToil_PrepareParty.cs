@@ -15,6 +15,10 @@ namespace EnhancedParty
 
 		public override ThinkTreeDutyHook VoluntaryJoinDutyHookFor(Pawn p) => LordJob.Def.dutyHook;
 
+		public virtual float CalculatePreparationScore() => 1f;
+
+		public virtual PreparationStatus CurrentPreparationStatus() => PreparationStatus.Ongoing;
+
 		public override void UpdateAllDuties()
 		{
 			for(int i = 0; i < this.lord.ownedPawns.Count; i++)

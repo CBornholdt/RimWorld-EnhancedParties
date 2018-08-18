@@ -4,7 +4,7 @@ using Verse.AI;
 
 namespace EnhancedParty
 {
-    public class PreparePartyToilData : EnhancedLordToilData
+    public class PreparePartyToilData : ComplexLordToilData
     {
 		public int ticksToNextPulse;
     
