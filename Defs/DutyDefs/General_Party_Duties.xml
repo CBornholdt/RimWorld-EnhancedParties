@@ -46,4 +46,33 @@
   		</subNodes>
   	</thinkNode>
   </DutyDef>
+
+  <DutyDef>
+    <defName>EP_GotoAndCleanFocusRoom</defName>
+    <socialModeMax>Off</socialModeMax>
+    <hook>MediumPriority</hook>
+    <thinkNode Class="ThinkNode_Priority">
+      <subNodes>
+        <!-- Goto party spot -->
+        <li Class="ThinkNode_Logger"/>
+        <li Class="JobGiver_GotoTravelDestination">
+          <exactCell>true</exactCell>
+          <locomotionUrgency>Jog</locomotionUrgency>
+        </li>
+
+        <li Class="ThinkNode_ConditionalInPartyArea">
+          <subNodes>
+            <li Class="EnhancedParty.JobGiver_CleanRoom">
+            </li>
+            <li Class="EnhancedParty.JobGiver_WanderInDutyRoom">
+              <ticksBetweenWandersRange>
+                <min>50</min>
+                <max>250</max>
+              </ticksBetweenWandersRange>
+            </li>
+          </subNodes>
+        </li>
+      </subNodes>
+    </thinkNode>
+  </DutyDef>
 </Defs>

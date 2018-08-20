@@ -42,6 +42,13 @@ namespace EnhancedParty
 
         public bool HasRole(string name) => roles.Any(role => role.name == name);
 
+		public void SetRoleEnabled(string name, bool enabled)
+		{
+			var role = GetRole(name);
+			if(role != null)
+				role.enabled = enabled;
+		}
+
         public EnhancedLordToil CurrentEnhancedToil => this.lord.CurLordToil as EnhancedLordToil;
 
 		virtual public bool AllowRolelessPawnsToReplenish => false;

@@ -7,7 +7,7 @@ using RimWorld;
 
 namespace EnhancedParty
 {
-    public abstract class EnhancedLordToil_PrepareParty : EnhancedLordToil
+    public abstract class EnhancedLordToil_PrepareParty : ComplexLordToil
     {
 		public new EnhancedLordJob_Party LordJob => (EnhancedLordJob_Party)this.lord.LordJob;
         

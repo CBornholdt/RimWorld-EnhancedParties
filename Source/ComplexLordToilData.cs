@@ -7,9 +7,7 @@ namespace EnhancedParty
 {
     public class ComplexLordToilData : LordToilData
     {
-        protected int currentIndex = 0;
-
-		public int CurrentIndex => currentIndex;
+        public int currentIndex = 0;
 
         public override void ExposeData()
         {

@@ -1,10 +1,22 @@
 ﻿using System;
 namespace EnhancedParty
 {
-    public class SimpleLordToil : NestableLordToil
+    public class SimpleLordToil : EnhancedLordToil
     {
-		public SimpleLordToil(ComplexLordToil parentToil = null) : base(parentToil)
+		bool cancelExistingJobsOnEntry;
+        
+        public SimpleLordToil(ComplexLordToil parentToil = null
+            , bool cancelExistingJobsOnEntry = false) : base(parentToil)
         {
+			this.cancelExistingJobsOnEntry = cancelExistingJobsOnEntry;
         }
-    }
+
+		public override void Init()
+		{
+			UpdateAllDuties();
+
+			if (cancelExistingJobsOnEntry)
+				this.lord.CancelAllPawnJobs();
+		}
+	}
 }

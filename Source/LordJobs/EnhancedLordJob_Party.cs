@@ -11,15 +11,15 @@ namespace EnhancedParty
 {
     public abstract class EnhancedLordJob_Party : EnhancedLordJob
     {
-        Pawn organizer;
-        EnhancedPartyDef def;
-        IntVec3 startingSpot;
-        int partySpotIndex;
-        IntVec3 currentPartySpot = IntVec3.Invalid;
-		bool partyHasStarted;
+        protected Pawn organizer;
+        protected EnhancedPartyDef def;
+        protected IntVec3 startingSpot;
+        protected int partySpotIndex;
+        protected IntVec3 currentPartySpot = IntVec3.Invalid;
+		protected bool partyHasStarted;
 
-        Trigger_TicksPassed preparationTimeout;
-        Trigger_TicksPassed partyTimeout;
+        protected Trigger_TicksPassed preparationTimeout;
+        protected Trigger_TicksPassed partyTimeout;
 
         List<Func<IntVec3>> partySpotGenerators;
 
@@ -45,6 +45,10 @@ namespace EnhancedParty
         public IntVec3 PartySpot => currentPartySpot;
 
 		public virtual bool PartyCanBeHadWith(Faction faction, Map map) => false;
+
+		public virtual bool AllowedToOrganize(Pawn pawn) => false;
+
+		public virtual bool UseWholePartyRoom => def.useWholePartyRoom;
         
         public virtual bool TryGetOrganizerAndStartingSpot(Faction faction, Map map, out Pawn organizer, out IntVec3 startingSpot)
         {
@@ -53,9 +57,9 @@ namespace EnhancedParty
 			return false;
         }
         
-        protected virtual EnhancedLordToil_Party PartyToil { get; }
+        protected abstract EnhancedLordToil_Party PartyToil { get; }
         
-        protected virtual EnhancedLordToil_PrepareParty PrepareToil { get; }
+        protected abstract EnhancedLordToil_PrepareParty PrepareToil { get; }
 
         private void UpdatePartySpot() => currentPartySpot = partySpotGenerators[partySpotIndex]();
 
@@ -77,15 +81,7 @@ namespace EnhancedParty
 		virtual public IEnumerable<Func<IntVec3>> PartySpotProgression()
 		{
 			yield return () => startingSpot;
-		} 
-
-		public void CancelJobsForAttendees()
-		{
-			foreach(var pawn in this.lord.ownedPawns) {
-				pawn.jobs.ClearQueuedJobs();
-				pawn.jobs.EndCurrentJob(JobCondition.InterruptForced);
-			}
-		}   
+		}    
         
         public override StateGraph CreateGraph()
         {
@@ -95,10 +91,10 @@ namespace EnhancedParty
             StateGraph stateGraph = new StateGraph();
 
             EnhancedLordToil_PrepareParty prepareToil = PrepareToil;
-            stateGraph.AddToil(prepareToil);
+			prepareToil.AttachTo(stateGraph);
 
 			EnhancedLordToil_Party partyToil = PartyToil;
-            stateGraph.AddToil(partyToil);
+			partyToil.AttachTo(stateGraph);
 
             LordToil_End endToil = new LordToil_End();
             stateGraph.AddToil(endToil);
@@ -113,7 +109,7 @@ namespace EnhancedParty
             preparationSucceeded.AddPreAction(new TransitionAction_Custom(
                 () => partyToil.PreparationScore = prepareToil.CalculatePreparationScore()));
             preparationSucceeded.AddPostAction(new TransitionAction_Custom(() => {
-                this.CancelJobsForAttendees();
+               // this.CancelJobsForAttendees();
                 this.partyHasStarted = true;
             }));
 
@@ -145,7 +141,6 @@ namespace EnhancedParty
             partyOverFail.AddTrigger(new Trigger_TickCondition(
                                 () => partyToil.CurrentPartyStatus() == PartyStatus.Interrupted)); 
                                                                
-
             Transition partyOverSuccess = new Transition(partyToil, endToil);
             partyOverSuccess.AddTrigger(new Trigger_Memo("PartySuccess"));
             partyOverSuccess.AddTrigger(new Trigger_TickCondition(
@@ -158,6 +153,7 @@ namespace EnhancedParty
 
             stateGraph.AddTransition(partyOverFail);
             stateGraph.AddTransition(partyOverSuccess);
+            
             return stateGraph;
         }   
 

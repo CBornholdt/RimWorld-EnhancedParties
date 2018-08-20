@@ -2,6 +2,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using EnhancedParty;
 
 namespace Verse
 {
@@ -30,5 +31,11 @@ namespace Verse
 		static public IEnumerable<IntVec3> PassableCellsInRadiusAround(this IntVec3 center, Map map, float radius) =>
 			GenRadial.RadialCellsAround(center, radius, true)
                      .Where(cell => cell.InBounds(map) && cell.Walkable(map));
+
+        static public bool TryGetEnhancedPartyLordJob(this IntVec3 cell, Map map, out EnhancedLordJob_Party job) =>
+        	(job = (EnhancedLordJob_Party) map.lordManager.lords
+        						            .Select(lord => lord.LordJob)
+        						            .FirstOrDefault(lordJob => lordJob is EnhancedLordJob_Party partyJob 
+                                                && partyJob.PartySpot == cell)) != null; 
     }
 }

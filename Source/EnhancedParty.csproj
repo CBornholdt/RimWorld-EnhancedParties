@@ -45,7 +45,6 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="EnhancedPartyWorker.cs" />
-    <Compile Include="EnhancedLordJob_Party.cs" />
     <Compile Include="EnhancedPartyDef.cs" />
     <Compile Include="EnhancedPartyUtility.cs" />
     <Compile Include="EnhancedLordToil_PrepareParty.cs" />
@@ -67,7 +66,6 @@
     <Compile Include="Triggers\Trigger_RoleEmpty.cs" />
     <Compile Include="Triggers\Trigger_RoleTaskComplete.cs" />
     <Compile Include="Triggers\Trigger_RoleStateTick_Custom.cs" />
-    <Compile Include="PartyWorkers\PartyWorker_RecRoom.cs" />
     <Compile Include="Utilities\Tuple.cs" />
     <Compile Include="ThinkNodes\ThinkNode_DutyTaskComplete.cs" />
     <Compile Include="ThinkNodes\ThinkNode_RoleDutyTaskComplete.cs" />
@@ -87,8 +85,18 @@
     <Compile Include="PreparationStatus.cs" />
     <Compile Include="PartyStatus.cs" />
     <Compile Include="SimpleLordToil.cs" />
-    <Compile Include="NestableLordToil.cs" />
     <Compile Include="ComplexLordToil.cs" />
+    <Compile Include="LordJobs\PartyJob_RecRoom.cs" />
+    <Compile Include="LordToils\RecRoomParty_PrepareToil.cs" />
+    <Compile Include="LordToils\RecRoomParty_PartyToil.cs" />
+    <Compile Include="LordToils\RoleDutyLordToil.cs" />
+    <Compile Include="Extensions\LordExt.cs" />
+    <Compile Include="EnhancedDutyDefOf.cs" />
+    <Compile Include="Patches\Lord_CheckTransitionOnSignal.cs" />
+    <Compile Include="Patches\Lord_GotoToil.cs" />
+    <Compile Include="Extensions\LordToilExt.cs" />
+    <Compile Include="Patches\PartyUtility_UseWholeRoomAsPartyArea.cs" />
+    <Compile Include="LordJobs\EnhancedLordJob_Party.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Patches\" />
@@ -97,9 +105,9 @@
     <Folder Include="Roles\" />
     <Folder Include="ThinkNodes\" />
     <Folder Include="Triggers\" />
-    <Folder Include="PartyWorkers\" />
     <Folder Include="Utilities\" />
     <Folder Include="LordJobs\" />
+    <Folder Include="LordToils\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

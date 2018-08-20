@@ -1,17 +1,44 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
+using System.Collections.Generic;
+using System.Reflection;
 using Verse;
+using RimWorld;
 using Verse.AI;
 using Verse.AI.Group;
-using RimWorld;
-
+using Harmony;
 
 namespace EnhancedParty
 {
- /*   public class PartyWorker_RecRoom : EnhancedPartyWorker
-    {  
-        override public bool PartyCanBeHadWith(Faction faction, Map map)
+    public class PartyJob_RecRoom : EnhancedLordJob_Party
+    {
+		protected RecRoomParty_PrepareToil prepareToil;
+		protected RecRoomParty_PartyToil partyToil;
+    
+        public PartyJob_RecRoom()
+        {
+			prepareToil = new RecRoomParty_PrepareToil();
+			partyToil = new RecRoomParty_PartyToil();
+        }
+
+		public override bool AllowStartNewGatherings => base.AllowStartNewGatherings;
+
+		protected override EnhancedLordToil_Party PartyToil => partyToil;
+
+		protected override EnhancedLordToil_PrepareParty PrepareToil => prepareToil;
+
+		public override bool IsAttendingParty(Pawn pawn)
+		{
+			return base.IsAttendingParty(pawn);
+		}
+        
+        override public bool AllowedToOrganize(Pawn pawn) =>
+            pawn.RaceProps.Humanlike && !pawn.InBed() && !pawn.InMentalState
+                && pawn.GetLord() == null
+                && pawn.AbleToStopJobForParty()
+                && PartyUtility.ShouldPawnKeepPartying(pawn);   
+
+		override public bool PartyCanBeHadWith(Faction faction, Map map)
         {   
             bool value = PartyUtility.AcceptableGameConditionsToStartParty(map)
                         && map.regionGrid.allRooms.Any(room => room.Role == RoomRoleDefOf.RecRoom)
@@ -23,13 +50,7 @@ namespace EnhancedParty
                         && map.mapPawns.FreeColonistsSpawned.Count() >= def.minNumOfPartiers;
         }
 
-		override public bool AllowedToOrganize(Pawn pawn) =>
-			pawn.RaceProps.Humanlike && !pawn.InBed() && !pawn.InMentalState
-				&& pawn.GetLord() == null
-				&& pawn.AbleToStopJobForParty()
-				&& PartyUtility.ShouldPawnKeepPartying(pawn);
-
-        public override bool TryGetOrganizerAndStartingSpot(Faction faction, Map map, out Pawn organizer, out IntVec3 startingSpot)
+		public override bool TryGetOrganizerAndStartingSpot(Faction faction, Map map, out Pawn organizer, out IntVec3 startingSpot)
         {
             var potentialOrganizers = map.mapPawns.SpawnedPawnsInFaction(faction)
                         .Where(pawn => AllowedToOrganize(pawn)).ToList();
@@ -58,32 +79,12 @@ namespace EnhancedParty
             organizer = null;
             return false;
         }
+        
+        public Room PartyRoom => PartySpot.GetRoom(this.lord.Map);
 
-		public Room PartyRoom => this.lordJob.PartySpot.GetRoom(this.lordJob.lord.Map);
-
-		public override PreparationStatus CurrentPreparationStatus()
-		{
-			Room room = PartyRoom;
-			int filthCount = room.ThingsInside().OfType<Filth>().Count();
-
-			switch(filthCount) {
-				case var test when test == 0:
-					return PreparationStatus.Maximal;
-				case var test when test <= room.CellCount / 10:
-					return PreparationStatus.Complete;
-				default:
-					return PreparationStatus.Ongoing;
-			}
-		}
-
-		public override PartyStatus CurrentPartyStatus()
-		{
-			return PartyStatus.Ongoing;
-		}
-
-		override public void ExposeData()
+        override public void ExposeData()
         {
             base.ExposeData();
         }
-    }   */
+	}
 }
