@@ -22,13 +22,20 @@ namespace EnhancedParty
 
             LordToil roleToil = new RoleDutyLordToil(this, true) 
                 { roleDutyMap = new Dictionary<LordPawnRole, Func<PawnDuty>>() 
-                   { { LordJob.GetRole("Default"), () => new EnhancedPawnDuty(EnhancedDutyDefOf.EP_GotoAndCleanFocusRoom
+                   { { LordJob.GetRole("PartyGoers"), () => new EnhancedPawnDuty(EnhancedDutyDefOf.EP_GotoAndCleanFocusRoom
                         , LordJob.PartySpot) { dutyRecipe = RecipeDefOf.CookMealSimple, dutyThingDef = ThingDefOf.MealSimple } } }
             };
 
             graph.AddToil(roleToil);
 
             return graph;
+        }
+        
+        public override void Init()
+        {
+            base.Init();
+            LordJob.SetRoleEnabled("SnackMakers", false);
+            LordJob.SetRoleEnabled("PartyGoers", true);
         }
 	}
 }

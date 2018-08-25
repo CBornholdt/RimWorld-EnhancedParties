@@ -17,6 +17,7 @@ namespace EnhancedParty
 		public bool stayInRoom = true;
 		public bool useFoodGuard = true;
 		public string taskName;
+		public List<JoyKindDef> allowedJoyKinds;
     
         public EnhancedPawnDuty(DutyDef duty, LocalTargetInfo focus, float radius = -1) : base(duty, focus, radius)
         {
@@ -33,6 +34,7 @@ namespace EnhancedParty
 			Scribe_Defs.Look<ThingDef>(ref this.dutyThingDef, "DutyThingDef");
 			Scribe_Values.Look<int>(ref this.thingCount, "ThingCount", 1);
 			Scribe_Values.Look<bool>(ref this.useFoodGuard, "UseFoodGuard", true);
+			Scribe_Collections.Look<JoyKindDef>(ref this.allowedJoyKinds, "AllowedJoyKinds", lookMode: LookMode.Def);
 		}	
     }
 }

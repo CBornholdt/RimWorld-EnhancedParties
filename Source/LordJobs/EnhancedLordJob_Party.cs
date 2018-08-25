@@ -192,9 +192,5 @@ namespace EnhancedParty
 												? "EP.Party.Report".Translate()
                                                 : "EP.Prepare.Report".Translate();
 
-		protected override void Initialize()
-		{
-			throw new NotImplementedException();
-		}
 	}
 }

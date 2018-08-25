@@ -48,14 +48,27 @@ namespace EnhancedParty
 			if(role != null)
 				role.enabled = enabled;
 		}
+        
+        public virtual bool IsCellInDutyArea(Pawn pawn, IntVec3 cell)
+        {
+            return EnhancedDutyUtility.IsCellInDutyArea(pawn, cell);
+        }
+
+		public virtual bool IsInDutyArea(Pawn pawn)
+		{
+			return EnhancedDutyUtility.IsInDutyArea(pawn);
+		}
+
+		public virtual IEnumerable<IntVec3> DutyAreaCells(Pawn pawn)
+		{
+			return EnhancedDutyUtility.DutyAreaCells(pawn);
+		}
 
         public EnhancedLordToil CurrentEnhancedToil => this.lord.CurLordToil as EnhancedLordToil;
 
 		virtual public bool AllowRolelessPawnsToReplenish => false;
-        
-        abstract protected void Initialize();
 
-        public EnhancedLordJob() => Initialize();
+		public EnhancedLordJob() { }
 
         public override void ExposeData()
         {

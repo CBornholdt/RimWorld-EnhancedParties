@@ -44,14 +44,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="EnhancedPartyWorker.cs" />
     <Compile Include="EnhancedPartyDef.cs" />
     <Compile Include="EnhancedPartyUtility.cs" />
-    <Compile Include="EnhancedLordToil_PrepareParty.cs" />
     <Compile Include="Extensions\CellExt.cs" />
     <Compile Include="Patches\HarmonyPatches.cs" />
     <Compile Include="Patches\VoluntarilyJoinableLordsStarter_TryStartParty.cs" />
-    <Compile Include="EnhancedLordToil_Party.cs" />
     <Compile Include="Jobs\JobGiver_CleanRoom.cs" />
     <Compile Include="Extensions\PawnExt.cs" />
     <Compile Include="EnhancedPartyJoinPriorities.cs" />
@@ -97,6 +94,13 @@
     <Compile Include="Extensions\LordToilExt.cs" />
     <Compile Include="Patches\PartyUtility_UseWholeRoomAsPartyArea.cs" />
     <Compile Include="LordJobs\EnhancedLordJob_Party.cs" />
+    <Compile Include="LordToils\EnhancedLordToil_Party.cs" />
+    <Compile Include="LordToils\EnhancedLordToil_PrepareParty.cs" />
+    <Compile Include="Jobs\DutyJob_GetJoyInPartyArea.cs" />
+    <Compile Include="Utilities\EnhancedDutyUtility.cs" />
+    <Compile Include="Jobs\DutyJob_EatInDutyArea.cs" />
+    <Compile Include="Extensions\JoyGiverExt.cs" />
+    <Compile Include="ThinkNodes\DutyConditional_InDutyArea.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Patches\" />
@@ -108,6 +112,7 @@
     <Folder Include="Utilities\" />
     <Folder Include="LordJobs\" />
     <Folder Include="LordToils\" />
+    <Folder Include="JoyGivers\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

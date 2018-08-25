@@ -59,7 +59,7 @@ namespace EnhancedParty
 		static public void InitNewlyEnclosingToils(LordToil newToil, LordToil oldToil)
 		{
 			var newEnclosingToils = newToil.ThisAndEnclosingToils().Reverse();
-			var oldEnclosingToils = oldToil.ThisAndEnclosingToils().Reverse();
+			var oldEnclosingToils = oldToil.ThisAndEnclosingToils();
 
 			List<LordToil> newlyEnclosedToils = newEnclosingToils.Except(oldEnclosingToils).ToList();
 

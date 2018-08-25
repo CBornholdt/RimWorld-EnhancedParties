@@ -29,6 +29,21 @@ namespace EnhancedParty
             LordJob.CheckAndUpdateRoles();
         }
 
+		public virtual bool IsCellInDutyArea(Pawn pawn, IntVec3 cell)
+		{
+			return EnhancedDutyUtility.IsCellInDutyArea(pawn, cell);
+		}
+        
+        public virtual bool IsInDutyArea(Pawn pawn)
+        {
+            return EnhancedDutyUtility.IsInDutyArea(pawn);
+        }
+
+        public virtual IEnumerable<IntVec3> DutyAreaCells(Pawn pawn)
+        {
+            return EnhancedDutyUtility.DutyAreaCells(pawn);
+        }
+
         public virtual void Notify_PawnJoinedRole(LordPawnRole role, Pawn pawn, LordPawnRole prevPawnRole) =>
                 LordJob.Notify_PawnJoinedRole(role, pawn, prevPawnRole);
 

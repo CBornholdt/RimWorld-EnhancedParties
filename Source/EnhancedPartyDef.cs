@@ -32,6 +32,7 @@ namespace Verse
 		public int ticksPerPartyPulse = 600;
 
 		public bool useWholePartyRoom = false;
+		public bool keepPartyInRoom = false;
 
 		private EnhancedLordJob_Party intLordJob;
 		private EnhancedLordJob_Party IntLordJob => intLordJob;

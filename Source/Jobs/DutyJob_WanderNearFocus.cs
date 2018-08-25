@@ -19,18 +19,7 @@ namespace RimWorld
 			if(duty == null)
 				return null;
 
-			if(duty.stayInRoom) {
-				Room pawnRoom = pawn.Position.GetRoom(pawn.Map);
-
-				if(pawnRoom == null || pawnRoom != pawn.mindState.duty?.focus.Cell.GetRoom(pawn.Map))
-					return null;
-
-				this.wanderDestValidator = (Pawn p, IntVec3 loc) => loc.GetRoom(p.Map) ==
-											GetWanderRoot(p).GetRoom(p.Map);
-			}
-			else {
-				this.wanderDestValidator = (Pawn p, IntVec3 loc) => true;
-			}
+			this.wanderDestValidator = (Pawn p, IntVec3 c) => p.IsCellInDutyArea(c);
 
             Log.Message($"Wandering for {pawn.Name} about { GetWanderRoot(pawn) }");
             return base.TryGiveJob(pawn);
