@@ -12,7 +12,8 @@ namespace EnhancedParty
 {
     abstract public class EnhancedLordJob : LordJob_VoluntarilyJoinable
     {
-        protected List<LordPawnRole> roles;
+        protected List<LordPawnRole> roles = new List<LordPawnRole>();
+		protected List<LordPawnRoleData> roleData;
 
         public bool TryGetRole(string name, out LordPawnRole role)
         {
@@ -29,7 +30,7 @@ namespace EnhancedParty
 
         public bool TryGetRole(Pawn pawn, out LordPawnRole role)
         {
-            int index = roles.FindIndex(r => r.currentPawns.Contains(pawn));
+            int index = roles.FindIndex(r => r.CurrentPawns.Contains(pawn));
             if (index == -1)
             {
                 role = null;
@@ -38,7 +39,7 @@ namespace EnhancedParty
             role = roles[index];
             return true;
         }
-        public LordPawnRole GetRole(Pawn pawn) => roles.FirstOrDefault(role => role.currentPawns.Contains(pawn));
+        public LordPawnRole GetRole(Pawn pawn) => roles.FirstOrDefault(role => role.CurrentPawns.Contains(pawn));
 
         public bool HasRole(string name) => roles.Any(role => role.name == name);
 
@@ -46,7 +47,18 @@ namespace EnhancedParty
 		{
 			var role = GetRole(name);
 			if(role != null)
-				role.enabled = enabled;
+				role.data.enabled = enabled;
+		}
+
+		protected void ConfigureRoleData()
+		{
+			foreach(var role in roles) {
+				var data = roleData?.FirstOrDefault(d => d.roleName == role.name);
+				if(data != null)
+					role.data = data;
+				else if(role.data == null)
+					role.data = new LordPawnRoleData(role.name);
+			}
 		}
         
         public virtual bool IsCellInDutyArea(Pawn pawn, IntVec3 cell)
@@ -64,7 +76,16 @@ namespace EnhancedParty
 			return EnhancedDutyUtility.DutyAreaCells(pawn);
 		}
 
-        public EnhancedLordToil CurrentEnhancedToil => this.lord.CurLordToil as EnhancedLordToil;
+		protected abstract StateGraph CreateGraphAndRoles();
+
+		public override StateGraph CreateGraph()
+		{
+			var graph = CreateGraphAndRoles();
+			ConfigureRoleData();
+			return graph;
+		}
+
+		public EnhancedLordToil CurrentEnhancedToil => this.lord.CurLordToil as EnhancedLordToil;
 
 		virtual public bool AllowRolelessPawnsToReplenish => false;
 
@@ -73,7 +94,7 @@ namespace EnhancedParty
         public override void ExposeData()
         {
             base.ExposeData();
-            Scribe_Collections.Look<LordPawnRole>(ref this.roles, "Roles", LookMode.Deep);
+            Scribe_Collections.Look<LordPawnRoleData>(ref this.roleData, "RoleData", LookMode.Deep);
         }
 
         public void AddRole(LordPawnRole role)
@@ -96,7 +117,7 @@ namespace EnhancedParty
         //Does not directly handle addition of new pawns to lord
         public void CheckAndUpdateRoles()
         {   //Everything is sorted descending by current role priority, allows priorities to change
-            var sortedRoles = roles.OrderByDescending(role => role.priority);
+            var sortedRoles = roles.OrderByDescending(role => role.Priority);
 
             HashSet<Pawn> pawnsWithLowerPriorityRoles = new HashSet<Pawn>(lord.ownedPawns);
             var pawnsLostSorted = new List<Tuple<LordPawnRole, Pawn, ReasonPawnLeftRole>>(); //Sorted by lost role priority
@@ -106,28 +127,28 @@ namespace EnhancedParty
             //Check for pawns that have left roles due to leaving lord or other, adjust current role pawns
             foreach (var role in sortedRoles)
             {
-                for (int i = role.currentPawns.Count - 1; i >= 0; i--)
+                for (int i = role.CurrentPawns.Count - 1; i >= 0; i--)
                 {
-                    Pawn pawn = role.currentPawns[i];
+                    Pawn pawn = role.CurrentPawns[i];
                     if (pawn.GetLord() != lord)
                     {
                         pawnsLostSorted.Add(Tuple.Create(role, pawn, ReasonPawnLeftRole.LeftLord));
-                        role.currentPawns.RemoveAt(i);
+                        role.CurrentPawns.RemoveAt(i);
                     }
                     else if (!role.pawnValidator(pawn))
                     {
                         pawnsLostSorted.Add(Tuple.Create(role, pawn, ReasonPawnLeftRole.Invalid));
-                        role.currentPawns.RemoveAt(i);
+                        role.CurrentPawns.RemoveAt(i);
                     }
                     else if (!pawnsWithLowerPriorityRoles.Contains(pawn))
                     {
                         pawnsLostSorted.Add(Tuple.Create(role, pawn, ReasonPawnLeftRole.InNewRole));
-                        role.currentPawns.RemoveAt(i);
+                        role.CurrentPawns.RemoveAt(i);
                     }
-                    else if (!role.enabled)
+                    else if (!role.IsEnabled)
                     {
                         pawnsLostSorted.Add(Tuple.Create(role, pawn, ReasonPawnLeftRole.RoleDisabled));
-                        role.currentPawns.RemoveAt(i);
+                        role.CurrentPawns.RemoveAt(i);
                     }
                     else
                         pawnsWithLowerPriorityRoles.Remove(pawn);
@@ -136,24 +157,24 @@ namespace EnhancedParty
 
             IEnumerable<Tuple<LordPawnRole, Pawn>> tuplePawnsWithRole(LordPawnRole role)
             {
-                foreach (var pawn in role.currentPawns)
+                foreach (var pawn in role.CurrentPawns)
                     yield return Tuple.Create(role, pawn);
             }
 			var potentialReplacements = AllowRolelessPawnsToReplenish
 											? this.lord.ownedPawns.Select(pawn => Tuple.Create(GetRole(pawn), pawn))
-																  .Where(tuple => tuple.Item1?.isReassignableFrom ?? true)
+																  .Where(tuple => tuple.Item1?.IsReassignableFrom ?? true)
 																  .ToList()
-											: sortedRoles.Where(role => role.isReassignableFrom)
+											: sortedRoles.Where(role => role.IsReassignableFrom)
 														 .SelectMany(tuplePawnsWithRole)
 														 .ToList();
                                                            
             void replaceLostPawnWith(Tuple<LordPawnRole, Pawn, ReasonPawnLeftRole> lostPawn
                                                     , Tuple<LordPawnRole, Pawn> replacement)
             {
-                lostPawn.Item1.currentPawns.Add(replacement.Item2);
-                replacement.Item1.currentPawns.Remove(replacement.Item2);
+                lostPawn.Item1.CurrentPawns.Add(replacement.Item2);
+                replacement.Item1.CurrentPawns.Remove(replacement.Item2);
                 //Will place this new lost pawn entry at the last position for its priority
-                pawnsLostSorted.Insert(pawnsLostSorted.FindLastIndex(pl => pl.Item1.priority >= replacement.Item1.priority)
+                pawnsLostSorted.Insert(pawnsLostSorted.FindLastIndex(pl => pl.Item1.Priority >= replacement.Item1.Priority)
                                     , Tuple.Create(replacement.Item1, replacement.Item2, ReasonPawnLeftRole.Replacement));
                 pawnsLostSorted.Remove(lostPawn);
                 pawnsReplaced.Add(Tuple.Create(lostPawn.Item1, replacement.Item2, lostPawn.Item2, replacement.Item1));
@@ -164,8 +185,8 @@ namespace EnhancedParty
             for (int i = 0; i < pawnsLostSorted.Count;)
             {    //Adding to list, so need for-loop not foreach
                 var pawnLost = pawnsLostSorted[i];
-				if (pawnLost.Item1.shouldSeekReplacement 
-                    && potentialReplacements.Where(vr => vr.Item1.priority < pawnLost.Item1.priority
+				if (pawnLost.Item1.ShouldSeekReplacement 
+                    && potentialReplacements.Where(vr => vr.Item1.Priority < pawnLost.Item1.Priority
 													        && pawnLost.Item1.pawnValidator(vr.Item2))
 					                        .TryRandomElementByWeight(vr => pawnLost.Item1.pawnReplenishPriority(vr.Item2)
 													                    , out Tuple<LordPawnRole, Pawn> replacement))
@@ -178,9 +199,9 @@ namespace EnhancedParty
 			List<Tuple<LordPawnRole, Pawn>> validReplacements = null;
             void replenishPawnTo(LordPawnRole role, Tuple<LordPawnRole, Pawn> replacement)
             {
-                role.currentPawns.Add(replacement.Item2);
-                replacement.Item1.currentPawns.Remove(replacement.Item2);
-                pawnsLostSorted.Insert(pawnsLostSorted.FindLastIndex(pl => pl.Item1.priority > replacement.Item1.priority)
+                role.CurrentPawns.Add(replacement.Item2);
+                replacement.Item1.CurrentPawns.Remove(replacement.Item2);
+                pawnsLostSorted.Insert(pawnsLostSorted.FindLastIndex(pl => pl.Item1.Priority > replacement.Item1.Priority)
                                         , Tuple.Create(replacement.Item1, replacement.Item2, ReasonPawnLeftRole.InNewRole));
                 pawnsAdded.Add(Tuple.Create(role, replacement.Item2, replacement.Item1));
 				potentialReplacements.Remove(replacement);
@@ -188,13 +209,13 @@ namespace EnhancedParty
             }
 
             //Perform replenishment loops by priorty order
-            foreach (var role in sortedRoles.Where(role => role.opportunisticallyReplenish))
+            foreach (var role in sortedRoles.Where(role => role.OpportunisticallyReplenish))
             {
-                validReplacements = potentialReplacements.Where(vr => vr.Item1.priority < role.priority
+                validReplacements = potentialReplacements.Where(vr => vr.Item1.Priority < role.Priority
                                                                         && role.pawnValidator(vr.Item2))
                                                           .OrderByDescending(vr => role.pawnReplenishPriority(vr.Item2))
                                                           .ToList();
-				while (!role.replenishCompleter(role.currentPawns)
+				while (!role.replenishCompleter(role.CurrentPawns)
 					&& validReplacements.TryRandomElementByWeight(vr => role.pawnReplenishPriority(vr.Item2)
 																  , out Tuple<LordPawnRole, Pawn> replacement)) 
 					replenishPawnTo(role, replacement);
@@ -228,7 +249,7 @@ namespace EnhancedParty
             {
                 foreach (var role in roles)
                 {
-                    if (role.currentPawns.Count == 0 && pawnsLostSorted.Any(pawnLost => pawnLost.Item1 == role))
+                    if (role.CurrentPawns.Count == 0 && pawnsLostSorted.Any(pawnLost => pawnLost.Item1 == role))
                         Notify_RoleNowEmpty(role);
                 }
             }

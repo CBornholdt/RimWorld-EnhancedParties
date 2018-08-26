@@ -81,10 +81,14 @@ namespace EnhancedParty
 		virtual public IEnumerable<Func<IntVec3>> PartySpotProgression()
 		{
 			yield return () => startingSpot;
-		}    
+		}
+
+		protected abstract void CreatePartyRoles();    
         
-        public override StateGraph CreateGraph()
+        protected override StateGraph CreateGraphAndRoles()
         {
+			CreatePartyRoles();
+        
             partySpotGenerators = new List<Func<IntVec3>>(PartySpotProgression());
             UpdatePartySpot();
             

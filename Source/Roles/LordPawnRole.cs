@@ -19,30 +19,38 @@ namespace EnhancedParty
 		NeedsLess = 0x0040  */
 	}
     
-    public class LordPawnRole : IExposable
+    public class LordPawnRole
     {
+		public LordPawnRole(string name, EnhancedLordJob lordJob)
+		{
+			this.name = name;
+			this.lordJob = lordJob;
+			this.data = new LordPawnRoleData(name);
+		}
+
+		public void Configure(bool enabled, int priority, bool reassignableFrom
+			, bool seekReplacements, bool seekReplenishment)
+		{
+			data.enabled = enabled;
+			data.priority = priority;
+			data.isReassignableFrom = reassignableFrom;
+			data.shouldSeekReplacement = seekReplacements;
+			data.opportunisticallyReplenish = seekReplenishment;
+		}
+    
 		public EnhancedLordJob lordJob;
-		public int priority = -1;
-        public string name;
-        public List<Pawn> currentPawns;
-		public Func<Pawn, bool> pawnValidator;
-		public bool enabled = true;
-        
-		public bool isReassignableFrom = false;
-		public bool shouldSeekReplacement = true;
-	//	public bool seekReplacementWithPriority = true; //Look for replacement before normal replenishment
-		public bool opportunisticallyReplenish = false;
+        public string name;       
+		public Func<Pawn, bool> pawnValidator;	
         public Func<Pawn, float> pawnReplenishPriority;
 		public Func<List<Pawn>, bool> replenishCompleter;
 
-		public void ExposeData()
-		{
-			Scribe_Values.Look<bool>(ref this.enabled, "Enabled", true);
-			Scribe_Values.Look<int>(ref this.priority, "Priority", -1);
-			Scribe_Collections.Look<Pawn>(ref this.currentPawns, "CurrentPawns", LookMode.Reference);
-			Scribe_Values.Look<bool>(ref this.isReassignableFrom, "IsReassignableFrom", false);
-			Scribe_Values.Look<bool>(ref this.shouldSeekReplacement, "ShouldSeekReplacement", true);
-			Scribe_Values.Look<bool>(ref this.opportunisticallyReplenish, "OpportunisticallyReplenish", false);
-		}
+		public LordPawnRoleData data;
+		public bool IsEnabled => data.enabled;
+		public int Priority => data.priority;
+        
+        public bool IsReassignableFrom => data.isReassignableFrom;
+		public bool ShouldSeekReplacement => data.shouldSeekReplacement;
+        public bool OpportunisticallyReplenish => data.opportunisticallyReplenish; 
+        public List<Pawn> CurrentPawns => data.currentPawns;
 	}
 }

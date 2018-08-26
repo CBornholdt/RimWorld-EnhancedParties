@@ -7,7 +7,7 @@ using EnhancedParty;
 
 namespace RimWorld
 {
-	public class DutyJob_GetJoyInPartyArea : JobGiver_GetJoyInPartyArea
+	public class DutyJob_GetJoyInDutyArea : JobGiver_GetJoyInPartyArea
 	{
 		public float stopGettingJoyWhenPctFull = 0.92f;
     

@@ -45,7 +45,6 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="EnhancedPartyDef.cs" />
-    <Compile Include="EnhancedPartyUtility.cs" />
     <Compile Include="Extensions\CellExt.cs" />
     <Compile Include="Patches\HarmonyPatches.cs" />
     <Compile Include="Patches\VoluntarilyJoinableLordsStarter_TryStartParty.cs" />
@@ -96,11 +95,14 @@
     <Compile Include="LordJobs\EnhancedLordJob_Party.cs" />
     <Compile Include="LordToils\EnhancedLordToil_Party.cs" />
     <Compile Include="LordToils\EnhancedLordToil_PrepareParty.cs" />
-    <Compile Include="Jobs\DutyJob_GetJoyInPartyArea.cs" />
+    <Compile Include="Jobs\DutyJob_GetJoyInDutyArea.cs" />
     <Compile Include="Utilities\EnhancedDutyUtility.cs" />
     <Compile Include="Jobs\DutyJob_EatInDutyArea.cs" />
     <Compile Include="Extensions\JoyGiverExt.cs" />
     <Compile Include="ThinkNodes\DutyConditional_InDutyArea.cs" />
+    <Compile Include="Roles\LordPawnRoleData.cs" />
+    <Compile Include="Utilities\EnhancedPartyUtility.cs" />
+    <Compile Include="Patches\Dialog_DebugActionsMenu_MapActions.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Patches\" />

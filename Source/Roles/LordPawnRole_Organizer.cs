@@ -18,11 +18,9 @@ namespace EnhancedParty
                         ?? dJob.Field("organizer")?.GetValue<Pawn>()) == pawn;
         }
 
-		static public LordPawnRole Create()
+		static public LordPawnRole Create(EnhancedLordJob lordJob, string name = "Organizer")
 		{
-			var role = new LordPawnRole() {
-				name = Name
-			};
+			var role = new LordPawnRole(name, lordJob);
 			role.pawnValidator = (Pawn pawn) => IsOrganizer(role.lordJob, pawn);
 			return role;
 		}

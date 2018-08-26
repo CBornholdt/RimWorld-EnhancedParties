@@ -31,8 +31,28 @@ namespace EnhancedParty
 		{
 			return base.IsAttendingParty(pawn);
 		}
-        
-        override public bool AllowedToOrganize(Pawn pawn) =>
+
+		protected override void CreatePartyRoles()
+		{
+			var partyGoers = new LordPawnRole("PartyGoers", this) {
+				pawnValidator = (Pawn p) => PartyUtility.ShouldPawnKeepPartying(p),
+				pawnReplenishPriority = (Pawn p) => 1f,
+				replenishCompleter = (List<Pawn> pawns) => false
+			};
+			partyGoers.Configure(enabled: true, priority: 1, reassignableFrom: true
+				, seekReplacements: false, seekReplenishment: true);
+
+			var snackMakers = new LordPawnRole("SnackMakers", this) {
+				pawnValidator = (Pawn p) => PartyUtility.ShouldPawnKeepPartying(p)
+												&& RecipeDefOf.CookMealSimple.PawnSatisfiesSkillRequirements(p),
+				pawnReplenishPriority = (Pawn p) => p.skills.GetSkill(SkillDefOf.Cooking).Level,
+				replenishCompleter = (List<Pawn> pawns) => pawns.Count >= 2
+            };
+            snackMakers.Configure(enabled: true, priority: 2, reassignableFrom: false
+                , seekReplacements: true, seekReplenishment: true); 
+		}
+
+		override public bool AllowedToOrganize(Pawn pawn) =>
             pawn.RaceProps.Humanlike && !pawn.InBed() && !pawn.InMentalState
                 && pawn.GetLord() == null
                 && pawn.AbleToStopJobForParty()
@@ -86,5 +106,10 @@ namespace EnhancedParty
         {
             base.ExposeData();
         }
+
+		public override float VoluntaryJoinPriorityFor(Pawn p)
+		{
+			return base.VoluntaryJoinPriorityFor(p);
+		}
 	}
 }

@@ -44,8 +44,10 @@ namespace EnhancedParty
 		public override void Init()
 		{
 			base.Init();
-			LordJob.SetRoleEnabled("SnackMakers", true);
-            LordJob.SetRoleEnabled("PartyGoers", true);
+			LordJob.GetRole("SnackMakers").Configure(enabled: true, priority: 2, reassignableFrom: false
+                , seekReplacements: true, seekReplenishment: true);
+            LordJob.GetRole("PartyGoers").Configure(enabled: true, priority: 1, reassignableFrom: true
+                , seekReplacements: false, seekReplenishment: true);
 		}
 	}
 }
