@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using Verse;
 using Verse.AI;
-using RimWorld;
+using EnhancedParty;
 
-namespace EnhancedParty
+namespace RimWorld
 {
     //Based on JobGiver_GotoTravelDestination
     public class JobGiver_CleanRoom : ThinkNode_JobGiver

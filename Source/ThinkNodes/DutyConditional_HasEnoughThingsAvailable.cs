@@ -29,7 +29,7 @@ namespace RimWorld
 			}
 
 			return pawn.Map.itemAvailability.ThingsAvailableAnywhere(
-				new ThingCountClass(duty.dutyThingDef, duty.thingCount), pawn);
+				new ThingDefCountClass(duty.dutyThingDef, duty.thingCount), pawn);
 		}
 	}
 }

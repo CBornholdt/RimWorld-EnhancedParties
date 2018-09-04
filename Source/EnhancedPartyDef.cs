@@ -9,9 +9,6 @@ namespace Verse
 {
     public class EnhancedPartyDef : Def
     {
-		public DutyDef partyDuty;
-		public DutyDef prepareDuty;
-    
 		public Type enhancedLordJobClass;
 		public int minNumOfPartiers = 4;
 		public int maxNumOfPartiers = 1000;

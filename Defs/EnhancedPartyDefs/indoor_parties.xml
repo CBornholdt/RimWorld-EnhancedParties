@@ -4,9 +4,8 @@
 		<defName>RecRoom_Basic</defName>
 		<label>Party in the recRoom</label>
 		<dutyHook>MediumPriority</dutyHook>
-		<prepareDuty>EP_RecRoom_Prepare</prepareDuty>
-		<partyDuty>EP_RecRoom_Party</partyDuty>
-		<workerClass>EnhancedParty.PartyWorker_RecRoom</workerClass>
+		<enhancedLordJobClass>EnhancedParty.PartyJob_RecRoom</enhancedLordJobClass>
 		<partyPreparationStartLetterTitle>Starting Preparation</partyPreparationStartLetterTitle>
+		<keepPartyInRoom>true</keepPartyInRoom>
 	</EnhancedPartyDef>
 </Defs>

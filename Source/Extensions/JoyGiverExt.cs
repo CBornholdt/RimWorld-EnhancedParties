@@ -14,27 +14,51 @@ namespace EnhancedParty
     static public class JoyGiverExt
     {
 		static BindingFlags flags = BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.GetField
-										| BindingFlags.Instance | BindingFlags.IgnoreCase | BindingFlags.Static;   
+										| BindingFlags.Instance | BindingFlags.IgnoreCase | BindingFlags.Static
+                                        | BindingFlags.GetProperty;   
     
 		static Func<JoyGiver_Ingest, Pawn, Predicate<Thing>, Job> joyGiver_Ingest__TryGiveJobInternal = null;
         
 		static Func<JoyGiver_InteractBuilding, bool> joyGiver_InteractBuilding__CanDoDuringParty = null;
 		static Func<JoyGiver_InteractBuilding, Pawn, Thing, Job> joyGiver_InteractBuilding__TryGivePlayJob = null;
 		static Func<JoyGiver_InteractBuilding, Pawn, Thing, bool, bool> joyGiver_InteractBuilding__CanInteractWith = null;
-		static Func<JoyGiver, Pawn, List<Thing>> joyGiver__GetSearchSet = null;
+		static Action<JoyGiver, Pawn, List<Thing>> joyGiver__GetSearchSet = null;
         
-		static Func<JoyGiver_SocialRelax, Pawn, Predicate<Thing>, Job> joyGiver_SocialRelax__TryGiveJobInt = null;
+		static Func<JoyGiver_SocialRelax, Pawn, Predicate<CompGatherSpot>, Job> joyGiver_SocialRelax__TryGiveJobInt = null;
 
 		static void HookupDelegate(FieldInfo field)
 		{
 			var names = field.Name.Split(new string[] { "__" }, StringSplitOptions.None);
-			MethodInfo privateMethod = Type.GetType(names[0].CapitalizeFirst()).GetMethod(names[1], flags);
-			if(privateMethod == null)
-				privateMethod = Type.GetType(names[0].CapitalizeFirst()).GetProperty(names[1], flags)?.GetGetMethod();
-			if(privateMethod == null) 
+			if(names.Length != 2) {
 				Log.Error($"Invalid field {field.Name} provided for delegate hookup");
-			else
-			    field.SetValue(null, Delegate.CreateDelegate(field.FieldType, privateMethod));
+				return;
+			}
+
+			string postfix = typeof(RimWorld.JoyGiver_Ingest).Assembly.FullName;
+
+			Type type = Type.GetType(names[0].CapitalizeFirst(), false, true);
+			if(type == null)
+				type = Type.GetType("RimWorld." + names[0].CapitalizeFirst() + ", " + postfix, false, true);
+			if(type == null) {
+				Log.Error($"Typename: {names[0]} is invalid");
+				return;
+			}    
+                
+			MethodInfo privateMethod = type.GetMethod(names[1], flags);
+			if(privateMethod == null)
+				privateMethod = type.GetProperty(names[1], flags)?.GetGetMethod();
+			if(privateMethod == null)
+				privateMethod = type.GetMethod("get_" + names[1], flags);
+			if(privateMethod == null)
+				Log.Error($"Invalid method or property name {names[1]} provided for delegate hookup");
+			else {
+				try {
+					field.SetValue(null, Delegate.CreateDelegate(field.FieldType, privateMethod));
+				}
+				catch(Exception) {
+					Log.Error($"Failed to hookup delegate for {names[0]}.{names[1]}");
+				}
+			}
 		}
 
 		static JoyGiverExt()
@@ -78,7 +102,8 @@ namespace EnhancedParty
 
 		static public Thing FindBestDutyGame(this JoyGiver_InteractBuilding joyGiver, Pawn pawn)
 		{
-            List<Thing> searchSet = joyGiver__GetSearchSet(joyGiver, pawn);
+			List<Thing> searchSet = new List<Thing>();
+            joyGiver__GetSearchSet(joyGiver, pawn, searchSet);
             Predicate<Thing> predicate = (Thing t) => joyGiver_InteractBuilding__CanInteractWith(joyGiver, pawn, t, false)
                                                         && pawn.IsCellInDutyArea(t.Position);
 
@@ -91,7 +116,8 @@ namespace EnhancedParty
         
         static public Job TryGiveJobInDutyArea(this JoyGiver_SocialRelax joyGiver, Pawn pawn)
         {
-            return joyGiver_SocialRelax__TryGiveJobInt(joyGiver, pawn, (Thing x) => !x.Spawned || pawn.IsCellInDutyArea(x.Position));
+            return joyGiver_SocialRelax__TryGiveJobInt(joyGiver, pawn
+                , (CompGatherSpot spot) => !spot.parent.Spawned || pawn.IsCellInDutyArea(spot.parent.Position));
         } 
     }
 }   

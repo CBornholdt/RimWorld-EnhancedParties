@@ -23,6 +23,9 @@ namespace EnhancedParty
 
         List<Func<IntVec3>> partySpotGenerators;
 
+		static public readonly string PreparationCompleteMemo = "PartyPreparationComplete";
+        static public readonly string PreparationFailedMemo = "PartyPreparationFailed";
+
         public EnhancedLordJob_Party() { }
         
         public EnhancedLordJob_Party(EnhancedPartyDef def, Pawn organizer, IntVec3 startingSpot)
@@ -109,7 +112,7 @@ namespace EnhancedParty
             this.partyTimeout = new Trigger_TicksPassed(Def.partyTimeout);
 
             Transition preparationSucceeded = new Transition(prepareToil, partyToil);
-            preparationSucceeded.AddTrigger(new Trigger_Memo("PreparationComplete"));
+            preparationSucceeded.AddTrigger(new Trigger_Memo(PreparationCompleteMemo));
             preparationSucceeded.AddPreAction(new TransitionAction_Custom(
                 () => partyToil.PreparationScore = prepareToil.CalculatePreparationScore()));
             preparationSucceeded.AddPostAction(new TransitionAction_Custom(() => {
@@ -124,7 +127,7 @@ namespace EnhancedParty
                     () => prepareToil.CurrentPreparationStatus() >= successStatus));
 
             Transition preparationFailed = new Transition(prepareToil, endToil);
-            preparationFailed.AddTrigger(new Trigger_Memo("PreparationFailed"));
+            preparationFailed.AddTrigger(new Trigger_Memo(PreparationFailedMemo));
             preparationFailed.AddTrigger(new Trigger_PawnLostViolently());
             preparationFailed.AddPreAction(new TransitionAction_Message("EP.PreparationFailed.TransitionMessage".Translate()
                                                 , MessageTypeDefOf.NegativeEvent, new TargetInfo(PartySpot, Map)));  //TODO make PartySpot lazily updatable

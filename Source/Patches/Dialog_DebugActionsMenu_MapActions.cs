@@ -14,7 +14,7 @@ namespace EnhancedParty
     {
 		static void Postfix(Dialog_DebugActionsMenu __instance)
 		{
-			Map map = Find.VisibleMap;
+			Map map = Find.CurrentMap; 
             Traverse.Create(__instance).Method("DoGap").GetValue();
 			Traverse.Create(__instance).Method("DoLabel", new object[1] { "Tools - Enhanced Parties" }).GetValue();
             Traverse.Create(__instance).Method("DebugAction", new object[2] { "Start Party ...", (Action)delegate

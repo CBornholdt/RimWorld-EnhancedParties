@@ -13,12 +13,13 @@ namespace EnhancedParty
         private ComplexLordToil parentToil;
 
         public ComplexLordToil ParentToil => ParentToil;
+
+		private List<Tuple<string, Pawn>> completeDutyOps = new List<Tuple<string, Pawn>>();
+        
+        private List<Tuple<string, Pawn>> failedDutyOps = new List<Tuple<string, Pawn>>();
     
         public EnhancedLordToil(ComplexLordToil parentToil = null) : base()
         {
-            if (LordJob == null)
-                Log.ErrorOnce($"Error constructing {this.GetType()}, LordJob is not subclass of EnhancedLordJob", 87228);
-
 			this.parentToil = parentToil;
         }
         
@@ -28,6 +29,12 @@ namespace EnhancedParty
         {
             LordJob.CheckAndUpdateRoles();
         }
+
+		public void RegisterDutyOpComplete(string dutyOp, Pawn pawn) =>
+			completeDutyOps.Add(Tuple.Create(dutyOp, pawn));
+            
+        public void RegisterDutyOpFailed(string dutyOp, Pawn pawn) =>
+            failedDutyOps.Add(Tuple.Create(dutyOp, pawn));    
 
 		public virtual bool IsCellInDutyArea(Pawn pawn, IntVec3 cell)
 		{
@@ -54,12 +61,26 @@ namespace EnhancedParty
                             , LordPawnRole newPawnOldRole, LordPawnRole oldPawnNewRole) =>
                 LordJob.Notify_PawnReplacedPawnInRole(role, newPawn, oldPawn, newPawnOldRole, oldPawnNewRole);
 
+		virtual public void Notify_PawnDutyOpComplete(string dutyOp, Pawn pawn) =>
+			LordJob.Notify_PawnDutyOpComplete(dutyOp, pawn);
+
+		virtual public void Notify_PawnDutyOpFailed(string dutyOp, Pawn pawn) =>
+			LordJob.Notify_PawnDutyOpFailed(dutyOp, pawn);
+
 		public StateGraph AttachAnyInternalStateGraphTo(StateGraph graph)
 		{
 			StateGraph subGraph;
 			if (this is ComplexLordToil complexToil && (subGraph = complexToil.CreateInternalGraph()) != null)
 				graph.AttachSubgraph(subGraph);
 			return graph;
+		}
+
+		public override void LordToilTick()
+		{
+			foreach(var completeOp in completeDutyOps)
+				DutyOpUtility.Notify_DutyOpComplete(completeOp.Item1, completeOp.Item2);
+			foreach(var failedOp in failedDutyOps)
+				DutyOpUtility.Notify_DutyOpFailed(failedOp.Item1, failedOp.Item2);    
 		}
 	}
 }

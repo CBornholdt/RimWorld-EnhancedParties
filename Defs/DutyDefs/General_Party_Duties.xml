@@ -1,52 +1,46 @@
-<?xml version="1.0" encoding="utf-8" ?>
+<?xml version='1.0' encoding='utf-8'?>
 <Defs>
   <DutyDef>
-  	<defName>EP_MakeThingsToFocus</defName>
-  	<socialModeMax>Off</socialModeMax>
-  	<hook>MediumPriority</hook>
-  	<thinkNode Class="ThinkNode_Priority">
-  		<subNodes>
-
-  			<li Class="DutyConditional_HasEnoughThingsAvailable">
-  				<subNodes>
-
-  					<li Class="DutyConditional_HasEnoughThingsAtFocus">
-  						<subNodes>
-  							<li Class="ThinkNode_DutyTaskComplete">
-  							</li>
-  						</subNodes>
-  					</li>
-
-  					<li Class="DutyConditional_HasEnoughThingsAtFocus">
-  						<invert>true</invert>
-  						<subNodes>
-  							<li Class="DutyJob_BringThingsToFocus">
-  							</li>
-  						</subNodes>
-  					</li>
-
-  				</subNodes>
-  			</li>
-
-  			<li Class="DutyConditional_HasEnoughThingsAvailable">
-  				<invert>true</invert>
-  				<subNodes>
-  					<li Class="DutyJob_PerformDutyRecipe">
-  					</li>
-  				</subNodes>
-  			</li>
-
-  			<li Class="ThinkNode_Logger">
-  				<subNodes>
-  					<li Class="DutyJob_WanderNearFocus">
-  					</li>
-  				</subNodes>
-  			</li>
-
-  		</subNodes>
-  	</thinkNode>
+    <defName>EP_MakeThingsToFocus</defName>
+    <socialModeMax>Off</socialModeMax>
+    <hook>MediumPriority</hook>
+    <thinkNode Class="ThinkNode_Priority">
+      <subNodes>
+        <li Class="DutyConditional_HasEnoughThingsAvailable">
+          <subNodes>
+            <li Class="DutyConditional_HasEnoughThingsAtDutyArea">
+              <subNodes>
+                <li Class="ThinkNode_DutyOpComplete">
+                </li>
+              </subNodes>
+            </li>
+            <li Class="DutyConditional_HasEnoughThingsAtDutyArea">
+              <invert>true</invert>
+              <subNodes>
+                <li Class="DutyJob_BringThingsToFocus">
+                </li>
+              </subNodes>
+            </li>
+          </subNodes>
+        </li>
+        <li Class="DutyConditional_HasEnoughThingsAvailable">
+          <invert>true</invert>
+          <subNodes>
+            <li Class="DutyJob_PerformDutyRecipe">
+            </li>
+          </subNodes>
+        </li>
+        <li Class="ThinkNode_Logger">
+          <subNodes>
+            <li Class="ThinkNode_DutyOpFailed">
+            </li>
+            <li Class="DutyJob_WanderNearFocus">
+            </li>
+          </subNodes>
+        </li>
+      </subNodes>
+    </thinkNode>
   </DutyDef>
-
   <DutyDef>
     <defName>EP_GotoAndCleanFocusRoom</defName>
     <socialModeMax>Off</socialModeMax>
@@ -59,12 +53,11 @@
           <exactCell>true</exactCell>
           <locomotionUrgency>Jog</locomotionUrgency>
         </li>
-
-        <li Class="DutyConditional_InPartyArea">
+        <li Class="DutyConditional_InDutyArea">
           <subNodes>
             <li Class="JobGiver_CleanRoom">
             </li>
-            <li Class="DutyJob_WanderInDutyArea">
+            <li Class="DutyJob_WanderNearFocus">
               <ticksBetweenWandersRange>
                 <min>50</min>
                 <max>250</max>
@@ -75,22 +68,21 @@
       </subNodes>
     </thinkNode>
   </DutyDef>
-
-  <DutyDef>     <!-- based on Default Party duty   -->
-    <defName>EP_GenericParty</defName>
+  <DutyDef>
+    <!-- based on Default Party duty   -->
+    <defName>EP_PartyWithAllowedJoyKinds</defName>
     <hook>MediumPriority</hook>
     <thinkNode Class="ThinkNode_Priority">
       <subNodes>
-        <li Class="DutyConditional_InPartyArea">
+        <li Class="DutyConditional_InDutyArea">
           <subNodes>
             <!-- Eat -->
             <li Class="ThinkNode_ConditionalRandom">
               <chance>0.05</chance>
               <subNodes>
-                <li Class="DutyJob_EatInDutyArea" />
+                <li Class="DutyJob_EatInDutyArea"/>
               </subNodes>
             </li>
-            
             <!-- Stand where you are and be socially active -->
             <li Class="ThinkNode_ConditionalRandom">
               <chance>0.35</chance>
@@ -103,15 +95,13 @@
                 </li>
               </subNodes>
             </li>
-            
             <!-- Get joy -->
             <li Class="ThinkNode_ConditionalRandom">
               <chance>0.1</chance>
               <subNodes>
-                <li Class="DutyJob_GetJoyInDutyArea" />
+                <li Class="DutyJob_GetJoyInDutyArea"/>
               </subNodes>
             </li>
-            
             <!-- Wander -->
             <li Class="DutyJob_WanderNearFocus">
               <ticksBetweenWandersRange>
@@ -121,7 +111,6 @@
             </li>
           </subNodes>
         </li>
-        
         <!-- Reach the party area -->
         <li Class="DutyJob_WanderNearFocus">
           <ticksBetweenWandersRange>

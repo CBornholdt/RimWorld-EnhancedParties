@@ -10,8 +10,8 @@ namespace RimWorld
 		{
 			this.wanderRadius = 7f; //From JobGiver_WanderCurrentRoom
 			this.locomotionUrgency = LocomotionUrgency.Amble;
-			this.wanderDestValidator = (Pawn pawn, IntVec3 loc) => loc.GetRoom(pawn.Map) == 
-                                            GetWanderRoot(pawn).GetRoom(pawn.Map);
+			this.wanderDestValidator = (Pawn pawn, IntVec3 loc, IntVec3 root) => loc.GetRoom(pawn.Map) == 
+                                            root.GetRoom(pawn.Map);
 		}
     
 		protected override Job TryGiveJob(Pawn pawn)

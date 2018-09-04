@@ -22,13 +22,6 @@ namespace EnhancedParty
 
         public override ThinkTreeDutyHook VoluntaryJoinDutyHookFor(Pawn p) => LordJob.Def.dutyHook;
 
-        public override void UpdateAllDuties()
-        {
-            for(int i = 0; i < this.lord.ownedPawns.Count; i++)
-                this.lord.ownedPawns[i].mindState.duty = new PawnDuty(LordJob.Def.partyDuty
-                        , LordJob.PartySpot, radius: -1f);
-        }
-
 		public virtual bool TryGivePartyMemory(Pawn pawn, out ThoughtDef memory)
 		{
 			memory = null;

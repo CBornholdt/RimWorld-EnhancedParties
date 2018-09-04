@@ -19,7 +19,7 @@ namespace RimWorld
 			if(duty == null)
 				return null;
 
-			this.wanderDestValidator = (Pawn p, IntVec3 c) => p.IsCellInDutyArea(c);
+			this.wanderDestValidator = (Pawn p, IntVec3 c, IntVec3 root) => p.IsCellInDutyArea(c);
 
             Log.Message($"Wandering for {pawn.Name} about { GetWanderRoot(pawn) }");
             return base.TryGiveJob(pawn);

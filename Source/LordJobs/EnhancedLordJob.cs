@@ -14,6 +14,10 @@ namespace EnhancedParty
     {
         protected List<LordPawnRole> roles = new List<LordPawnRole>();
 		protected List<LordPawnRoleData> roleData;
+        
+        private List<Tuple<string, Pawn>> completeDutyOps = new List<Tuple<string, Pawn>>();
+        
+        private List<Tuple<string, Pawn>> failedDutyOps = new List<Tuple<string, Pawn>>();
 
         public bool TryGetRole(string name, out LordPawnRole role)
         {
@@ -113,6 +117,16 @@ namespace EnhancedParty
         virtual public void Notify_PawnReplacedPawnInRole(LordPawnRole role, Pawn replacer, Pawn prevPawn
                         , LordPawnRole replacerOldRole, LordPawnRole prevPawnNewRole)
         { }
+
+		virtual public void Notify_PawnDutyOpComplete(string dutyOp, Pawn pawn) { }
+        
+        virtual public void Notify_PawnDutyOpFailed(string dutyOp, Pawn pawn) { }
+        
+        public void RegisterDutyOpComplete(string dutyOp, Pawn pawn) =>
+            completeDutyOps.Add(Tuple.Create(dutyOp, pawn));
+            
+        public void RegisterDutyOpFailed(string dutyOp, Pawn pawn) =>
+            failedDutyOps.Add(Tuple.Create(dutyOp, pawn));
 
         //Does not directly handle addition of new pawns to lord
         public void CheckAndUpdateRoles()

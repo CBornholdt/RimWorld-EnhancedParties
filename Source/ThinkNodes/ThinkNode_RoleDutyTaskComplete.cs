@@ -34,7 +34,7 @@ namespace RimWorld
             if(repeatProtection && alreadyTriggered)
                 return ThinkResult.NoJob;
 
-            string pawnNamePart = (addPawnNameToMemo) ? pawn.NameStringShort + "." : string.Empty;
+            string pawnNamePart = (addPawnNameToMemo) ? pawn.Name + "." : string.Empty;
 			string taskName = (pawn.mindState.duty as EnhancedPawnDuty)?.taskName;
             string taskNamePart = (taskName != null) ? taskName + "." : string.Empty;
             string memo = MemoBegin + "." + pawnNamePart + taskNamePart + MemoEnd;

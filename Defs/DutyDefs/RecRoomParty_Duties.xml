@@ -1,58 +1,55 @@
-<?xml version="1.0" encoding="utf-8" ?>
+<?xml version='1.0' encoding='utf-8'?>
 <Defs>
   <DutyDef>
-  	<defName>EP_RecRoom_Prepare</defName>
-  	<socialModeMax>Off</socialModeMax>
-  	<hook>MediumPriority</hook>
-  	<thinkNode Class="ThinkNode_Priority">
-  		<subNodes>
-	  		<!-- Goto party spot -->
-	  		<li Class="ThinkNode_Logger"/>
-	  		<li Class="JobGiver_GotoTravelDestination">
-	  			<exactCell>true</exactCell>
-	  			<locomotionUrgency>Jog</locomotionUrgency>
-	  		</li>
-
-				<li Class="ThinkNode_ConditionalInPartyArea">
-					<subNodes>
-						<li Class="EnhancedParty.JobGiver_CleanRoom">
-						</li>
-					  <li Class="EnhancedParty.JobGiver_WanderInDutyRoom">
-	            <ticksBetweenWandersRange>
-	              <min>50</min>
-	              <max>250</max>
-	            </ticksBetweenWandersRange>
-	          </li>
-	        </subNodes>
-	      </li>
-	    </subNodes>
-  	</thinkNode>
-	</DutyDef>
-
-	<DutyDef>
-  	<defName>EP_RecRoom_Party</defName>
-  	<socialModeMax>Off</socialModeMax>
-  	<hook>MediumPriority</hook>
-  	<thinkNode Class="ThinkNode_Priority">
-  		<subNodes>
-	  		<!-- Goto party spot -->
-	  		<li Class="JobGiver_GotoTravelDestination">
-	  			<exactCell>true</exactCell>
-	  			<locomotionUrgency>Jog</locomotionUrgency>
-	  		</li>
-
-				<li Class="ThinkNode_ConditionalInPartyArea">
-					<subNodes>
-						<li Class="EnhancedParty.JobGiver_CleanRoom"/>
-					  <li Class="JobGiver_WanderInPartyArea">
-	            <ticksBetweenWandersRange>
-	              <min>50</min>
-	              <max>250</max>
-	            </ticksBetweenWandersRange>
-	          </li>
-	        </subNodes>
-	      </li>
-	    </subNodes>
-  	</thinkNode>
-	</DutyDef>
+    <defName>EP_RecRoom_Prepare</defName>
+    <socialModeMax>Off</socialModeMax>
+    <hook>MediumPriority</hook>
+    <thinkNode Class="ThinkNode_Priority">
+      <subNodes>
+        <!-- Goto party spot -->
+        <li Class="ThinkNode_Logger"/>
+        <li Class="JobGiver_GotoTravelDestination">
+          <exactCell>true</exactCell>
+          <locomotionUrgency>Jog</locomotionUrgency>
+        </li>
+        <li Class="DutyConditional_InDutyArea">
+          <subNodes>
+            <li Class="DutyConditional_InDutyArea">
+			</li>
+            <li Class="DutyJob_WanderInDutyRoom">
+              <ticksBetweenWandersRange>
+                <min>50</min>
+                <max>250</max>
+              </ticksBetweenWandersRange>
+            </li>
+          </subNodes>
+        </li>
+      </subNodes>
+    </thinkNode>
+  </DutyDef>
+  <DutyDef>
+    <defName>EP_RecRoom_Party</defName>
+    <socialModeMax>Off</socialModeMax>
+    <hook>MediumPriority</hook>
+    <thinkNode Class="ThinkNode_Priority">
+      <subNodes>
+        <!-- Goto party spot -->
+        <li Class="JobGiver_GotoTravelDestination">
+          <exactCell>true</exactCell>
+          <locomotionUrgency>Jog</locomotionUrgency>
+        </li>
+        <li Class="DutyConditional_InDutyArea">
+          <subNodes>
+            <li Class="JobGiver_CleanRoom"/>
+            <li Class="DutyJob_WanderInDutyRoom">
+              <ticksBetweenWandersRange>
+                <min>50</min>
+                <max>250</max>
+              </ticksBetweenWandersRange>
+            </li>
+          </subNodes>
+        </li>
+      </subNodes>
+    </thinkNode>
+  </DutyDef>
 </Defs>

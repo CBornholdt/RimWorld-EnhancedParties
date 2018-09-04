@@ -58,12 +58,11 @@
     <Compile Include="Roles\ReasonPawnLeftRole.cs" />
     <Compile Include="EnhancedPawnDuty.cs" />
     <Compile Include="ThinkNodes\ThinkNode_Logger.cs" />
-    <Compile Include="Triggers\Trigger_DutyMemo.cs" />
     <Compile Include="Triggers\Trigger_RoleEmpty.cs" />
     <Compile Include="Triggers\Trigger_RoleTaskComplete.cs" />
     <Compile Include="Triggers\Trigger_RoleStateTick_Custom.cs" />
     <Compile Include="Utilities\Tuple.cs" />
-    <Compile Include="ThinkNodes\ThinkNode_DutyTaskComplete.cs" />
+    <Compile Include="ThinkNodes\ThinkNode_DutyOpComplete.cs" />
     <Compile Include="ThinkNodes\ThinkNode_RoleDutyTaskComplete.cs" />
     <Compile Include="ThinkNodes\DutyConditional_HasEnoughThingsAvailable.cs" />
     <Compile Include="Extensions\ThingExt.cs" />
@@ -71,17 +70,10 @@
     <Compile Include="Jobs\DutyJob_WanderNearFocus.cs" />
     <Compile Include="Jobs\DutyJob_BringThingsToFocus.cs" />
     <Compile Include="Jobs\DutyJob_PerformDutyRecipe.cs" />
-    <Compile Include="EnhancedLordToil.cs" />
-    <Compile Include="EnhancedLordJob.cs" />
-    <Compile Include="ComplexLordToilData.cs" />
-    <Compile Include="ThinkNodes\ThinkNode_DutyTaskIncompletable.cs" />
+    <Compile Include="ThinkNodes\ThinkNode_DutyOpFailed.cs" />
     <Compile Include="Utilities\ReflectTools.cs" />
-    <Compile Include="PreparePartyToilData.cs" />
-    <Compile Include="PartyToilData.cs" />
     <Compile Include="PreparationStatus.cs" />
     <Compile Include="PartyStatus.cs" />
-    <Compile Include="SimpleLordToil.cs" />
-    <Compile Include="ComplexLordToil.cs" />
     <Compile Include="LordJobs\PartyJob_RecRoom.cs" />
     <Compile Include="LordToils\RecRoomParty_PrepareToil.cs" />
     <Compile Include="LordToils\RecRoomParty_PartyToil.cs" />
@@ -103,6 +95,15 @@
     <Compile Include="Roles\LordPawnRoleData.cs" />
     <Compile Include="Utilities\EnhancedPartyUtility.cs" />
     <Compile Include="Patches\Dialog_DebugActionsMenu_MapActions.cs" />
+    <Compile Include="ThinkNodes\DutyConditional_HasEnoughThingsAtDutyArea.cs" />
+    <Compile Include="LordJobs\EnhancedLordJob.cs" />
+    <Compile Include="LordToils\EnhancedLordToil.cs" />
+    <Compile Include="LordToils\SimpleLordToil.cs" />
+    <Compile Include="LordToils\PartyToilData.cs" />
+    <Compile Include="LordToils\ComplexLordToil.cs" />
+    <Compile Include="LordToils\ComplexLordToilData.cs" />
+    <Compile Include="LordToils\PreparePartyToilData.cs" />
+    <Compile Include="Utilities\DutyOpUtility.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Patches\" />

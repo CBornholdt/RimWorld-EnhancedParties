@@ -19,13 +19,6 @@ namespace EnhancedParty
 
 		public virtual PreparationStatus CurrentPreparationStatus() => PreparationStatus.Ongoing;
 
-		public override void UpdateAllDuties()
-		{
-			for(int i = 0; i < this.lord.ownedPawns.Count; i++)
-				this.lord.ownedPawns[i].mindState.duty = new PawnDuty(LordJob.Def.prepareDuty
-						, LordJob.PartySpot, radius: -1f);
-		}
-
 		protected virtual bool TryGivePreparationMemory(Pawn pawn, out ThoughtDef memory)
 		{
 			memory = null;
