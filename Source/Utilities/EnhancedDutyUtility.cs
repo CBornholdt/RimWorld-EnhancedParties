@@ -9,6 +9,9 @@ namespace EnhancedParty
 {
     static public class EnhancedDutyUtility
     {
+		static EnhancedPawnDuty EnhancedDuty(this Pawn pawn) =>
+			pawn.mindState?.duty as EnhancedPawnDuty;
+    
         static public bool IsCellInDutyArea(Pawn pawn, IntVec3 cell)
         {
             EnhancedPawnDuty duty = pawn?.mindState.duty as EnhancedPawnDuty;

@@ -9,6 +9,10 @@ namespace EnhancedParty
 {
     static public class PawnExt
     {
+		static public LordPawnRole GetLordPawnRole(this Pawn pawn) =>
+			(pawn.GetLord()?.LordJob as EnhancedLordJob)?.GetRole(pawn);
+            
+    
 		static public bool AbleToStopJobForParty(this Pawn pawn)
 		{
 			return !(pawn.CurJob.targetA.Thing is Pawn

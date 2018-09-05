@@ -1,19 +1,23 @@
 ﻿using System;
+using EnhancedParty;
 
 namespace Verse.AI
 {
-    public class ThinkNode_Logger : ThinkNode
+    public class ThinkNode_Logger : ThinkNode_Priority
     {     
         public override ThinkNode DeepCopy(bool resolve = true)
         {
-			ThinkNode_Logger thinkNode = new ThinkNode_Logger();
+			ThinkNode_Logger thinkNode = (ThinkNode_Logger)base.DeepCopy(resolve);
             return thinkNode;
         }
 
         public override ThinkResult TryIssueJobPackage(Pawn pawn, JobIssueParams p)
         {
-			Log.Message($"Hitting ThinkNode_Logger for {pawn.Name}");
-			return ThinkResult.NoJob;
+			if(!EnhancedLordDebugSettings.disableThinkNodeLogging) {
+				// if(EnhancedLordDebugSettings.verboseThinkNodeLogging)
+				Log.Message($"ThinkNode_Logger for {pawn.Name} with role {pawn.GetLordPawnRole()?.name ?? "NONE"}");
+			}
+			return base.TryIssueJobPackage(pawn, p);
         }
     }
 }

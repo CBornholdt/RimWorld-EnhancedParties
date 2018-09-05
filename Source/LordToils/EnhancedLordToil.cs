@@ -12,7 +12,7 @@ namespace EnhancedParty
     {
         private ComplexLordToil parentToil;
 
-        public ComplexLordToil ParentToil => ParentToil;
+        public ComplexLordToil ParentToil => parentToil;
 
 		private List<Tuple<string, Pawn>> completeDutyOps = new List<Tuple<string, Pawn>>();
         
@@ -24,11 +24,6 @@ namespace EnhancedParty
         }
         
         public EnhancedLordJob LordJob => this.lord.LordJob as EnhancedLordJob;
-
-        public override void UpdateAllDuties()
-        {
-            LordJob.CheckAndUpdateRoles();
-        }
 
 		public void RegisterDutyOpComplete(string dutyOp, Pawn pawn) =>
 			completeDutyOps.Add(Tuple.Create(dutyOp, pawn));
@@ -51,7 +46,11 @@ namespace EnhancedParty
             return EnhancedDutyUtility.DutyAreaCells(pawn);
         }
 
-        public virtual void Notify_PawnJoinedRole(LordPawnRole role, Pawn pawn, LordPawnRole prevPawnRole) =>
+		public override void UpdateAllDuties()
+		{
+		}
+
+		public virtual void Notify_PawnJoinedRole(LordPawnRole role, Pawn pawn, LordPawnRole prevPawnRole) =>
                 LordJob.Notify_PawnJoinedRole(role, pawn, prevPawnRole);
 
         public virtual void Notify_PawnLeftRole(LordPawnRole role, Pawn pawn, LordPawnRole newPawnRole) =>
@@ -78,9 +77,12 @@ namespace EnhancedParty
 		public override void LordToilTick()
 		{
 			foreach(var completeOp in completeDutyOps)
-				DutyOpUtility.Notify_DutyOpComplete(completeOp.Item1, completeOp.Item2);
+				Notify_PawnDutyOpComplete(completeOp.Item1, completeOp.Item2);
 			foreach(var failedOp in failedDutyOps)
-				DutyOpUtility.Notify_DutyOpFailed(failedOp.Item1, failedOp.Item2);    
+				Notify_PawnDutyOpFailed(failedOp.Item1, failedOp.Item2);
+
+			completeDutyOps.Clear();
+			failedDutyOps.Clear();   
 		}
 	}
 }

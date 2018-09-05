@@ -13,24 +13,41 @@ namespace EnhancedParty
     public class RecRoomParty_PrepareToil : EnhancedLordToil_PrepareParty
     {
 		static public readonly string SnackOpName = "MakeSnacks";
+		RoleDutyLordToil subToil;
     
         public RecRoomParty_PrepareToil()
         {
+			this.data = new PreparePartyToilData();
         }
 
-		private int GetDesiredSnackCount()
+		public override LordToil SelectSubToil()
+		{
+			return subToil;
+		}
+		
+
+		public new PartyJob_RecRoom LordJob => this.lord?.LordJob as PartyJob_RecRoom;
+
+		public int GetDesiredSnackCount()
 		{
 			return Math.Min(lord.ownedPawns.Count, 3);
+		}
+
+		public int GetSetupSnackCount()
+		{
+            return lord.Map.listerThings.ThingsOfDef(ThingDefOf.MealSimple)
+                            .Where(thing => LordJob.IsInPartyArea(thing.PositionHeld))
+                            .Sum(thing => thing.stackCount); 
 		}
 
         public override StateGraph CreateInternalGraph()
         {
             StateGraph graph = new StateGraph();
 
-            LordToil roleToil = new RoleDutyLordToil(this, true) {   
-                roleDutyMap = new Dictionary<LordPawnRole, Func<PawnDuty>>(){ 
+            RoleDutyLordToil roleToil = new RoleDutyLordToil(this, true) {   
+                roleDutyMap = new Dictionary<string, Func<PawnDuty>>(){ 
                     {   
-                        LordJob.GetRole("SnackMakers"), 
+                        "SnackMakers", 
                         () => new EnhancedPawnDuty(EnhancedDutyDefOf.EP_MakeThingsToFocus, LordJob.PartySpot){   
                             dutyRecipe = RecipeDefOf.CookMealSimple,
                             dutyThingDef = ThingDefOf.MealSimple,
@@ -39,13 +56,14 @@ namespace EnhancedParty
                         } 
                     }, 
                     {   
-                        LordJob.GetRole("PartyGoers"), 
+                        "PartyGoers", 
                         () => new EnhancedPawnDuty(EnhancedDutyDefOf.EP_GotoAndCleanFocusRoom, LordJob.PartySpot) 
                     } 
                 }
             };
 
             graph.AddToil(roleToil);
+			subToil = roleToil;
 
             return graph;
         }

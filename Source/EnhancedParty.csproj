@@ -104,6 +104,8 @@
     <Compile Include="LordToils\ComplexLordToilData.cs" />
     <Compile Include="LordToils\PreparePartyToilData.cs" />
     <Compile Include="Utilities\DutyOpUtility.cs" />
+    <Compile Include="EnhancedLordDebugSettings.cs" />
+    <Compile Include="Patches\Dialog_DebugSettingsMenu_DoListingItems.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Patches\" />

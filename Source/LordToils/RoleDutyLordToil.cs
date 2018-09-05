@@ -17,7 +17,7 @@ namespace EnhancedParty
         {
         }
 
-		public Dictionary<LordPawnRole, Func<PawnDuty>> roleDutyMap;
+		public Dictionary<string, Func<PawnDuty>> roleDutyMap;
 
 		public override void Notify_PawnJoinedRole(LordPawnRole role, Pawn pawn, LordPawnRole prevPawnRole)
 		{
@@ -36,7 +36,7 @@ namespace EnhancedParty
 
 		public void AssignDutyTo(Pawn pawn, LordPawnRole role)
 		{   //Might need a guard on the .mindState
-            if (role != null && roleDutyMap.TryGetValue(role, out Func<PawnDuty> dutyGen) && dutyGen != null)
+            if (role != null && roleDutyMap.TryGetValue(role.name, out Func<PawnDuty> dutyGen) && dutyGen != null)
                 pawn.mindState.duty = dutyGen();
 		}
 

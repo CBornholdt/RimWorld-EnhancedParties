@@ -26,6 +26,7 @@ namespace RimWorld
 
         public override ThinkResult TryIssueJobPackage(Pawn pawn, JobIssueParams jobParams)
         {
+			Log.Message("there");
             EnhancedPawnDuty duty = pawn.mindState?.duty as EnhancedPawnDuty;
         
             if(duty == null || (repeatProtection && alreadyTriggered))

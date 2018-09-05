@@ -55,13 +55,6 @@ namespace EnhancedParty
 			containedTransitions = internalGraph.transitions;
 		}
 
-        //TODO adjust Init to use some type of initial states
-        override public void Init()
-        {
-            Traverse.Create(this.lord).Field("curLordToil").SetValue(containedToils[CurrentIndex]);
-            containedToils[CurrentIndex].Init();
-        }
-
 		abstract public StateGraph CreateInternalGraph();
     }
 }

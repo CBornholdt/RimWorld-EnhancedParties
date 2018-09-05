@@ -12,7 +12,7 @@ namespace EnhancedParty
     public abstract class EnhancedLordJob_Party : EnhancedLordJob
     {
         protected Pawn organizer;
-        protected EnhancedPartyDef def;
+        public EnhancedPartyDef def;
         protected IntVec3 startingSpot;
         protected int partySpotIndex;
         protected IntVec3 currentPartySpot = IntVec3.Invalid;
@@ -26,7 +26,7 @@ namespace EnhancedParty
 		static public readonly string PreparationCompleteMemo = "PartyPreparationComplete";
         static public readonly string PreparationFailedMemo = "PartyPreparationFailed";
 
-        public EnhancedLordJob_Party() { }
+		public EnhancedLordJob_Party() { }
         
         public EnhancedLordJob_Party(EnhancedPartyDef def, Pawn organizer, IntVec3 startingSpot)
         {
@@ -52,6 +52,15 @@ namespace EnhancedParty
 		public virtual bool AllowedToOrganize(Pawn pawn) => false;
 
 		public virtual bool UseWholePartyRoom => def.useWholePartyRoom;
+
+		public virtual bool IsPartyAboutToEnd => 
+            def.ticksLeftWhenPartyAboutToEnd > 0
+                ? partyTimeout.TicksLeft > def.ticksLeftWhenPartyAboutToEnd
+                : false;
+
+        //Not sure about this null check, copied from LordJob_Joinable_Party
+		public virtual bool IsInvited(Pawn pawn) =>
+			lord.faction != null && pawn.Faction == lord.faction;
         
         public virtual bool TryGetOrganizerAndStartingSpot(Faction faction, Map map, out Pawn organizer, out IntVec3 startingSpot)
         {
@@ -164,8 +173,6 @@ namespace EnhancedParty
             return stateGraph;
         }   
 
-        public bool IsPartyAboutToEnd() => false;
-
         public override void ExposeData()
         {
             base.ExposeData();
@@ -180,7 +187,25 @@ namespace EnhancedParty
             return !PartyUtility.AcceptableGameConditionsToContinueParty(this.Map) || !this.PartySpot.Roofed(this.Map);
         }
 
-		public override float VoluntaryJoinPriorityFor(Pawn p) => 1f;
+		public override float VoluntaryJoinPriorityFor(Pawn p)
+		{
+			if(!IsInvited(p))
+				return 0f;
+
+			if(!EnhancedPartyUtility.CanPawnKeepPartyingBasicChecks(p))
+				return 0f;
+
+			if(PartySpot.IsForbidden(p))
+				return 0f;
+                
+            if (!this.lord.ownedPawns.Contains(p) && this.IsPartyAboutToEnd)
+                return 0f;
+
+			if(p == Organizer)
+				return EnhancedPartyJoinPriorities.organizer;
+
+			return EnhancedPartyJoinPriorities.normalGuest;
+		}
         
 		public override void Notify_PawnAdded(Pawn p)
 		{
@@ -198,6 +223,5 @@ namespace EnhancedParty
 		public override string GetReport() => PartyHasStarted
 												? "EP.Party.Report".Translate()
                                                 : "EP.Prepare.Report".Translate();
-
 	}
 }

@@ -15,10 +15,8 @@ namespace EnhancedParty
 		{
 			yield return toil;
 			if(toil is EnhancedLordToil eToil) {
-				while(eToil.ParentToil != null) {
-					yield return eToil.ParentToil;
-					eToil = eToil.ParentToil;
-				}
+				while(eToil.ParentToil != null) 
+					yield return (eToil = eToil.ParentToil);
 			}
 		}
     }

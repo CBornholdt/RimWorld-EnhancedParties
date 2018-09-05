@@ -14,6 +14,7 @@ namespace EnhancedParty
     {
         public RecRoomParty_PartyToil()
         {
+			this.data = new PartyToilData(); 
         }
 
 		public override StateGraph CreateInternalGraph()
@@ -21,8 +22,8 @@ namespace EnhancedParty
             StateGraph graph = new StateGraph();
 
             LordToil roleToil = new RoleDutyLordToil(this, true) 
-                { roleDutyMap = new Dictionary<LordPawnRole, Func<PawnDuty>>() 
-                   { { LordJob.GetRole("PartyGoers"), () => new EnhancedPawnDuty(EnhancedDutyDefOf.EP_GotoAndCleanFocusRoom
+                { roleDutyMap = new Dictionary<string, Func<PawnDuty>>() 
+                   { { "PartyGoers", () => new EnhancedPawnDuty(EnhancedDutyDefOf.EP_GotoAndCleanFocusRoom
                         , LordJob.PartySpot) { dutyRecipe = RecipeDefOf.CookMealSimple, dutyThingDef = ThingDefOf.MealSimple } } }
             };
 

@@ -24,6 +24,7 @@ namespace Verse
         
 		public int partyTimeout = 5000;
 		public bool failOnPartyTimeout = false;
+		public int ticksLeftWhenPartyAboutToEnd = 1200;
 
 		public int ticksPerPreparationPulse = 1200;
 		public int ticksPerPartyPulse = 600;
@@ -36,7 +37,7 @@ namespace Verse
 
 		public EnhancedLordJob_Party CreateLordJob(Pawn organizer, IntVec3 startingSpot) =>
 			(EnhancedLordJob_Party)Activator.CreateInstance(enhancedLordJobClass
-														, new object[2] { organizer, startingSpot }); 
+														, new object[3] { this, organizer, startingSpot }); 
 
 		public bool PartyCanBeHadWith(Faction faction, Map map)
 		{
@@ -55,10 +56,12 @@ namespace Verse
 			foreach(var error in base.ConfigErrors())
 				yield return error;
 
-			if (!typeof(EnhancedLordJob_Party).IsAssignableFrom(enhancedLordJobClass))
+			if(!typeof(EnhancedLordJob_Party).IsAssignableFrom(enhancedLordJobClass))
 				yield return $"<enhancedLordJobClass> configured in EnhancedPartyDef {this.label} is not a sub-class of EnhancedLordJob_Party";
-			else
+			else {
 				intLordJob = (EnhancedLordJob_Party)Activator.CreateInstance(enhancedLordJobClass);
+				intLordJob.def = this;
+			}
 		}
 	}
 }

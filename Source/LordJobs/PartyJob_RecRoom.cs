@@ -10,15 +10,21 @@ using Harmony;
 
 namespace EnhancedParty
 {
-    public class PartyJob_RecRoom : EnhancedLordJob_Party
-    {
+	public class PartyJob_RecRoom : EnhancedLordJob_Party
+	{
 		protected RecRoomParty_PrepareToil prepareToil;
 		protected RecRoomParty_PartyToil partyToil;
-    
+
+		public PartyJob_RecRoom(EnhancedPartyDef def, Pawn organizer, IntVec3 spot) : base(def, organizer, spot) 
+        {
+            prepareToil = new RecRoomParty_PrepareToil();
+            partyToil = new RecRoomParty_PartyToil();
+        }
+        
         public PartyJob_RecRoom()
         {
-			prepareToil = new RecRoomParty_PrepareToil();
-			partyToil = new RecRoomParty_PartyToil();
+            prepareToil = new RecRoomParty_PrepareToil();
+            partyToil = new RecRoomParty_PartyToil();
         }
 
 		public override bool AllowStartNewGatherings => base.AllowStartNewGatherings;
@@ -32,34 +38,43 @@ namespace EnhancedParty
 			return base.IsAttendingParty(pawn);
 		}
 
+		public override bool AllowRolelessPawnsToReplenish => true;
+
+		public int TotalSnacksNeeded() => prepareToil.GetDesiredSnackCount();
+
+		public int SnacksToSetup() => prepareToil.GetSetupSnackCount(); 
+
 		protected override void CreatePartyRoles()
 		{
 			var partyGoers = new LordPawnRole("PartyGoers", this) {
-				pawnValidator = (Pawn p) => PartyUtility.ShouldPawnKeepPartying(p),
+				pawnValidator = (Pawn p) => true,
 				pawnReplenishPriority = (Pawn p) => 1f,
-				replenishCompleter = (List<Pawn> pawns) => false
+				replenishCompleter = (List<Pawn> pawns) => false    //hungry, will default to everything
 			};
 			partyGoers.Configure(enabled: true, priority: 1, reassignableFrom: true
 				, seekReplacements: false, seekReplenishment: true);
+			roles.Add(partyGoers);
 
 			var snackMakers = new LordPawnRole("SnackMakers", this) {
-				pawnValidator = (Pawn p) => PartyUtility.ShouldPawnKeepPartying(p)
-												&& RecipeDefOf.CookMealSimple.PawnSatisfiesSkillRequirements(p),
+				pawnValidator = (Pawn p) => RecipeDefOf.CookMealSimple.PawnSatisfiesSkillRequirements(p),
 				pawnReplenishPriority = (Pawn p) => p.skills.GetSkill(SkillDefOf.Cooking).Level,
-				replenishCompleter = (List<Pawn> pawns) => pawns.Count >= 2
+				replenishCompleter = (List<Pawn> pawns) => pawns.Any()
+                    && pawns.Count >= SnacksToSetup() / 2
             };
             snackMakers.Configure(enabled: true, priority: 2, reassignableFrom: false
-                , seekReplacements: true, seekReplenishment: true); 
+                , seekReplacements: true, seekReplenishment: true);
+			roles.Add(snackMakers);
 		}
 
 		override public bool AllowedToOrganize(Pawn pawn) =>
-            pawn.RaceProps.Humanlike && !pawn.InBed() && !pawn.InMentalState
-                && pawn.GetLord() == null
-                && pawn.AbleToStopJobForParty()
-                && PartyUtility.ShouldPawnKeepPartying(pawn);   
+			pawn.RaceProps.Humanlike && !pawn.InBed() && !pawn.InMentalState
+				&& pawn.GetLord() == null
+				&& pawn.AbleToStopJobForParty()
+				&& EnhancedPartyUtility.ShouldPawnKeepPartyingBasicChecks(pawn)
+				&& RecipeDefOf.CookMealSimple.PawnSatisfiesSkillRequirements(pawn);   
 
 		override public bool PartyCanBeHadWith(Faction faction, Map map)
-        {   
+        {
             bool value = PartyUtility.AcceptableGameConditionsToStartParty(map)
                         && map.regionGrid.allRooms.Any(room => room.Role == RoomRoleDefOf.RecRoom)
                         && map.mapPawns.FreeColonistsSpawned.Count() >= def.minNumOfPartiers;
@@ -101,6 +116,12 @@ namespace EnhancedParty
         }
         
         public Room PartyRoom => PartySpot.GetRoom(this.lord.Map);
+
+		public bool IsInPartyArea(IntVec3 cell)
+		{
+			Map map = this.lord.Map;
+			return cell.GetRoom(map) == PartySpot.GetRoom(map);
+		}
 
         override public void ExposeData()
         {

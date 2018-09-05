@@ -26,8 +26,8 @@ namespace EnhancedParty
             MethodInfo cleanupFormerlyEnclosingToils = AccessTools.Method(typeof(Lord_GotoToil)
                 , nameof(Lord_GotoToil.CleanupFormerlyEnclosingToils));
 
-			yield return new CodeInstruction(OpCodes.Ldarg_0);  //Place Lord on stack
-			yield return new CodeInstruction(OpCodes.Call, selectAppropriateToil);  //Lord replaced by LordToil
+			yield return new CodeInstruction(OpCodes.Ldarg_1);  //Place newLordToil on stack
+			yield return new CodeInstruction(OpCodes.Call, selectAppropriateToil);  //find correct toil
 			yield return new CodeInstruction(OpCodes.Starg_S, 1);   //Replace newLordToil argument
 
 			foreach(var instruction in instructions) {
@@ -45,10 +45,8 @@ namespace EnhancedParty
 			}
 		}
     
-		static public LordToil SelectAppropriateToil(Lord lord)
-		{
-			var toil = lord.CurLordToil;
-        
+		static public LordToil SelectAppropriateToil(LordToil toil)
+		{          
 			while(toil is ComplexLordToil complex)
 				toil = complex.SelectSubToil();
 
@@ -59,7 +57,7 @@ namespace EnhancedParty
 		static public void InitNewlyEnclosingToils(LordToil newToil, LordToil oldToil)
 		{
 			var newEnclosingToils = newToil.ThisAndEnclosingToils().Reverse();
-			var oldEnclosingToils = oldToil.ThisAndEnclosingToils();
+			var oldEnclosingToils = oldToil?.ThisAndEnclosingToils() ?? Enumerable.Empty<LordToil>();
 
 			List<LordToil> newlyEnclosedToils = newEnclosingToils.Except(oldEnclosingToils).ToList();
 
@@ -76,7 +74,7 @@ namespace EnhancedParty
         //Will perform cleanups from sub state on up
 		static public void CleanupFormerlyEnclosingToils(LordToil oldToil, LordToil newToil)
 		{
-            var newEnclosingToils = newToil.ThisAndEnclosingToils();
+            var newEnclosingToils = newToil?.ThisAndEnclosingToils() ?? Enumerable.Empty<LordToil>();
             var oldEnclosingToils = oldToil.ThisAndEnclosingToils();
 
 			foreach(var formerlyEnclosedToil in oldEnclosingToils.Except(newEnclosingToils))

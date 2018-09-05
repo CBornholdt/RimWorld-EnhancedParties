@@ -128,7 +128,6 @@ namespace EnhancedParty
         public void RegisterDutyOpFailed(string dutyOp, Pawn pawn) =>
             failedDutyOps.Add(Tuple.Create(dutyOp, pawn));
 
-        //Does not directly handle addition of new pawns to lord
         public void CheckAndUpdateRoles()
         {   //Everything is sorted descending by current role priority, allows priorities to change
             var sortedRoles = roles.OrderByDescending(role => role.Priority);
@@ -186,10 +185,12 @@ namespace EnhancedParty
                                                     , Tuple<LordPawnRole, Pawn> replacement)
             {
                 lostPawn.Item1.CurrentPawns.Add(replacement.Item2);
-                replacement.Item1.CurrentPawns.Remove(replacement.Item2);
-                //Will place this new lost pawn entry at the last position for its priority
-                pawnsLostSorted.Insert(pawnsLostSorted.FindLastIndex(pl => pl.Item1.Priority >= replacement.Item1.Priority)
-                                    , Tuple.Create(replacement.Item1, replacement.Item2, ReasonPawnLeftRole.Replacement));
+				//Will place this new lost pawn entry at the last position for its priority
+				if(replacement.Item1 != null) {   //Prevents role-less pawns from adding to lost list
+					replacement.Item1.CurrentPawns.Remove(replacement.Item2);
+					pawnsLostSorted.Insert(pawnsLostSorted.FindLastIndex(pl => pl.Item1.Priority >= replacement.Item1.Priority)
+											, Tuple.Create(replacement.Item1, replacement.Item2, ReasonPawnLeftRole.Replacement));
+				}
                 pawnsLostSorted.Remove(lostPawn);
                 pawnsReplaced.Add(Tuple.Create(lostPawn.Item1, replacement.Item2, lostPawn.Item2, replacement.Item1));
                 potentialReplacements.Remove(replacement);
@@ -200,7 +201,7 @@ namespace EnhancedParty
             {    //Adding to list, so need for-loop not foreach
                 var pawnLost = pawnsLostSorted[i];
 				if (pawnLost.Item1.ShouldSeekReplacement 
-                    && potentialReplacements.Where(vr => vr.Item1.Priority < pawnLost.Item1.Priority
+                    && potentialReplacements.Where(vr => (vr.Item1?.Priority ?? 0) < pawnLost.Item1.Priority
 													        && pawnLost.Item1.pawnValidator(vr.Item2))
 					                        .TryRandomElementByWeight(vr => pawnLost.Item1.pawnReplenishPriority(vr.Item2)
 													                    , out Tuple<LordPawnRole, Pawn> replacement))
@@ -214,9 +215,11 @@ namespace EnhancedParty
             void replenishPawnTo(LordPawnRole role, Tuple<LordPawnRole, Pawn> replacement)
             {
                 role.CurrentPawns.Add(replacement.Item2);
-                replacement.Item1.CurrentPawns.Remove(replacement.Item2);
-                pawnsLostSorted.Insert(pawnsLostSorted.FindLastIndex(pl => pl.Item1.Priority > replacement.Item1.Priority)
-                                        , Tuple.Create(replacement.Item1, replacement.Item2, ReasonPawnLeftRole.InNewRole));
+				if(replacement.Item1 != null) {  //role-less pawns will not be seen as lost
+					replacement.Item1.CurrentPawns.Remove(replacement.Item2);
+					pawnsLostSorted.Insert(pawnsLostSorted.FindLastIndex(pl => pl.Item1.Priority > replacement.Item1.Priority)
+											, Tuple.Create(replacement.Item1, replacement.Item2, ReasonPawnLeftRole.InNewRole));
+				}
                 pawnsAdded.Add(Tuple.Create(role, replacement.Item2, replacement.Item1));
 				potentialReplacements.Remove(replacement);
 				validReplacements.Remove(replacement);
@@ -225,10 +228,10 @@ namespace EnhancedParty
             //Perform replenishment loops by priorty order
             foreach (var role in sortedRoles.Where(role => role.OpportunisticallyReplenish))
             {
-                validReplacements = potentialReplacements.Where(vr => vr.Item1.Priority < role.Priority
+                validReplacements = potentialReplacements.Where(vr => (vr.Item1?.Priority ?? 0) < role.Priority
                                                                         && role.pawnValidator(vr.Item2))
-                                                          .OrderByDescending(vr => role.pawnReplenishPriority(vr.Item2))
-                                                          .ToList();
+                                                         .OrderByDescending(vr => role.pawnReplenishPriority(vr.Item2))
+                                                         .ToList();
 				while (!role.replenishCompleter(role.CurrentPawns)
 					&& validReplacements.TryRandomElementByWeight(vr => role.pawnReplenishPriority(vr.Item2)
 																  , out Tuple<LordPawnRole, Pawn> replacement)) 
@@ -267,6 +270,21 @@ namespace EnhancedParty
                         Notify_RoleNowEmpty(role);
                 }
             }
+
+			if(EnhancedLordDebugSettings.logRoleChanges) {
+				var builder = new StringBuilder();
+
+				builder.AppendLine($"EnhancedLordJob {this.GetType().Name} on map {this.lord.Map.Index} at tick {Find.TickManager.TicksGame}");
+				builder.AppendLine($"Pawns Left Role: {pawnsLostSorted.Count}   Pawns Replaced: {pawnsReplaced.Count}   Pawns Added: {pawnsAdded.Count}");
+				foreach(var lostPawn in pawnsLostSorted)
+					builder.AppendLine($"\tLOST  Role: {lostPawn.Item1.name}  Pawn: {lostPawn.Item2.Name}   Reason: {lostPawn.Item3.ToString()}");
+				foreach(var replacedPawn in pawnsReplaced)
+					builder.AppendLine($"\tREPLACED  Role: {replacedPawn.Item1.name}  NewPawn: {replacedPawn.Item2.Name}   OldPawn: {replacedPawn.Item3.Name}   NewPawnOldRole: {replacedPawn.Item4.name}");
+				foreach(var addedPawn in pawnsAdded)
+					builder.AppendLine($"\tADDED  Role: {addedPawn.Item1.name}  Pawn: {addedPawn.Item2.Name}   OldRole: {addedPawn.Item3?.name ?? "NONE"}");
+
+				Log.Message(builder.ToString());
+			}
         }
     }
 }

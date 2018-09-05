@@ -15,7 +15,9 @@ namespace RimWorld
     
         protected override Job TryGiveJob(Pawn pawn)
         {
-			EnhancedPawnDuty duty = pawn.mindState.duty as EnhancedPawnDuty;
+			Log.Message("here");
+        
+			EnhancedPawnDuty duty = pawn.mindState?.duty as EnhancedPawnDuty;
 			if(duty == null)
 				return null;
 

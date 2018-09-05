@@ -35,6 +35,10 @@
             <li Class="ThinkNode_DutyOpFailed">
             </li>
             <li Class="DutyJob_WanderNearFocus">
+              <ticksBetweenWandersRange>
+                <min>50</min>
+                <max>250</max>
+              </ticksBetweenWandersRange>
             </li>
           </subNodes>
         </li>

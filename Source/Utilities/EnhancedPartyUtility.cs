@@ -10,6 +10,9 @@ namespace EnhancedParty
 {
     static public class EnhancedPartyUtility
     {
+		static public bool ShouldPawnKeepPartyingBasicChecks(Pawn pawn) =>
+			PartyUtility.ShouldPawnKeepPartying(pawn);
+    
 		static public bool CanPawnJoinPartyBasicChecks(Pawn pawn)
 		{
 			return CanPawnKeepPartyingBasicChecks(pawn);
