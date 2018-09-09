@@ -74,7 +74,8 @@ namespace RimWorld
                 recipeBill = recipe.MakeNewBill();
                 recipeBill.pawnRestriction = pawn;
                 (chosenLocation as IBillGiver).BillStack.AddBill(recipeBill);
-                lordJob.cleanupActions.Add(new CleanableBill(recipeBill));
+                if(duty.registerForCleanup)
+                    lordJob.cleanupActions.Add(new CleanableBill(recipeBill));
             }
 
             IBillGiver billGiver = chosenLocation as IBillGiver;

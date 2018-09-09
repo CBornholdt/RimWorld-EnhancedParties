@@ -112,6 +112,8 @@
     <Compile Include="Jobs\DutyJob_MoveThingToCell.cs" />
     <Compile Include="CleanableActions\CleanableHaulable.cs" />
     <Compile Include="JobDrivers\JobDriver_HaulToCell_Cleanup.cs" />
+    <Compile Include="CleanableActions\CleanableReturnBuilding.cs" />
+    <Compile Include="Jobs\DutyJob_BringBuildingToSpot.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Patches\" />

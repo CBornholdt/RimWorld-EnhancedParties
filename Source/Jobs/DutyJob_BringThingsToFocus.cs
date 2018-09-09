@@ -50,7 +50,7 @@ namespace RimWorld
                 count = Math.Max(1, duty.thingCount - thingsAtFocus)
             };
 
-            if(job.def.driverClass == typeof(JobDriver_HaulToCell)) {
+            if(duty.registerForCleanup && job.def.driverClass == typeof(JobDriver_HaulToCell)) {
                 var driver = new JobDriver_HaulToCell_Cleanup();
                 driver.job = job;
                 driver.pawn = pawn; //overlap with argument name prevents initializer list syntax

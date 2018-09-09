@@ -13,6 +13,8 @@ namespace EnhancedParty
     public class RecRoomParty_PartyToil : EnhancedLordToil_Party
     {
         RoleDutyLordToil subToil;
+        static public readonly string SnackMakers = "SnackMakers";
+        static public readonly string PartyGoers = "PartyGoers";
     
         public RecRoomParty_PartyToil()
         {
@@ -24,11 +26,14 @@ namespace EnhancedParty
             StateGraph graph = new StateGraph();
 
             RoleDutyLordToil roleToil = new RoleDutyLordToil(this, cancelExistingJobsOnTransition: true) {
-                roleDutyMap = new Dictionary<string, Func<PawnDuty>>()
-                   { { "PartyGoers", () => new EnhancedPawnDuty(EnhancedDutyDefOf.EP_PartyWithAllowedJoyKinds
-                        , focus: LordJob.PartySpot){
-                        allowedJoyKinds = new List<JoyKindDef>(){ DefDatabase<JoyKindDef>.GetNamed("Gaming_Dexterity"),
-                                                                  DefDatabase<JoyKindDef>.GetNamed("Gaming_Cerebral")
+                roleDutyMap = new Dictionary<string, Func<PawnDuty>>(){ 
+                    { 
+                        PartyGoers, 
+                        () => new EnhancedPawnDuty(EnhancedDutyDefOf.EP_PartyWithAllowedJoyKinds
+                                                        , focus: LordJob.PartySpot){
+                            allowedJoyKinds = new List<JoyKindDef>(){ 
+                                DefDatabase<JoyKindDef>.GetNamed("Gaming_Dexterity"),
+                                DefDatabase<JoyKindDef>.GetNamed("Gaming_Cerebral")
             } } } } };
 
             graph.AddToil(roleToil);
@@ -41,9 +46,9 @@ namespace EnhancedParty
         {
             base.Init();
             Log.Message("PartyInit");
-            LordJob.GetRole("SnackMakers").Configure(enabled: false, priority: 2, reassignableFrom: false
+            LordJob.GetRole(SnackMakers).Configure(enabled: false, priority: 2, reassignableFrom: false
                 , seekReplacements: true, seekReplenishment: true);
-            LordJob.GetRole("PartyGoers").Configure(enabled: true, priority: 1, reassignableFrom: true
+            LordJob.GetRole(PartyGoers).Configure(enabled: true, priority: 1, reassignableFrom: true
                 , seekReplacements: false, seekReplenishment: true);
         }
 
