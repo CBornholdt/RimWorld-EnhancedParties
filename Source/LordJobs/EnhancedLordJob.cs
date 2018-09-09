@@ -12,7 +12,7 @@ namespace EnhancedParty
 {
     abstract public class EnhancedLordJob : LordJob_VoluntarilyJoinable
     {
-		static public bool transitioningToils = false;
+		static public bool nextCheckUseRefresh = false;
     
         protected List<LordPawnRole> roles = new List<LordPawnRole>();
 		protected List<LordPawnRoleData> roleData;
@@ -110,6 +110,9 @@ namespace EnhancedParty
             base.ExposeData();
             Scribe_Collections.Look<LordPawnRoleData>(ref this.roleData, "RoleData", LookMode.Deep);
 			Scribe_Collections.Look<ICleanableAction>(ref this.cleanupActions, "CleanupActions", LookMode.Deep);
+
+			if(Scribe.mode == LoadSaveMode.PostLoadInit)    //Remove cleanupActions with broken references
+				this.cleanupActions = cleanupActions.Where(action => !action.ReferencesBroken()).ToList();
         }
 
         public void AddRole(LordPawnRole role)
@@ -261,7 +264,7 @@ namespace EnhancedParty
             }
 
             EnhancedLordToil toil = CurrentEnhancedToil;
-			if(!transitioningToils && toil != null) {
+			if(!nextCheckUseRefresh && toil != null) {
 				//Notify Toil if such
 				foreach(var pawnLost in pawnsLostSorted)
 					toil.Notify_PawnLeftRole(pawnLost.Item1, pawnLost.Item2, GetRole(pawnLost.Item2));
@@ -271,8 +274,8 @@ namespace EnhancedParty
 				foreach(var pawnAdded in pawnsAdded)
 					toil.Notify_PawnJoinedRole(pawnAdded.Item1, pawnAdded.Item2, pawnAdded.Item3);
 			}
-			else {  //Fallback to LordJob notifications if Toil does not support Role Logic
-				if(toil == null) {
+			else {  
+				if(toil == null) {  //Refresh requires enhanced toil, so notify LordJob was fallback
 					foreach(var pawnLost in pawnsLostSorted)
 						this.Notify_PawnLeftRole(pawnLost.Item1, pawnLost.Item2, GetRole(pawnLost.Item2));
 					foreach(var pawnReplaced in pawnsReplaced)
@@ -287,13 +290,13 @@ namespace EnhancedParty
 				}
 			}
 
-	/*			//Notify if any roles have become empty
-				if(pawnsLostSorted.Any()) {
-					foreach(var role in roles) {
-						if(role.CurrentPawns.Count == 0 && pawnsLostSorted.Any(pawnLost => pawnLost.Item1 == role))
-							Notify_RoleNowEmpty(role);
-					}
-				}   */
+			//Notify if any roles have become empty
+			if(!nextCheckUseRefresh && pawnsLostSorted.Any()) {
+				foreach(var role in roles) {
+					if(role.CurrentPawns.Count == 0 && pawnsLostSorted.Any(pawnLost => pawnLost.Item1 == role))
+						Notify_RoleNowEmpty(role);
+				}
+			}   
 
 			if(EnhancedLordDebugSettings.logRoleChanges) {
 				var builder = new StringBuilder();
@@ -310,7 +313,7 @@ namespace EnhancedParty
 				Log.Message(builder.ToString());
 			}
 
-			transitioningToils = false;
+			nextCheckUseRefresh = false;
         }
 
 		public override void Cleanup()

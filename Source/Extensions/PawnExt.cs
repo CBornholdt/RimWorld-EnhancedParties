@@ -11,7 +11,9 @@ namespace EnhancedParty
     {
 		static public LordPawnRole GetLordPawnRole(this Pawn pawn) =>
 			(pawn.GetLord()?.LordJob as EnhancedLordJob)?.GetRole(pawn);
-            
+
+		static public EnhancedLordJob GetEnhancedLordJob(this Pawn pawn) =>
+			pawn.GetLord()?.LordJob as EnhancedLordJob;
     
 		static public bool AbleToStopJobForParty(this Pawn pawn)
 		{

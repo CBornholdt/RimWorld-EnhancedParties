@@ -109,6 +109,9 @@
     <Compile Include="CleanableActions\ICleanableAction.cs" />
     <Compile Include="CleanableActions\CleanableBill.cs" />
     <Compile Include="Extensions\EnhancedLordJobExt.cs" />
+    <Compile Include="Jobs\DutyJob_MoveThingToCell.cs" />
+    <Compile Include="CleanableActions\CleanableHaulable.cs" />
+    <Compile Include="JobDrivers\JobDriver_HaulToCell_Cleanup.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Patches\" />

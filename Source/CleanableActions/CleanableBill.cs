@@ -8,11 +8,13 @@ namespace EnhancedParty
     {
 		public Bill bill;
 		public bool destroyUft = true;
+		string id;
     
         public CleanableBill(Bill bill, bool destroyUft = true)
         {
 			this.bill = bill;
 			this.destroyUft = destroyUft;
+			this.id = bill.GetUniqueLoadID() + "_CA";
         }
 
 		public bool CleanupStillNeeded()
@@ -24,12 +26,10 @@ namespace EnhancedParty
 		{
 			Scribe_References.Look<Bill>(ref this.bill, "Bill");
 			Scribe_Values.Look<bool>(ref this.destroyUft, "DestroyUft", true);
+			Scribe_Values.Look<string>(ref this.id, "ID", "Blank");
 		}
 
-		public string GetUniqueLoadID()
-		{
-			return this.bill.GetUniqueLoadID() + "_CA";
-		}
+		public string GetUniqueLoadID() => id;		
 
 		public void PerformCleanup()
 		{
@@ -40,5 +40,7 @@ namespace EnhancedParty
 					unfinished.Destroy(DestroyMode.Cancel);
 			}
 		}
+
+		public bool ReferencesBroken() => bill == null;	
 	}
 }

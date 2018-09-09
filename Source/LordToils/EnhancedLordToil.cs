@@ -99,7 +99,7 @@ namespace EnhancedParty
 
 		public override void Init()
 		{
-			EnhancedLordJob.transitioningToils = true;
+			EnhancedLordJob.nextCheckUseRefresh = true;
 		}
 	}
 }

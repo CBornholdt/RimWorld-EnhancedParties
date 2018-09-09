@@ -56,7 +56,7 @@ namespace EnhancedParty
 					field.SetValue(null, Delegate.CreateDelegate(field.FieldType, privateMethod));
 				}
 				catch(Exception) {
-					Log.Error($"Failed to hookup delegate for {names[0]}.{names[1]}");
+					Log.Error($"Failed to hookup delegate for {names[0].CapitalizeFirst()}.{names[1]}, check field types");
 				}
 			}
 		}

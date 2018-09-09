@@ -7,6 +7,7 @@ using RimWorld;
 using Verse.AI;
 using Verse.AI.Group;
 using EnhancedParty;
+using Harmony;
 
 namespace RimWorld
 {
@@ -44,10 +45,19 @@ namespace RimWorld
 			int thingsAtFocus = pawn.Map.listerThings.ThingsOfDef(duty.dutyThingDef)
 									.Where(thing => lordJob.IsCellInDutyArea(pawn, thing.PositionHeld))
 									.Sum(thing => thing.stackCount);
+                                    
+            var job = new Job(JobDefOf.HaulToCell, chosenThing, chosenCell) {
+                count = Math.Max(1, duty.thingCount - thingsAtFocus)
+            };
 
-			return new Job(JobDefOf.HaulToCell, chosenThing, chosenCell) {
-				count = Math.Max(1, duty.thingCount - thingsAtFocus)
-			};                             
+			if(job.def.driverClass == typeof(JobDriver_HaulToCell)) {
+				var driver = new JobDriver_HaulToCell_Cleanup();
+				driver.job = job;
+				driver.pawn = pawn; //overlap with argument name prevents initializer list syntax
+				Traverse.Create(job).Field("cachedDriver").SetValue(driver);
+			}   
+
+			return job;
         }
 
 		//Will prevent placement onto any cell with a Thing of the same category

@@ -43,6 +43,7 @@ namespace EnhancedParty
 		public Func<Pawn, bool> pawnValidator;	
         public Func<Pawn, float> pawnReplenishPriority;
 		public Func<List<Pawn>, bool> replenishCompleter;
+		public Func<Pawn, IntVec3> dutyCellSelector;    //For DutyJob specific cell selection
 
 		public LordPawnRoleData data;
 		public bool IsEnabled => data.enabled;
