@@ -48,7 +48,14 @@ namespace EnhancedParty
 
 		public override void UpdateAllDuties()
 		{
+			parentToil?.UpdateAllDuties();
 		}
+
+		public virtual void RefreshAllDuties()
+		{
+		}
+
+		public virtual void Notify_PawnJoinedLord(Pawn pawn) { }
 
 		public virtual void Notify_PawnJoinedRole(LordPawnRole role, Pawn pawn, LordPawnRole prevPawnRole) =>
                 LordJob.Notify_PawnJoinedRole(role, pawn, prevPawnRole);
@@ -61,10 +68,10 @@ namespace EnhancedParty
                 LordJob.Notify_PawnReplacedPawnInRole(role, newPawn, oldPawn, newPawnOldRole, oldPawnNewRole);
 
 		virtual public void Notify_PawnDutyOpComplete(string dutyOp, Pawn pawn) =>
-			LordJob.Notify_PawnDutyOpComplete(dutyOp, pawn);
+			ParentToil?.Notify_PawnDutyOpComplete(dutyOp, pawn);
 
 		virtual public void Notify_PawnDutyOpFailed(string dutyOp, Pawn pawn) =>
-			LordJob.Notify_PawnDutyOpFailed(dutyOp, pawn);
+			ParentToil?.Notify_PawnDutyOpFailed(dutyOp, pawn);
 
 		public StateGraph AttachAnyInternalStateGraphTo(StateGraph graph)
 		{
@@ -83,6 +90,16 @@ namespace EnhancedParty
 
 			completeDutyOps.Clear();
 			failedDutyOps.Clear();   
+		}
+
+		public override ThinkTreeDutyHook VoluntaryJoinDutyHookFor(Pawn p)
+		{
+			return LordJob.DefaultToilDutyHook;
+		}
+
+		public override void Init()
+		{
+			EnhancedLordJob.transitioningToils = true;
 		}
 	}
 }

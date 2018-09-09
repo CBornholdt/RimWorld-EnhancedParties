@@ -40,6 +40,22 @@ namespace EnhancedParty
                 pawn.mindState.duty = dutyGen();
 		}
 
-		public void AssignDutyTo(Pawn pawn) => AssignDutyTo(pawn, LordJob.GetRole(pawn));
+		public void AssignDutyTo(Pawn pawn)
+		{
+			var role = LordJob.GetRole(pawn);
+
+			if(role == null) {
+				Log.Message($"Attempted to get role for pawn { pawn.Name } but it was null");
+			}
+			else
+				AssignDutyTo(pawn, role);
+		}
+
+		public override void RefreshAllDuties()
+		{
+			foreach(var pawn in lord.ownedPawns) 
+				AssignDutyTo(pawn);
+			base.RefreshAllDuties();
+		}
 	}
 }

@@ -21,7 +21,7 @@ namespace RimWorld
 			if(pawnRoom == null || pawnRoom != pawn.mindState.duty?.focus.Cell.GetRoom(pawn.Map))
 				return null;
 
-			Log.Message($"Wandering for {pawn.Name} about { GetWanderRoot(pawn) }");
+			//Log.Message($"Wandering for {pawn.Name} about { GetWanderRoot(pawn) }");
 			return base.TryGiveJob(pawn);
 		}
 

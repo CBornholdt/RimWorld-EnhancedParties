@@ -18,13 +18,13 @@ namespace EnhancedParty
 
 			if(__instance.CurLordToil is EnhancedLordToil toil) {
 				while (toil.ParentToil != null) {
+                    toil = toil.ParentToil;
 					for (int i = 0; i < __instance.Graph.transitions.Count; i++) {
-						if(__instance.Graph.transitions[i].sources.Contains(toil.ParentToil) && __instance.Graph.transitions[i].CheckSignal(__instance, signal)) {
+						if(__instance.Graph.transitions[i].sources.Contains(toil) && __instance.Graph.transitions[i].CheckSignal(__instance, signal)) {
 							__result = true;
 							return;
 						}
 					}
-					toil = toil.ParentToil;
 				}
 			}
 		}

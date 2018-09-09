@@ -39,13 +39,6 @@ namespace EnhancedParty
 			}
 		}
 
-		public override void Cleanup()
-		{
-			Data.currentIndex = ContainedToils.IndexOf(lord.CurLordToil);
-			if(Data.currentIndex == -1)
-				Log.Message($"During cleanup for { this.GetType().Name }, lord's previous toil is not in containedToils list");
-		}
-
 		public void AttachTo(StateGraph graph)
 		{
 			graph.AddToil(this);

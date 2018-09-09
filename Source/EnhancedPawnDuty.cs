@@ -16,6 +16,7 @@ namespace EnhancedParty
 		public bool useOnlyTables = false;
 		public bool stayInRoom = true;
 		public bool useFoodGuard = true;
+	//	public bool registerForCleanup = true;
 		public string taskName;
 		public List<JoyKindDef> allowedJoyKinds;
     
@@ -34,6 +35,7 @@ namespace EnhancedParty
 			Scribe_Defs.Look<ThingDef>(ref this.dutyThingDef, "DutyThingDef");
 			Scribe_Values.Look<int>(ref this.thingCount, "ThingCount", 1);
 			Scribe_Values.Look<bool>(ref this.useFoodGuard, "UseFoodGuard", true);
+			//Scribe_Values.Look<bool>(ref this.registerForCleanup, "RegisterForCleanup", true);
 			Scribe_Collections.Look<JoyKindDef>(ref this.allowedJoyKinds, "AllowedJoyKinds", lookMode: LookMode.Def);
 		}	
     }

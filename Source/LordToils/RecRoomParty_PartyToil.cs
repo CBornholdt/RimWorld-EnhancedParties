@@ -12,6 +12,8 @@ namespace EnhancedParty
 {
     public class RecRoomParty_PartyToil : EnhancedLordToil_Party
     {
+        RoleDutyLordToil subToil;
+    
         public RecRoomParty_PartyToil()
         {
 			this.data = new PartyToilData(); 
@@ -21,13 +23,16 @@ namespace EnhancedParty
         {
             StateGraph graph = new StateGraph();
 
-            LordToil roleToil = new RoleDutyLordToil(this, true) 
-                { roleDutyMap = new Dictionary<string, Func<PawnDuty>>() 
-                   { { "PartyGoers", () => new EnhancedPawnDuty(EnhancedDutyDefOf.EP_GotoAndCleanFocusRoom
-                        , LordJob.PartySpot) { dutyRecipe = RecipeDefOf.CookMealSimple, dutyThingDef = ThingDefOf.MealSimple } } }
-            };
+			RoleDutyLordToil roleToil = new RoleDutyLordToil(this, cancelExistingJobsOnTransition: true) {
+				roleDutyMap = new Dictionary<string, Func<PawnDuty>>()
+				   { { "PartyGoers", () => new EnhancedPawnDuty(EnhancedDutyDefOf.EP_PartyWithAllowedJoyKinds
+						, focus: LordJob.PartySpot){
+						allowedJoyKinds = new List<JoyKindDef>(){ DefDatabase<JoyKindDef>.GetNamed("Gaming_Dexterity"),
+																  DefDatabase<JoyKindDef>.GetNamed("Gaming_Cerebral")
+            } } } } };
 
             graph.AddToil(roleToil);
+			subToil = roleToil;
 
             return graph;
         }
@@ -35,10 +40,16 @@ namespace EnhancedParty
         public override void Init()
         {
             base.Init();
+			Log.Message("PartyInit");
             LordJob.GetRole("SnackMakers").Configure(enabled: false, priority: 2, reassignableFrom: false
                 , seekReplacements: true, seekReplenishment: true);
             LordJob.GetRole("PartyGoers").Configure(enabled: true, priority: 1, reassignableFrom: true
                 , seekReplacements: false, seekReplenishment: true);
         }
+
+		public override LordToil SelectSubToil()
+		{
+			return subToil;
+		}
 	}
 }

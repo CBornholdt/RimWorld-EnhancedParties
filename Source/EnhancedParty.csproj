@@ -106,6 +106,9 @@
     <Compile Include="Utilities\DutyOpUtility.cs" />
     <Compile Include="EnhancedLordDebugSettings.cs" />
     <Compile Include="Patches\Dialog_DebugSettingsMenu_DoListingItems.cs" />
+    <Compile Include="CleanableActions\ICleanableAction.cs" />
+    <Compile Include="CleanableActions\CleanableBill.cs" />
+    <Compile Include="Extensions\EnhancedLordJobExt.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Patches\" />
@@ -118,6 +121,8 @@
     <Folder Include="LordJobs\" />
     <Folder Include="LordToils\" />
     <Folder Include="JoyGivers\" />
+    <Folder Include="CleanableActions\" />
+    <Folder Include="JobDrivers\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

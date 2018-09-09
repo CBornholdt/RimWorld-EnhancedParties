@@ -12,12 +12,16 @@ namespace EnhancedParty
 {
     abstract public class EnhancedLordJob : LordJob_VoluntarilyJoinable
     {
+		static public bool transitioningToils = false;
+    
         protected List<LordPawnRole> roles = new List<LordPawnRole>();
 		protected List<LordPawnRoleData> roleData;
         
         private List<Tuple<string, Pawn>> completeDutyOps = new List<Tuple<string, Pawn>>();
         
         private List<Tuple<string, Pawn>> failedDutyOps = new List<Tuple<string, Pawn>>();
+
+		public List<ICleanableAction> cleanupActions = new List<ICleanableAction>();
 
         public bool TryGetRole(string name, out LordPawnRole role)
         {
@@ -64,6 +68,12 @@ namespace EnhancedParty
 					role.data = new LordPawnRoleData(role.name);
 			}
 		}
+
+		public void ClearAllRolePawns()
+		{
+			foreach(var role in roles)
+				role.CurrentPawns.Clear();
+		}
         
         public virtual bool IsCellInDutyArea(Pawn pawn, IntVec3 cell)
         {
@@ -99,6 +109,7 @@ namespace EnhancedParty
         {
             base.ExposeData();
             Scribe_Collections.Look<LordPawnRoleData>(ref this.roleData, "RoleData", LookMode.Deep);
+			Scribe_Collections.Look<ICleanableAction>(ref this.cleanupActions, "CleanupActions", LookMode.Deep);
         }
 
         public void AddRole(LordPawnRole role)
@@ -109,6 +120,11 @@ namespace EnhancedParty
 
         virtual public void Notify_RoleNowEmpty(LordPawnRole role) =>
             this.lord.ReceiveMemo($"LordPawnRole.{role.name}.Empty");
+            
+        public override void Notify_PawnAdded(Pawn p)
+        {
+			CurrentEnhancedToil?.Notify_PawnJoinedLord(p);
+        }
 
         virtual public void Notify_PawnLeftRole(LordPawnRole role, Pawn pawn, LordPawnRole newRole) { }
 
@@ -127,6 +143,12 @@ namespace EnhancedParty
             
         public void RegisterDutyOpFailed(string dutyOp, Pawn pawn) =>
             failedDutyOps.Add(Tuple.Create(dutyOp, pawn));
+
+		public void RegisterCleanupAction(ICleanableAction action) =>
+			cleanupActions.Add(action);
+
+		public virtual ThinkTreeDutyHook DefaultToilDutyHook =>
+			ThinkTreeDutyHook.MediumPriority;
 
         public void CheckAndUpdateRoles()
         {   //Everything is sorted descending by current role priority, allows priorities to change
@@ -188,7 +210,7 @@ namespace EnhancedParty
 				//Will place this new lost pawn entry at the last position for its priority
 				if(replacement.Item1 != null) {   //Prevents role-less pawns from adding to lost list
 					replacement.Item1.CurrentPawns.Remove(replacement.Item2);
-					pawnsLostSorted.Insert(pawnsLostSorted.FindLastIndex(pl => pl.Item1.Priority >= replacement.Item1.Priority)
+					pawnsLostSorted.Insert(pawnsLostSorted.FindLastIndex(pl => pl.Item1.Priority >= replacement.Item1.Priority) + 1
 											, Tuple.Create(replacement.Item1, replacement.Item2, ReasonPawnLeftRole.Replacement));
 				}
                 pawnsLostSorted.Remove(lostPawn);
@@ -200,7 +222,7 @@ namespace EnhancedParty
             for (int i = 0; i < pawnsLostSorted.Count;)
             {    //Adding to list, so need for-loop not foreach
                 var pawnLost = pawnsLostSorted[i];
-				if (pawnLost.Item1.ShouldSeekReplacement 
+				if (pawnLost.Item1.IsEnabled && pawnLost.Item1.ShouldSeekReplacement 
                     && potentialReplacements.Where(vr => (vr.Item1?.Priority ?? 0) < pawnLost.Item1.Priority
 													        && pawnLost.Item1.pawnValidator(vr.Item2))
 					                        .TryRandomElementByWeight(vr => pawnLost.Item1.pawnReplenishPriority(vr.Item2)
@@ -217,7 +239,7 @@ namespace EnhancedParty
                 role.CurrentPawns.Add(replacement.Item2);
 				if(replacement.Item1 != null) {  //role-less pawns will not be seen as lost
 					replacement.Item1.CurrentPawns.Remove(replacement.Item2);
-					pawnsLostSorted.Insert(pawnsLostSorted.FindLastIndex(pl => pl.Item1.Priority > replacement.Item1.Priority)
+					pawnsLostSorted.Insert(pawnsLostSorted.FindLastIndex(pl => pl.Item1.Priority > replacement.Item1.Priority) + 1
 											, Tuple.Create(replacement.Item1, replacement.Item2, ReasonPawnLeftRole.InNewRole));
 				}
                 pawnsAdded.Add(Tuple.Create(role, replacement.Item2, replacement.Item1));
@@ -226,7 +248,7 @@ namespace EnhancedParty
             }
 
             //Perform replenishment loops by priorty order
-            foreach (var role in sortedRoles.Where(role => role.OpportunisticallyReplenish))
+            foreach (var role in sortedRoles.Where(role => role.IsEnabled && role.OpportunisticallyReplenish))
             {
                 validReplacements = potentialReplacements.Where(vr => (vr.Item1?.Priority ?? 0) < role.Priority
                                                                         && role.pawnValidator(vr.Item2))
@@ -238,38 +260,40 @@ namespace EnhancedParty
 					replenishPawnTo(role, replacement);
             }
 
-			//Notify Toil if such
-			EnhancedLordToil toil = CurrentEnhancedToil;
-            if (toil != null)
-            {
-                foreach (var pawnLost in pawnsLostSorted)
-                    toil.Notify_PawnLeftRole(pawnLost.Item1, pawnLost.Item2, GetRole(pawnLost.Item2));
-                foreach (var pawnReplaced in pawnsReplaced)
-                    toil.Notify_PawnReplacedPawnInRole(pawnReplaced.Item1, pawnReplaced.Item2
-                                    , pawnReplaced.Item3, pawnReplaced.Item4, GetRole(pawnReplaced.Item2));
-                foreach (var pawnAdded in pawnsAdded)
-                    toil.Notify_PawnJoinedRole(pawnAdded.Item1, pawnAdded.Item2, pawnAdded.Item3);
-            }
-            else
-            {  //Fallback to LordJob notifications if Toil does not support Role Logic
-                foreach (var pawnLost in pawnsLostSorted)
-                    this.Notify_PawnLeftRole(pawnLost.Item1, pawnLost.Item2, GetRole(pawnLost.Item2));
-                foreach (var pawnReplaced in pawnsReplaced)
-                    this.Notify_PawnReplacedPawnInRole(pawnReplaced.Item1, pawnReplaced.Item2
-                                    , pawnReplaced.Item3, pawnReplaced.Item4, GetRole(pawnReplaced.Item2));
-                foreach (var pawnAdded in pawnsAdded)
-                    this.Notify_PawnJoinedRole(pawnAdded.Item1, pawnAdded.Item2, pawnAdded.Item3);
-            }
+            EnhancedLordToil toil = CurrentEnhancedToil;
+			if(!transitioningToils && toil != null) {
+				//Notify Toil if such
+				foreach(var pawnLost in pawnsLostSorted)
+					toil.Notify_PawnLeftRole(pawnLost.Item1, pawnLost.Item2, GetRole(pawnLost.Item2));
+				foreach(var pawnReplaced in pawnsReplaced)
+					toil.Notify_PawnReplacedPawnInRole(pawnReplaced.Item1, pawnReplaced.Item2
+									, pawnReplaced.Item3, pawnReplaced.Item4, GetRole(pawnReplaced.Item2));
+				foreach(var pawnAdded in pawnsAdded)
+					toil.Notify_PawnJoinedRole(pawnAdded.Item1, pawnAdded.Item2, pawnAdded.Item3);
+			}
+			else {  //Fallback to LordJob notifications if Toil does not support Role Logic
+				if(toil == null) {
+					foreach(var pawnLost in pawnsLostSorted)
+						this.Notify_PawnLeftRole(pawnLost.Item1, pawnLost.Item2, GetRole(pawnLost.Item2));
+					foreach(var pawnReplaced in pawnsReplaced)
+						this.Notify_PawnReplacedPawnInRole(pawnReplaced.Item1, pawnReplaced.Item2
+										, pawnReplaced.Item3, pawnReplaced.Item4, GetRole(pawnReplaced.Item2));
+					foreach(var pawnAdded in pawnsAdded)
+						this.Notify_PawnJoinedRole(pawnAdded.Item1, pawnAdded.Item2, pawnAdded.Item3);
+				}
+				else {
+					Log.Message("refreshing");
+					toil.RefreshAllDuties();
+				}
+			}
 
-            //Notify if any roles have become empty
-            if (pawnsLostSorted.Any())
-            {
-                foreach (var role in roles)
-                {
-                    if (role.CurrentPawns.Count == 0 && pawnsLostSorted.Any(pawnLost => pawnLost.Item1 == role))
-                        Notify_RoleNowEmpty(role);
-                }
-            }
+	/*			//Notify if any roles have become empty
+				if(pawnsLostSorted.Any()) {
+					foreach(var role in roles) {
+						if(role.CurrentPawns.Count == 0 && pawnsLostSorted.Any(pawnLost => pawnLost.Item1 == role))
+							Notify_RoleNowEmpty(role);
+					}
+				}   */
 
 			if(EnhancedLordDebugSettings.logRoleChanges) {
 				var builder = new StringBuilder();
@@ -279,12 +303,24 @@ namespace EnhancedParty
 				foreach(var lostPawn in pawnsLostSorted)
 					builder.AppendLine($"\tLOST  Role: {lostPawn.Item1.name}  Pawn: {lostPawn.Item2.Name}   Reason: {lostPawn.Item3.ToString()}");
 				foreach(var replacedPawn in pawnsReplaced)
-					builder.AppendLine($"\tREPLACED  Role: {replacedPawn.Item1.name}  NewPawn: {replacedPawn.Item2.Name}   OldPawn: {replacedPawn.Item3.Name}   NewPawnOldRole: {replacedPawn.Item4.name}");
+					builder.AppendLine($"\tREPLACED  Role: {replacedPawn.Item1.name}  NewPawn: {replacedPawn.Item2.Name}   OldPawn: {replacedPawn.Item3.Name}   NewPawnOldRole: {replacedPawn.Item4?.name ?? "NONE"}");
 				foreach(var addedPawn in pawnsAdded)
 					builder.AppendLine($"\tADDED  Role: {addedPawn.Item1.name}  Pawn: {addedPawn.Item2.Name}   OldRole: {addedPawn.Item3?.name ?? "NONE"}");
 
 				Log.Message(builder.ToString());
 			}
+
+			transitioningToils = false;
         }
-    }
+
+		public override void Cleanup()
+		{
+			base.Cleanup();
+			foreach(var action in cleanupActions)
+				if(action.CleanupStillNeeded())
+					action.PerformCleanup();
+
+			cleanupActions.Clear();
+		}
+	}
 }

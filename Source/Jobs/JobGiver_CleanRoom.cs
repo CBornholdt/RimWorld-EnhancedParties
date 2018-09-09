@@ -14,7 +14,7 @@ namespace RimWorld
 
 		protected override Job TryGiveJob(Pawn pawn)
 		{
-			Log.Message($"Cleaning room with {pawn.Name}");
+		// 	Log.Message($"Cleaning room with {pawn.Name}");
         
 			Job job = new Job(JobDefOf.Clean);
 			Room roomToBeCleaned = pawn.mindState.duty?.focus.Cell.GetRoom(pawn.Map, RegionType.Set_Passable);

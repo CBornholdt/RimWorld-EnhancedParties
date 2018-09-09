@@ -17,6 +17,8 @@ namespace RimWorld
 			if(allowedJoyKinds != null && !allowedJoyKinds.Contains(def.joyKind))
 				return null;
 
+			Log.Message($"Trying {def.defName}");
+
 			if (pawn.mindState.duty == null)
             {
                 return null;

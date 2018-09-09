@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Harmony;
 using Verse;
 using RimWorld;
@@ -17,6 +18,7 @@ namespace EnhancedParty
 			Map map = Find.CurrentMap; 
             Traverse.Create(__instance).Method("DoGap").GetValue();
 			Traverse.Create(__instance).Method("DoLabel", new object[1] { "Tools - Enhanced Parties" }).GetValue();
+            
             Traverse.Create(__instance).Method("DebugAction", new object[2] { "Start Party ...", (Action)delegate
 			{
 				List<DebugMenuOption> list = new List<DebugMenuOption>();
@@ -36,7 +38,15 @@ namespace EnhancedParty
         				}));
 				}
 				Find.WindowStack.Add(new Dialog_DebugOptionListLister(list));
-			}}).GetValue();    
+			}}).GetValue();
+            
+            Traverse.Create(__instance).Method("DebugAction", new object[2] { "Cancel non partier jobs", (Action)delegate
+            {
+				foreach(var pawn in map.mapPawns.AllPawnsSpawned.Where(p => !(p.GetLord()?.LordJob is EnhancedLordJob_Party))) {
+					pawn.jobs.ClearQueuedJobs();
+					pawn.jobs.EndCurrentJob(JobCondition.InterruptForced);
+				}                        
+            }}).GetValue();    
         //    if(map.lordManager.lords.Any(lord => lord.LordJob is EnhancedLordJob_Party))
 		}  
     }

@@ -30,7 +30,6 @@ Global
 		$3.NewLinesForBracesInLambdaExpressionBody = False
 		$3.NewLineForClausesInQuery = False
 		$3.SpaceAfterControlFlowStatementKeyword = False
-		$3.SpaceBeforeSemicolonsInForStatement = True
 		$3.scope = text/x-csharp
 	EndGlobalSection
 EndGlobal

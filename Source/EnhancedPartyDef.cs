@@ -18,7 +18,6 @@ namespace Verse
         public string partyPreparationStartLetterText;
 		public int preparationTimeout = 5000;
 		public bool failOnPreparationTimeout = false;
-		public bool progressToPartyWhenPreparationComplete = true;
 
 		public bool forceAddOrganizer = true;
         

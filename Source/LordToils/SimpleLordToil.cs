@@ -13,13 +13,18 @@ namespace EnhancedParty
 
 		public override void Init()
 		{
-			if (cancelExistingJobsOnEntry)
-				this.lord.CancelAllPawnJobs();
 		}
 
 		public override void UpdateAllDuties()
 		{
 			LordJob.CheckAndUpdateRoles();
+			base.UpdateAllDuties();
+		}
+
+		public override void RefreshAllDuties()
+		{
+			if(cancelExistingJobsOnEntry)
+				lord.CancelAllPawnJobs();
 		}
 	}
 }

@@ -42,7 +42,7 @@ namespace EnhancedParty
 
 		public int TotalSnacksNeeded() => prepareToil.GetDesiredSnackCount();
 
-		public int SnacksToSetup() => prepareToil.GetSetupSnackCount(); 
+		public int SnacksAlreadySetup() => prepareToil.GetSetupSnackCount(); 
 
 		protected override void CreatePartyRoles()
 		{
@@ -59,7 +59,7 @@ namespace EnhancedParty
 				pawnValidator = (Pawn p) => RecipeDefOf.CookMealSimple.PawnSatisfiesSkillRequirements(p),
 				pawnReplenishPriority = (Pawn p) => p.skills.GetSkill(SkillDefOf.Cooking).Level,
 				replenishCompleter = (List<Pawn> pawns) => pawns.Any()
-                    && pawns.Count >= SnacksToSetup() / 2
+                    && pawns.Count >= (TotalSnacksNeeded() - SnacksAlreadySetup()) / 2
             };
             snackMakers.Configure(enabled: true, priority: 2, reassignableFrom: false
                 , seekReplacements: true, seekReplenishment: true);
@@ -130,7 +130,12 @@ namespace EnhancedParty
 
 		public override float VoluntaryJoinPriorityFor(Pawn p)
 		{
-			return base.VoluntaryJoinPriorityFor(p);
+			float priority = base.VoluntaryJoinPriorityFor(p);
+
+			if(EnhancedLordDebugSettings.logJoinPriorities)
+				Log.Message($"{this.GetType().Name} VoluntaryJoinPriorityFor Pawn: {p.Name} is {priority}");
+
+			return priority;
 		}
 	}
 }

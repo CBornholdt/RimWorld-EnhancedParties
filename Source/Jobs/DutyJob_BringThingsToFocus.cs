@@ -15,26 +15,39 @@ namespace RimWorld
         protected override Job TryGiveJob(Pawn pawn)
         {
             EnhancedPawnDuty duty = pawn.mindState?.duty as EnhancedPawnDuty;
+			EnhancedLordJob lordJob = pawn.GetLord()?.LordJob as EnhancedLordJob;
 
-            if(duty == null)
+			Log.Message("Bringing");
+
+            if(duty == null || lordJob == null)
                 return null;
 
             var potentialThings = pawn.Map.listerThings.ThingsOfDef(duty.dutyThingDef)
                                 .Where(thing => !thing.IsForbidden(pawn)
-                                        && !thing.AtDutyDestination(duty, pawn)
+                                        && !lordJob.IsCellInDutyArea(pawn, thing.PositionHeld)
                                         && pawn.CanReserveAndReach(thing, PathEndMode.ClosestTouch
                                                                     , Danger.Some));
 
-            if(!potentialThings.Any())
-                return null;
+			if(!potentialThings.Any()) {
+				Log.Message("no things to bring to focus");
+				return null;
+			}
 
 			var chosenCell = AvailableDestinations(duty, pawn).FirstOrDefault();
-			if(chosenCell == default(IntVec3))
+			if(chosenCell == default(IntVec3)) {
+				Log.Message("no destination to bring thing to");
 				return null;
+			}
 
             var chosenThing = potentialThings.MinBy(thing => thing.PositionHeld.DistanceToSquared(pawn.Position));
 
-			return new Job(JobDefOf.HaulToCell, chosenThing, chosenCell);                           
+			int thingsAtFocus = pawn.Map.listerThings.ThingsOfDef(duty.dutyThingDef)
+									.Where(thing => lordJob.IsCellInDutyArea(pawn, thing.PositionHeld))
+									.Sum(thing => thing.stackCount);
+
+			return new Job(JobDefOf.HaulToCell, chosenThing, chosenCell) {
+				count = Math.Max(1, duty.thingCount - thingsAtFocus)
+			};                             
         }
 
 		//Will prevent placement onto any cell with a Thing of the same category

@@ -71,12 +71,12 @@ namespace EnhancedParty
             EnhancedLordToil lordToil = lord.CurLordToil as EnhancedLordToil;
 
             if(lordToil != null)
-                return lordToil.IsInDutyArea(pawn);
+                return lordToil.IsCellInDutyArea(pawn, cell);
 
             EnhancedLordJob lordJob = lord.LordJob as EnhancedLordJob;
 
             if(lordJob != null)
-                return lordJob.IsInDutyArea(pawn);
+                return lordJob.IsCellInDutyArea(pawn, cell);
 
             return false;
         }

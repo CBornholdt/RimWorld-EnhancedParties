@@ -13,6 +13,8 @@ namespace EnhancedParty
     public class RecRoomParty_PrepareToil : EnhancedLordToil_PrepareParty
     {
 		static public readonly string SnackOpName = "MakeSnacks";
+		static public readonly string SnackMakers = "SnackMakers";
+		static public readonly string PartyGoers = "PartyGoers";
 		RoleDutyLordToil subToil;
     
         public RecRoomParty_PrepareToil()
@@ -24,20 +26,22 @@ namespace EnhancedParty
 		{
 			return subToil;
 		}
-		
 
 		public new PartyJob_RecRoom LordJob => this.lord?.LordJob as PartyJob_RecRoom;
 
 		public int GetDesiredSnackCount()
 		{
-			return Math.Min(lord.ownedPawns.Count, 3);
+            int value = Math.Min(lord.ownedPawns.Count, 6);
+			return value;
 		}
 
 		public int GetSetupSnackCount()
 		{
-            return lord.Map.listerThings.ThingsOfDef(ThingDefOf.MealSimple)
+            int value = lord.Map.listerThings.ThingsOfDef(ThingDefOf.MealSimple)
                             .Where(thing => LordJob.IsInPartyArea(thing.PositionHeld))
-                            .Sum(thing => thing.stackCount); 
+                            .Sum(thing => thing.stackCount);
+
+			return value;
 		}
 
         public override StateGraph CreateInternalGraph()
@@ -47,7 +51,7 @@ namespace EnhancedParty
             RoleDutyLordToil roleToil = new RoleDutyLordToil(this, true) {   
                 roleDutyMap = new Dictionary<string, Func<PawnDuty>>(){ 
                     {   
-                        "SnackMakers", 
+                        SnackMakers, 
                         () => new EnhancedPawnDuty(EnhancedDutyDefOf.EP_MakeThingsToFocus, LordJob.PartySpot){   
                             dutyRecipe = RecipeDefOf.CookMealSimple,
                             dutyThingDef = ThingDefOf.MealSimple,
@@ -56,7 +60,7 @@ namespace EnhancedParty
                         } 
                     }, 
                     {   
-                        "PartyGoers", 
+                        PartyGoers, 
                         () => new EnhancedPawnDuty(EnhancedDutyDefOf.EP_GotoAndCleanFocusRoom, LordJob.PartySpot) 
                     } 
                 }
@@ -71,22 +75,43 @@ namespace EnhancedParty
 		public override void Init()
 		{
 			base.Init();
-			LordJob.GetRole("SnackMakers").Configure(enabled: true, priority: 2, reassignableFrom: false
+			LordJob.GetRole(SnackMakers).Configure(enabled: true, priority: 2, reassignableFrom: false
                 , seekReplacements: true, seekReplenishment: true);
-            LordJob.GetRole("PartyGoers").Configure(enabled: true, priority: 1, reassignableFrom: true
+            LordJob.GetRole(PartyGoers).Configure(enabled: true, priority: 1, reassignableFrom: true
                 , seekReplacements: false, seekReplenishment: true);
 		}
 
 		public override void Notify_PawnDutyOpComplete(string dutyOp, Pawn pawn)
 		{
-			if(dutyOp == SnackOpName)
+			if(dutyOp == SnackOpName) {
+				Log.Message("Sending complete memo");
 				this.lord.ReceiveMemo(EnhancedLordJob_Party.PreparationCompleteMemo);
+			}
 		}
 
 		public override void Notify_PawnDutyOpFailed(string dutyOp, Pawn pawn)
 		{
 			if(dutyOp == SnackOpName)
                 this.lord.ReceiveMemo(EnhancedLordJob_Party.PreparationFailedMemo);
+		}
+
+		public override void Notify_PawnLeftRole(LordPawnRole role, Pawn pawn, LordPawnRole newPawnRole)
+		{
+			if(role.name == SnackMakers)
+				DutyJob_PerformDutyRecipe.RemoveBillsWithCreator(LordJob, pawn);
+		}
+
+		public override void Notify_PawnReplacedPawnInRole(LordPawnRole role, Pawn newPawn, Pawn oldPawn, LordPawnRole newPawnOldRole, LordPawnRole oldPawnNewRole)
+		{
+			if(role.name == SnackMakers)
+				DutyJob_PerformDutyRecipe.ReplaceBillCreatorWith(LordJob, replacement: newPawn, replaced: oldPawn);
+		}
+
+		public override void UpdateAllDuties()
+		{
+			foreach(var pawn in LordJob.GetRole(SnackMakers).CurrentPawns) {
+				(pawn.mindState.duty as EnhancedPawnDuty).thingCount = GetDesiredSnackCount();
+			}
 		}
 	}
 }
