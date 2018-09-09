@@ -7,7 +7,7 @@ namespace RimWorld
 {
     public class DutyJob_EatInDutyArea : ThinkNode_JobGiver
     {
-		public float stopEatingWhenPctFull = 0.9f;
+        public float stopEatingWhenPctFull = 0.9f;
     
         protected override Job TryGiveJob(Pawn pawn)
         {

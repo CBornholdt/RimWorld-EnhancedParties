@@ -13,7 +13,7 @@ namespace EnhancedParty
         public Trigger_RoleTaskComplete(string roleName, string taskName)
         {
             RoleName = roleName;
-			TaskName = taskName;
+            TaskName = taskName;
         }
 
         public override bool ActivateOn(Lord lord, TriggerSignal signal)
@@ -21,7 +21,7 @@ namespace EnhancedParty
             if(signal.type != TriggerSignalType.Memo)
                 return false;
 
-			return signal.memo.StartsWith($"LordPawnRole.{RoleName}.{TaskName}.Complete", StringComparison.OrdinalIgnoreCase);
+            return signal.memo.StartsWith($"LordPawnRole.{RoleName}.{TaskName}.Complete", StringComparison.OrdinalIgnoreCase);
         }
     }
 }

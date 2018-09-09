@@ -15,11 +15,11 @@ namespace RimWorld
     
         protected override Job TryGiveJob(Pawn pawn)
         {
-			EnhancedPawnDuty duty = pawn.mindState?.duty as EnhancedPawnDuty;
-			if(duty == null)
-				return null;
+            EnhancedPawnDuty duty = pawn.mindState?.duty as EnhancedPawnDuty;
+            if(duty == null)
+                return null;
 
-			this.wanderDestValidator = (Pawn p, IntVec3 c, IntVec3 root) => p.IsCellInDutyArea(c);
+            this.wanderDestValidator = (Pawn p, IntVec3 c, IntVec3 root) => p.IsCellInDutyArea(c);
 
          //   Log.Message($"Wandering for {pawn.Name} about { GetWanderRoot(pawn) }");
             return base.TryGiveJob(pawn);
@@ -29,5 +29,5 @@ namespace RimWorld
         {
             return pawn.mindState.duty.focus.Cell;
         }
-	}
+    }
 }

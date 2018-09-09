@@ -11,15 +11,15 @@ namespace EnhancedParty
     
         public Trigger_RoleEmpty(string roleName)
         {
-			RoleName = roleName;
+            RoleName = roleName;
         }
 
-		public override bool ActivateOn(Lord lord, TriggerSignal signal)
-		{
-			if(signal.type != TriggerSignalType.Memo)
-				return false;
+        public override bool ActivateOn(Lord lord, TriggerSignal signal)
+        {
+            if(signal.type != TriggerSignalType.Memo)
+                return false;
 
-			return signal.memo == $"LordPawnRole.{RoleName}.Empty";
-		}
-	}
+            return signal.memo == $"LordPawnRole.{RoleName}.Empty";
+        }
+    }
 }

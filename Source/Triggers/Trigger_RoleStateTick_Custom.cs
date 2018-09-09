@@ -12,8 +12,8 @@ namespace EnhancedParty
     
         public Trigger_RoleStateTick_Custom(string roleName, Func<LordPawnRole, bool> condition)
         {
-			RoleName = roleName;
-			Condition = condition;
+            RoleName = roleName;
+            Condition = condition;
         }
 
         public override bool ActivateOn(Lord lord, TriggerSignal signal)

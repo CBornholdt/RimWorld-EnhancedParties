@@ -14,27 +14,27 @@ namespace EnhancedParty
 
         public ComplexLordToil ParentToil => parentToil;
 
-		private List<Tuple<string, Pawn>> completeDutyOps = new List<Tuple<string, Pawn>>();
+        private List<Tuple<string, Pawn>> completeDutyOps = new List<Tuple<string, Pawn>>();
         
         private List<Tuple<string, Pawn>> failedDutyOps = new List<Tuple<string, Pawn>>();
     
         public EnhancedLordToil(ComplexLordToil parentToil = null) : base()
         {
-			this.parentToil = parentToil;
+            this.parentToil = parentToil;
         }
         
         public EnhancedLordJob LordJob => this.lord.LordJob as EnhancedLordJob;
 
-		public void RegisterDutyOpComplete(string dutyOp, Pawn pawn) =>
-			completeDutyOps.Add(Tuple.Create(dutyOp, pawn));
+        public void RegisterDutyOpComplete(string dutyOp, Pawn pawn) =>
+            completeDutyOps.Add(Tuple.Create(dutyOp, pawn));
             
         public void RegisterDutyOpFailed(string dutyOp, Pawn pawn) =>
             failedDutyOps.Add(Tuple.Create(dutyOp, pawn));    
 
-		public virtual bool IsCellInDutyArea(Pawn pawn, IntVec3 cell)
-		{
-			return EnhancedDutyUtility.IsCellInDutyArea(pawn, cell);
-		}
+        public virtual bool IsCellInDutyArea(Pawn pawn, IntVec3 cell)
+        {
+            return EnhancedDutyUtility.IsCellInDutyArea(pawn, cell);
+        }
         
         public virtual bool IsInDutyArea(Pawn pawn)
         {
@@ -46,18 +46,18 @@ namespace EnhancedParty
             return EnhancedDutyUtility.DutyAreaCells(pawn);
         }
 
-		public override void UpdateAllDuties()
-		{
-			parentToil?.UpdateAllDuties();
-		}
+        public override void UpdateAllDuties()
+        {
+            parentToil?.UpdateAllDuties();
+        }
 
-		public virtual void RefreshAllDuties()
-		{
-		}
+        public virtual void RefreshAllDuties()
+        {
+        }
 
-		public virtual void Notify_PawnJoinedLord(Pawn pawn) { }
+        public virtual void Notify_PawnJoinedLord(Pawn pawn) { }
 
-		public virtual void Notify_PawnJoinedRole(LordPawnRole role, Pawn pawn, LordPawnRole prevPawnRole) =>
+        public virtual void Notify_PawnJoinedRole(LordPawnRole role, Pawn pawn, LordPawnRole prevPawnRole) =>
                 LordJob.Notify_PawnJoinedRole(role, pawn, prevPawnRole);
 
         public virtual void Notify_PawnLeftRole(LordPawnRole role, Pawn pawn, LordPawnRole newPawnRole) =>
@@ -67,39 +67,39 @@ namespace EnhancedParty
                             , LordPawnRole newPawnOldRole, LordPawnRole oldPawnNewRole) =>
                 LordJob.Notify_PawnReplacedPawnInRole(role, newPawn, oldPawn, newPawnOldRole, oldPawnNewRole);
 
-		virtual public void Notify_PawnDutyOpComplete(string dutyOp, Pawn pawn) =>
-			ParentToil?.Notify_PawnDutyOpComplete(dutyOp, pawn);
+        virtual public void Notify_PawnDutyOpComplete(string dutyOp, Pawn pawn) =>
+            ParentToil?.Notify_PawnDutyOpComplete(dutyOp, pawn);
 
-		virtual public void Notify_PawnDutyOpFailed(string dutyOp, Pawn pawn) =>
-			ParentToil?.Notify_PawnDutyOpFailed(dutyOp, pawn);
+        virtual public void Notify_PawnDutyOpFailed(string dutyOp, Pawn pawn) =>
+            ParentToil?.Notify_PawnDutyOpFailed(dutyOp, pawn);
 
-		public StateGraph AttachAnyInternalStateGraphTo(StateGraph graph)
-		{
-			StateGraph subGraph;
-			if (this is ComplexLordToil complexToil && (subGraph = complexToil.CreateInternalGraph()) != null)
-				graph.AttachSubgraph(subGraph);
-			return graph;
-		}
+        public StateGraph AttachAnyInternalStateGraphTo(StateGraph graph)
+        {
+            StateGraph subGraph;
+            if (this is ComplexLordToil complexToil && (subGraph = complexToil.CreateInternalGraph()) != null)
+                graph.AttachSubgraph(subGraph);
+            return graph;
+        }
 
-		public override void LordToilTick()
-		{
-			foreach(var completeOp in completeDutyOps)
-				Notify_PawnDutyOpComplete(completeOp.Item1, completeOp.Item2);
-			foreach(var failedOp in failedDutyOps)
-				Notify_PawnDutyOpFailed(failedOp.Item1, failedOp.Item2);
+        public override void LordToilTick()
+        {
+            foreach(var completeOp in completeDutyOps)
+                Notify_PawnDutyOpComplete(completeOp.Item1, completeOp.Item2);
+            foreach(var failedOp in failedDutyOps)
+                Notify_PawnDutyOpFailed(failedOp.Item1, failedOp.Item2);
 
-			completeDutyOps.Clear();
-			failedDutyOps.Clear();   
-		}
+            completeDutyOps.Clear();
+            failedDutyOps.Clear();   
+        }
 
-		public override ThinkTreeDutyHook VoluntaryJoinDutyHookFor(Pawn p)
-		{
-			return LordJob.DefaultToilDutyHook;
-		}
+        public override ThinkTreeDutyHook VoluntaryJoinDutyHookFor(Pawn p)
+        {
+            return LordJob.DefaultToilDutyHook;
+        }
 
-		public override void Init()
-		{
-			EnhancedLordJob.nextCheckUseRefresh = true;
-		}
-	}
+        public override void Init()
+        {
+            EnhancedLordJob.nextCheckUseRefresh = true;
+        }
+    }
 }

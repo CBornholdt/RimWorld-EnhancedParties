@@ -11,8 +11,8 @@ namespace EnhancedParty
     {
         static HarmonyPatches()
         {
-			HarmonyInstance harmony = HarmonyInstance.Create("rimworld.cbornholdt.enhancedparty");
-			harmony.PatchAll(Assembly.GetExecutingAssembly());
+            HarmonyInstance harmony = HarmonyInstance.Create("rimworld.cbornholdt.enhancedparty");
+            harmony.PatchAll(Assembly.GetExecutingAssembly());
         }
     }
 }

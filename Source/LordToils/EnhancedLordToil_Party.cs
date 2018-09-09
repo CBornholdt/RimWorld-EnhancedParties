@@ -14,19 +14,19 @@ namespace EnhancedParty
         public PartyToilData Data => (PartyToilData)this.data;
         
         virtual public float PreparationScore {
-			get => Data.preparationScore;
-			set => Data.preparationScore = value;
-		}
+            get => Data.preparationScore;
+            set => Data.preparationScore = value;
+        }
 
-		virtual public PartyStatus CurrentPartyStatus() => PartyStatus.Ongoing;
+        virtual public PartyStatus CurrentPartyStatus() => PartyStatus.Ongoing;
 
         public override ThinkTreeDutyHook VoluntaryJoinDutyHookFor(Pawn p) => LordJob.Def.dutyHook;
 
-		public virtual bool TryGivePartyMemory(Pawn pawn, out ThoughtDef memory)
-		{
-			memory = null;
-			return false;
-		}
+        public virtual bool TryGivePartyMemory(Pawn pawn, out ThoughtDef memory)
+        {
+            memory = null;
+            return false;
+        }
 
         public override void LordToilTick()
         {

@@ -6,10 +6,10 @@ namespace EnhancedParty
 {
     public interface ICleanableAction : IExposable, ILoadReferenceable
     {
-		bool CleanupStillNeeded();
+        bool CleanupStillNeeded();
 
-		bool ReferencesBroken();
+        bool ReferencesBroken();
     
-		void PerformCleanup(); 	
-	}
+        void PerformCleanup(); 	
+    }
 }

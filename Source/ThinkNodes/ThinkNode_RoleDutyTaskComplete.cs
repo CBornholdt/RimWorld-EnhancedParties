@@ -9,7 +9,7 @@ namespace RimWorld
     public class ThinkNode_RoleDutyTaskComplete : ThinkNode
     {
         static readonly public string MemoBegin = "Duty";
-		static readonly public string MemoEnd = "Complete";
+        static readonly public string MemoEnd = "Complete";
     
         public bool addPawnNameToMemo = false;
         public bool repeatProtection = true;
@@ -35,7 +35,7 @@ namespace RimWorld
                 return ThinkResult.NoJob;
 
             string pawnNamePart = (addPawnNameToMemo) ? pawn.Name + "." : string.Empty;
-			string taskName = (pawn.mindState.duty as EnhancedPawnDuty)?.taskName;
+            string taskName = (pawn.mindState.duty as EnhancedPawnDuty)?.taskName;
             string taskNamePart = (taskName != null) ? taskName + "." : string.Empty;
             string memo = MemoBegin + "." + pawnNamePart + taskNamePart + MemoEnd;
             pawn.GetLord().ReceiveMemo(memo);

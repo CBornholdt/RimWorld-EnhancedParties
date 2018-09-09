@@ -11,13 +11,13 @@ namespace EnhancedParty
 {
     static public class LordToilExt
     {
-		static public IEnumerable<LordToil> ThisAndEnclosingToils(this LordToil toil)
-		{
-			yield return toil;
-			if(toil is EnhancedLordToil eToil) {
-				while(eToil.ParentToil != null) 
-					yield return (eToil = eToil.ParentToil);
-			}
-		}
+        static public IEnumerable<LordToil> ThisAndEnclosingToils(this LordToil toil)
+        {
+            yield return toil;
+            if(toil is EnhancedLordToil eToil) {
+                while(eToil.ParentToil != null) 
+                    yield return (eToil = eToil.ParentToil);
+            }
+        }
     }
 }

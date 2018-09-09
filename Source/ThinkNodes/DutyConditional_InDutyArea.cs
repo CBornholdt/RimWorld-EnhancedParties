@@ -7,6 +7,6 @@ namespace RimWorld
 {
     public class DutyConditional_InDutyArea : ThinkNode_Conditional
     {
-		protected override bool Satisfied(Pawn pawn) => pawn.IsInDutyArea();
+        protected override bool Satisfied(Pawn pawn) => pawn.IsInDutyArea();
     }
 }

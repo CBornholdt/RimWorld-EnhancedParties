@@ -16,22 +16,22 @@ namespace EnhancedParty
         protected IntVec3 startingSpot;
         protected int partySpotIndex;
         protected IntVec3 currentPartySpot = IntVec3.Invalid;
-		protected bool partyHasStarted;
+        protected bool partyHasStarted;
 
         protected Trigger_TicksPassed preparationTimeout;
         protected Trigger_TicksPassed partyTimeout;
 
         List<Func<IntVec3>> partySpotGenerators;
 
-		static public readonly string PreparationCompleteMemo = "PartyPreparationComplete";
+        static public readonly string PreparationCompleteMemo = "PartyPreparationComplete";
         static public readonly string PreparationFailedMemo = "PartyPreparationFailed";
 
-		public Transition preparationFailed;
-		public Transition preparationSucceeded;
-		public Transition partyFailed;
-		public Transition partySucceeded;
+        public Transition preparationFailed;
+        public Transition preparationSucceeded;
+        public Transition partyFailed;
+        public Transition partySucceeded;
 
-		public EnhancedLordJob_Party() { }
+        public EnhancedLordJob_Party() { }
         
         public EnhancedLordJob_Party(EnhancedPartyDef def, Pawn organizer, IntVec3 startingSpot)
         {
@@ -39,39 +39,39 @@ namespace EnhancedParty
             this.organizer = organizer;
             this.startingSpot = startingSpot;
             this.partySpotIndex = 0;
-			this.partyHasStarted = false;
+            this.partyHasStarted = false;
         }
 
         public EnhancedPartyDef Def => def;
 
         public override bool AllowStartNewGatherings => false;
 
-		public bool PartyHasStarted => this.partyHasStarted;
+        public bool PartyHasStarted => this.partyHasStarted;
 
         public Pawn Organizer => organizer;
 
         public IntVec3 PartySpot => currentPartySpot;
 
-		public virtual bool PartyCanBeHadWith(Faction faction, Map map) => false;
+        public virtual bool PartyCanBeHadWith(Faction faction, Map map) => false;
 
-		public virtual bool AllowedToOrganize(Pawn pawn) => false;
+        public virtual bool AllowedToOrganize(Pawn pawn) => false;
 
-		public virtual bool UseWholePartyRoom => def.useWholePartyRoom;
+        public virtual bool UseWholePartyRoom => def.useWholePartyRoom;
 
-		public virtual bool IsPartyAboutToEnd => 
+        public virtual bool IsPartyAboutToEnd => 
             def.ticksLeftWhenPartyAboutToEnd > 0
                 ? partyTimeout.TicksLeft < def.ticksLeftWhenPartyAboutToEnd
                 : false;
 
         //Not sure about this null check, copied from LordJob_Joinable_Party
-		public virtual bool IsInvited(Pawn pawn) =>
-			lord.faction != null && pawn.Faction == lord.faction;
+        public virtual bool IsInvited(Pawn pawn) =>
+            lord.faction != null && pawn.Faction == lord.faction;
         
         public virtual bool TryGetOrganizerAndStartingSpot(Faction faction, Map map, out Pawn organizer, out IntVec3 startingSpot)
         {
             organizer = null;
             startingSpot = default(IntVec3);
-			return false;
+            return false;
         }
         
         protected abstract EnhancedLordToil_Party PartyToil { get; }
@@ -95,16 +95,16 @@ namespace EnhancedParty
         virtual public int PreparationTimeoutTicks() => def.preparationTimeout;
         virtual public int PartyTimeoutTicks() => def.partyTimeout;
 
-		virtual public IEnumerable<Func<IntVec3>> PartySpotProgression()
-		{
-			yield return () => startingSpot;
-		}
+        virtual public IEnumerable<Func<IntVec3>> PartySpotProgression()
+        {
+            yield return () => startingSpot;
+        }
 
-		protected abstract void CreatePartyRoles();    
+        protected abstract void CreatePartyRoles();    
         
         protected override StateGraph CreateGraphAndRoles()
         {
-			CreatePartyRoles();
+            CreatePartyRoles();
         
             partySpotGenerators = new List<Func<IntVec3>>(PartySpotProgression());
             UpdatePartySpot();
@@ -112,10 +112,10 @@ namespace EnhancedParty
             StateGraph stateGraph = new StateGraph();
 
             EnhancedLordToil_PrepareParty prepareToil = PrepareToil;
-			prepareToil.AttachTo(stateGraph);
+            prepareToil.AttachTo(stateGraph);
 
-			EnhancedLordToil_Party partyToil = PartyToil;
-			partyToil.AttachTo(stateGraph);
+            EnhancedLordToil_Party partyToil = PartyToil;
+            partyToil.AttachTo(stateGraph);
 
             LordToil_End endToil = new LordToil_End();
             stateGraph.AddToil(endToil);
@@ -137,7 +137,7 @@ namespace EnhancedParty
 
             preparationFailed = new Transition(prepareToil, endToil);
             preparationFailed.AddTrigger(new Trigger_Memo(PreparationFailedMemo));
-			preparationFailed.AddTrigger(new Trigger_TickCondition(() => this.ShouldBeCalledOff()));
+            preparationFailed.AddTrigger(new Trigger_TickCondition(() => this.ShouldBeCalledOff()));
             preparationFailed.AddPreAction(new TransitionAction_Message("EP.PreparationFailed.TransitionMessage".Translate()
                                                 , MessageTypeDefOf.NegativeEvent, new TargetInfo(PartySpot, Map)));  //TODO make PartySpot lazily updatable
 
@@ -187,41 +187,41 @@ namespace EnhancedParty
             return !PartyUtility.AcceptableGameConditionsToContinueParty(this.Map) || !this.PartySpot.Roofed(this.Map);
         }
 
-		public override float VoluntaryJoinPriorityFor(Pawn p)
-		{
-			if(!IsInvited(p))
-				return 0f;
+        public override float VoluntaryJoinPriorityFor(Pawn p)
+        {
+            if(!IsInvited(p))
+                return 0f;
 
-			if(!EnhancedPartyUtility.CanPawnKeepPartyingBasicChecks(p))
-				return 0f;
+            if(!EnhancedPartyUtility.CanPawnKeepPartyingBasicChecks(p))
+                return 0f;
 
-			if(PartySpot.IsForbidden(p))
-				return 0f;
+            if(PartySpot.IsForbidden(p))
+                return 0f;
                 
             if (!this.lord.ownedPawns.Contains(p) && this.IsPartyAboutToEnd)
                 return 0f;
 
-			if(p == Organizer)
-				return EnhancedPartyJoinPriorities.organizer;
+            if(p == Organizer)
+                return EnhancedPartyJoinPriorities.organizer;
 
-			return EnhancedPartyJoinPriorities.normalGuest;
-		}
+            return EnhancedPartyJoinPriorities.normalGuest;
+        }
         
-		public override void Notify_PawnAdded(Pawn p)
-		{
-			base.Notify_PawnAdded(p);
-	//		Log.Message($"Gained pawn {p.Name}");
-		}
+        public override void Notify_PawnAdded(Pawn p)
+        {
+            base.Notify_PawnAdded(p);
+    //		Log.Message($"Gained pawn {p.Name}");
+        }
 
-		public override void Notify_PawnLost(Pawn p, PawnLostCondition condition)
-		{
-			base.Notify_PawnLost(p, condition);
+        public override void Notify_PawnLost(Pawn p, PawnLostCondition condition)
+        {
+            base.Notify_PawnLost(p, condition);
 
-	//		Log.Message($"Lost pawn {p.Name}");
-		}
+    //		Log.Message($"Lost pawn {p.Name}");
+        }
 
-		public override string GetReport() => PartyHasStarted
-												? "EP.Party.Report".Translate()
+        public override string GetReport() => PartyHasStarted
+                                                ? "EP.Party.Report".Translate()
                                                 : "EP.Prepare.Report".Translate();
-	}
+    }
 }

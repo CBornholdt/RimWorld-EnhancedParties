@@ -11,22 +11,22 @@ namespace EnhancedParty
     [HarmonyPatch("CheckTransitionOnSignal")]
     static public class Lord_CheckTransitionOnSignal
     {
-		static public void Postfix(Lord __instance, ref bool __result, TriggerSignal signal)
-		{
-			if(__result)
-				return;
+        static public void Postfix(Lord __instance, ref bool __result, TriggerSignal signal)
+        {
+            if(__result)
+                return;
 
-			if(__instance.CurLordToil is EnhancedLordToil toil) {
-				while (toil.ParentToil != null) {
+            if(__instance.CurLordToil is EnhancedLordToil toil) {
+                while (toil.ParentToil != null) {
                     toil = toil.ParentToil;
-					for (int i = 0; i < __instance.Graph.transitions.Count; i++) {
-						if(__instance.Graph.transitions[i].sources.Contains(toil) && __instance.Graph.transitions[i].CheckSignal(__instance, signal)) {
-							__result = true;
-							return;
-						}
-					}
-				}
-			}
-		}
+                    for (int i = 0; i < __instance.Graph.transitions.Count; i++) {
+                        if(__instance.Graph.transitions[i].sources.Contains(toil) && __instance.Graph.transitions[i].CheckSignal(__instance, signal)) {
+                            __result = true;
+                            return;
+                        }
+                    }
+                }
+            }
+        }
     }
 }

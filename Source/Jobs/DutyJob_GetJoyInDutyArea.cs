@@ -7,19 +7,19 @@ using EnhancedParty;
 
 namespace RimWorld
 {
-	public class DutyJob_GetJoyInDutyArea : JobGiver_GetJoyInPartyArea
-	{
-		public float stopGettingJoyWhenPctFull = 0.92f;
+    public class DutyJob_GetJoyInDutyArea : JobGiver_GetJoyInPartyArea
+    {
+        public float stopGettingJoyWhenPctFull = 0.92f;
     
-		protected override Job TryGiveJobFromJoyGiverDefDirect(JoyGiverDef def, Pawn pawn)
-		{
-			List<JoyKindDef> allowedJoyKinds = (pawn.mindState?.duty as EnhancedPawnDuty)?.allowedJoyKinds;
-			if(allowedJoyKinds != null && !allowedJoyKinds.Contains(def.joyKind))
-				return null;
+        protected override Job TryGiveJobFromJoyGiverDefDirect(JoyGiverDef def, Pawn pawn)
+        {
+            List<JoyKindDef> allowedJoyKinds = (pawn.mindState?.duty as EnhancedPawnDuty)?.allowedJoyKinds;
+            if(allowedJoyKinds != null && !allowedJoyKinds.Contains(def.joyKind))
+                return null;
 
-			Log.Message($"Trying {def.defName}");
+            Log.Message($"Trying {def.defName}");
 
-			if (pawn.mindState.duty == null)
+            if (pawn.mindState.duty == null)
             {
                 return null;
             }
@@ -33,7 +33,7 @@ namespace RimWorld
                 return null;
             }
             
-			return def.Worker.TryGiveJobInDutyArea(pawn);
-		}
-	}
+            return def.Worker.TryGiveJobInDutyArea(pawn);
+        }
+    }
 }

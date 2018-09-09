@@ -79,13 +79,13 @@ namespace EnhancedParty
         {
             Item1 = item1;
             Item2 = item2;
-			Item3 = item3;
+            Item3 = item3;
         }
     
         #region Optional - If you need to use in dictionaries or check equality
         private static readonly IEqualityComparer<T1> Item1Comparer = EqualityComparer<T1>.Default;
         private static readonly IEqualityComparer<T2> Item2Comparer = EqualityComparer<T2>.Default;
-		private static readonly IEqualityComparer<T3> Item3Comparer = EqualityComparer<T3>.Default;
+        private static readonly IEqualityComparer<T3> Item3Comparer = EqualityComparer<T3>.Default;
     
         public override int GetHashCode()
         {
@@ -101,12 +101,12 @@ namespace EnhancedParty
         public override bool Equals(object obj)
         {
             var other = obj as Tuple<T1, T2, T3>;
-			if(object.ReferenceEquals(other, null))
-				return false;
-			else
-				return Item1Comparer.Equals(Item1, other.Item1)
-						&& Item2Comparer.Equals(Item2, other.Item2)
-						&& Item3Comparer.Equals(Item3, other.Item3);
+            if(object.ReferenceEquals(other, null))
+                return false;
+            else
+                return Item1Comparer.Equals(Item1, other.Item1)
+                        && Item2Comparer.Equals(Item2, other.Item2)
+                        && Item3Comparer.Equals(Item3, other.Item3);
         }
         #endregion
     
@@ -132,7 +132,7 @@ namespace EnhancedParty
             Item1 = item1;
             Item2 = item2;
             Item3 = item3;
-			Item4 = item4;
+            Item4 = item4;
         }
     
         #region Optional - If you need to use in dictionaries or check equality

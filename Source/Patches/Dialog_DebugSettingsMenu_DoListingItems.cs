@@ -15,13 +15,13 @@ namespace EnhancedParty
     [HarmonyPatch("DoListingItems")]
     static public class Dialog_DebugSettingsMenu_DoListingItems
     {
-		static public void Postfix(Dialog_DebugSettingsMenu __instance)
-		{
-			Listing_Standard listing = Traverse.Create(__instance).Field("listing").GetValue<Listing_Standard>();
-			listing.Gap();
-			listing.Label("Enhanced Lords", -1f, null);
-			foreach(var field in typeof(EnhancedLordDebugSettings).GetFields())
-				Traverse.Create(__instance).Method("DoField", field).GetValue();
-		}
+        static public void Postfix(Dialog_DebugSettingsMenu __instance)
+        {
+            Listing_Standard listing = Traverse.Create(__instance).Field("listing").GetValue<Listing_Standard>();
+            listing.Gap();
+            listing.Label("Enhanced Lords", -1f, null);
+            foreach(var field in typeof(EnhancedLordDebugSettings).GetFields())
+                Traverse.Create(__instance).Method("DoField", field).GetValue();
+        }
     }
 }

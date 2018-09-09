@@ -9,46 +9,46 @@ namespace EnhancedParty
 {
     static public class PawnExt
     {
-		static public LordPawnRole GetLordPawnRole(this Pawn pawn) =>
-			(pawn.GetLord()?.LordJob as EnhancedLordJob)?.GetRole(pawn);
+        static public LordPawnRole GetLordPawnRole(this Pawn pawn) =>
+            (pawn.GetLord()?.LordJob as EnhancedLordJob)?.GetRole(pawn);
 
-		static public EnhancedLordJob GetEnhancedLordJob(this Pawn pawn) =>
-			pawn.GetLord()?.LordJob as EnhancedLordJob;
+        static public EnhancedLordJob GetEnhancedLordJob(this Pawn pawn) =>
+            pawn.GetLord()?.LordJob as EnhancedLordJob;
     
-		static public bool AbleToStopJobForParty(this Pawn pawn)
-		{
-			return !(pawn.CurJob.targetA.Thing is Pawn
-						|| pawn.CurJob.targetB.Thing is Pawn
-						|| pawn.CurJob.targetC.Thing is Pawn) 
+        static public bool AbleToStopJobForParty(this Pawn pawn)
+        {
+            return !(pawn.CurJob.targetA.Thing is Pawn
+                        || pawn.CurJob.targetB.Thing is Pawn
+                        || pawn.CurJob.targetC.Thing is Pawn) 
                    && pawn.jobs.jobQueue.Count == 0;
-		}
+        }
         
-		static public bool IsInDutyArea(this Pawn pawn)
-		{
-			Lord lord = pawn.GetLord();
+        static public bool IsInDutyArea(this Pawn pawn)
+        {
+            Lord lord = pawn.GetLord();
 
-			if(lord == null)
-				return false;
+            if(lord == null)
+                return false;
 
-			EnhancedLordToil lordToil = lord.CurLordToil as EnhancedLordToil;
+            EnhancedLordToil lordToil = lord.CurLordToil as EnhancedLordToil;
 
-			if(lordToil != null)
-				return lordToil.IsInDutyArea(pawn);
+            if(lordToil != null)
+                return lordToil.IsInDutyArea(pawn);
 
-			EnhancedLordJob lordJob = lord.LordJob as EnhancedLordJob;
+            EnhancedLordJob lordJob = lord.LordJob as EnhancedLordJob;
 
-			if(lordJob != null)
-				return lordJob.IsInDutyArea(pawn);
+            if(lordJob != null)
+                return lordJob.IsInDutyArea(pawn);
 
-			return false;
-		}
+            return false;
+        }
         
         static public IEnumerable<IntVec3> DutyAreaCells(this Pawn pawn)
         {
             Lord lord = pawn.GetLord();
 
-			if(lord == null)
-				return Enumerable.Empty<IntVec3>();
+            if(lord == null)
+                return Enumerable.Empty<IntVec3>();
 
             EnhancedLordToil lordToil = lord.CurLordToil as EnhancedLordToil;
 
@@ -57,10 +57,10 @@ namespace EnhancedParty
 
             EnhancedLordJob lordJob = lord.LordJob as EnhancedLordJob;
 
-			if(lordJob != null)
-				return lordJob.DutyAreaCells(pawn);
+            if(lordJob != null)
+                return lordJob.DutyAreaCells(pawn);
 
-			return Enumerable.Empty<IntVec3>();
+            return Enumerable.Empty<IntVec3>();
         }
         
         static public bool IsCellInDutyArea(this Pawn pawn, IntVec3 cell)

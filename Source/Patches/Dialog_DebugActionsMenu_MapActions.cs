@@ -13,41 +13,41 @@ namespace EnhancedParty
     [HarmonyPatch("DoListingItems_MapActions")]
     static public class Dialog_DebugActionsMenu_MapActions
     {
-		static void Postfix(Dialog_DebugActionsMenu __instance)
-		{
-			Map map = Find.CurrentMap; 
+        static void Postfix(Dialog_DebugActionsMenu __instance)
+        {
+            Map map = Find.CurrentMap; 
             Traverse.Create(__instance).Method("DoGap").GetValue();
-			Traverse.Create(__instance).Method("DoLabel", new object[1] { "Tools - Enhanced Parties" }).GetValue();
+            Traverse.Create(__instance).Method("DoLabel", new object[1] { "Tools - Enhanced Parties" }).GetValue();
             
             Traverse.Create(__instance).Method("DebugAction", new object[2] { "Start Party ...", (Action)delegate
-			{
-				List<DebugMenuOption> list = new List<DebugMenuOption>();
-				Faction faction = Faction.OfPlayer;
-				
-				foreach (EnhancedPartyDef current in DefDatabase<EnhancedPartyDef>.AllDefs)
-				{
+            {
+                List<DebugMenuOption> list = new List<DebugMenuOption>();
+                Faction faction = Faction.OfPlayer;
+                
+                foreach (EnhancedPartyDef current in DefDatabase<EnhancedPartyDef>.AllDefs)
+                {
                     if(current.PartyCanBeHadWith(faction, map))
-        				list.Add(new DebugMenuOption(current.defName, DebugMenuOptionMode.Action, (Action)delegate
-        				{
-							if(EnhancedPartyUtility.TryStartEnhancedPartyDef(faction, map, current))
-								Messages.Message($"Debug starting enhanced party ${current.defName} for faction ${faction.Name}"
+                        list.Add(new DebugMenuOption(current.defName, DebugMenuOptionMode.Action, (Action)delegate
+                        {
+                            if(EnhancedPartyUtility.TryStartEnhancedPartyDef(faction, map, current))
+                                Messages.Message($"Debug starting enhanced party ${current.defName} for faction ${faction.Name}"
                                                     , MessageTypeDefOf.TaskCompletion);
-							else   
+                            else   
                                 Messages.Message($"Debug failed to start enhanced party ${current.defName} for faction ${faction.Name}"
                                                     , MessageTypeDefOf.TaskCompletion);  
-        				}));
-				}
-				Find.WindowStack.Add(new Dialog_DebugOptionListLister(list));
-			}}).GetValue();
+                        }));
+                }
+                Find.WindowStack.Add(new Dialog_DebugOptionListLister(list));
+            }}).GetValue();
             
             Traverse.Create(__instance).Method("DebugAction", new object[2] { "Cancel non partier jobs", (Action)delegate
             {
-				foreach(var pawn in map.mapPawns.AllPawnsSpawned.Where(p => !(p.GetLord()?.LordJob is EnhancedLordJob_Party))) {
-					pawn.jobs.ClearQueuedJobs();
-					pawn.jobs.EndCurrentJob(JobCondition.InterruptForced);
-				}                        
+                foreach(var pawn in map.mapPawns.AllPawnsSpawned.Where(p => !(p.GetLord()?.LordJob is EnhancedLordJob_Party))) {
+                    pawn.jobs.ClearQueuedJobs();
+                    pawn.jobs.EndCurrentJob(JobCondition.InterruptForced);
+                }                        
             }}).GetValue();    
         //    if(map.lordManager.lords.Any(lord => lord.LordJob is EnhancedLordJob_Party))
-		}  
+        }  
     }
 }
