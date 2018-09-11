@@ -19,6 +19,7 @@ namespace EnhancedParty
         public bool registerForCleanup = true;
         public string taskName;
         public List<JoyKindDef> allowedJoyKinds;
+        public Rot4 direction;
     
         public EnhancedPawnDuty(DutyDef duty, LocalTargetInfo focus, float radius = -1) : base(duty, focus, radius)
         {
@@ -37,6 +38,7 @@ namespace EnhancedParty
             Scribe_Values.Look<bool>(ref this.useFoodGuard, "UseFoodGuard", true);
             Scribe_Values.Look<bool>(ref this.registerForCleanup, "RegisterForCleanup", true);
             Scribe_Collections.Look<JoyKindDef>(ref this.allowedJoyKinds, "AllowedJoyKinds", lookMode: LookMode.Def);
+            Scribe_Values.Look<Rot4>(ref this.direction, "Direction", Rot4.Invalid);
         }	
     }
 }

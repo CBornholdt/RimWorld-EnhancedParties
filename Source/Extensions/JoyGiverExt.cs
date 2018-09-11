@@ -19,7 +19,7 @@ namespace EnhancedParty
     
         static Func<JoyGiver_Ingest, Pawn, Predicate<Thing>, Job> joyGiver_Ingest__TryGiveJobInternal = null;
         
-        static Func<JoyGiver_InteractBuilding, bool> joyGiver_InteractBuilding__CanDoDuringParty = null;
+        //static Func<JoyGiver_InteractBuilding, bool> joyGiver_InteractBuilding__CanDoDuringParty = null;
         static Func<JoyGiver_InteractBuilding, Pawn, Thing, Job> joyGiver_InteractBuilding__TryGivePlayJob = null;
         static Func<JoyGiver_InteractBuilding, Pawn, Thing, bool, bool> joyGiver_InteractBuilding__CanInteractWith = null;
         static Action<JoyGiver, Pawn, List<Thing>> joyGiver__GetSearchSet = null;

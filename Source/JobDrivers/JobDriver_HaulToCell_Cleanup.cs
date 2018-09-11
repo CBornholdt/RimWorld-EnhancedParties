@@ -16,7 +16,7 @@ namespace EnhancedParty
             Action oldInitAction = toilToWrap.initAction;
             toilToWrap.initAction = () => {
                 oldInitAction?.Invoke();
-                toilToWrap.actor.GetEnhancedLordJob().RegisterCleanupAction(new CleanableHaulable
+                toilToWrap.actor.GetEnhancedLordJob().RegisterCleanupAction(new Cleanable_Haulable
                     (toilToWrap.actor.carryTracker.CarriedThing));
             };
             return baseToils;

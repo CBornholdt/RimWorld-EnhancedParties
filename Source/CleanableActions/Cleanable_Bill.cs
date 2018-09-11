@@ -4,13 +4,13 @@ using Verse;
 
 namespace EnhancedParty
 {
-    public class CleanableBill : ICleanableAction
+    public class Cleanable_Bill : ICleanableAction
     {
         public Bill bill;
         public bool destroyUft = true;
         string id;
     
-        public CleanableBill(Bill bill, bool destroyUft = true)
+        public Cleanable_Bill(Bill bill, bool destroyUft = true)
         {
             this.bill = bill;
             this.destroyUft = destroyUft;

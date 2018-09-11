@@ -9,12 +9,8 @@ using EnhancedParty;
 
 namespace RimWorld
 {
-    public class DutyConditional_HasEnoughThingsAtDutyArea : ThinkNode_Conditional
+    public class DutyConditional_HasEnoughThingsAtDutyArea : ThinkNode_Conditional_Else
     {
-        public DutyConditional_HasEnoughThingsAtDutyArea()
-        {
-        }
-
         protected override bool Satisfied(Pawn pawn)
         {
             EnhancedPawnDuty duty = pawn.mindState?.duty as EnhancedPawnDuty;
@@ -29,7 +25,6 @@ namespace RimWorld
                             .Sum(thing => thing.stackCount);
             //Log.Message($"Duty ThingCount for pawn { pawn.Name } is { duty.thingCount } and area count is { count }");
             
-
             return count
                     >= duty.thingCount;    
         }

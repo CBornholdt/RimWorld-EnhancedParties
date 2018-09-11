@@ -25,6 +25,9 @@ namespace EnhancedParty
 
         static public readonly string PreparationCompleteMemo = "PartyPreparationComplete";
         static public readonly string PreparationFailedMemo = "PartyPreparationFailed";
+        
+        static public readonly string PartyCompleteMemo = "PartyComplete";
+        static public readonly string PartyFailedMemo = "PartyFailed";
 
         public Transition preparationFailed;
         public Transition preparationSucceeded;
@@ -150,7 +153,7 @@ namespace EnhancedParty
             stateGraph.AddTransition(preparationFailed);
 
             partyFailed = new Transition(partyToil, endToil);
-            partyFailed.AddTrigger(new Trigger_Memo("PartyFailed"));
+            partyFailed.AddTrigger(new Trigger_Memo(PartyFailedMemo));
             partyFailed.AddTrigger(new Trigger_TickCondition(() => this.ShouldBeCalledOff()));
             partyFailed.AddPreAction(new TransitionAction_Message("EP.PartyFailed.TransitionMessage".Translate()
                                                 , MessageTypeDefOf.NegativeEvent, new TargetInfo(PartySpot, Map)));
@@ -158,7 +161,7 @@ namespace EnhancedParty
                                 () => partyToil.CurrentPartyStatus() == PartyStatus.Interrupted)); 
                                                                
             partySucceeded = new Transition(partyToil, endToil);
-            partySucceeded.AddTrigger(new Trigger_Memo("PartySuccess"));
+            partySucceeded.AddTrigger(new Trigger_Memo(PartyCompleteMemo));
             partySucceeded.AddTrigger(new Trigger_TickCondition(
                                 () => partyToil.CurrentPartyStatus() == PartyStatus.Finished));
 
@@ -183,8 +186,10 @@ namespace EnhancedParty
         }
 
         public virtual bool ShouldBeCalledOff()
-        {
-            return !PartyUtility.AcceptableGameConditionsToContinueParty(this.Map) || !this.PartySpot.Roofed(this.Map);
+        {   var result = Map.dangerWatcher.DangerRating == StoryDanger.High || !this.PartySpot.Roofed(this.Map);
+            if(result)
+                Log.Message($"Calling off party {def.defName}");
+            return result;
         }
 
         public override float VoluntaryJoinPriorityFor(Pawn p)

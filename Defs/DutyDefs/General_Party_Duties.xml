@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <Defs>
   <DutyDef>
-    <defName>EP_MakeThingsToFocus</defName>
+    <defName>EP_MakeAndMoveThingsToFocus</defName>
     <socialModeMax>Off</socialModeMax>
     <hook>MediumPriority</hook>
     <thinkNode Class="ThinkNode_Priority">
@@ -13,22 +13,49 @@
                 <li Class="ThinkNode_DutyOpComplete">
                 </li>
               </subNodes>
-            </li>
-            <li Class="DutyConditional_HasEnoughThingsAtDutyArea">
-              <invert>true</invert>
-              <subNodes>
+              <else_subNodes>
                 <li Class="DutyJob_BringThingsToFocus">
                 </li>
-              </subNodes>
+              </else_subNodes>
+            </li>
+          </subNodes>
+          <else_subNodes>
+            <li Class="DutyJob_PerformDutyRecipe">
+            </li>
+            <li Class="ThinkNode_DutyOpFailed">
+            </li>
+          </else_subNodes>
+        </li>
+        <li Class="ThinkNode_Logger">
+          <subNodes>           
+            <li Class="DutyJob_WanderNearFocus">
+              <ticksBetweenWandersRange>
+                <min>50</min>
+                <max>250</max>
+              </ticksBetweenWandersRange>
             </li>
           </subNodes>
         </li>
-        <li Class="DutyConditional_HasEnoughThingsAvailable">
-          <invert>true</invert>
+      </subNodes>
+    </thinkNode>
+  </DutyDef>
+  <DutyDef>
+    <defName>EP_MoveBuildingToFocus</defName>
+    <socialModeMax>Off</socialModeMax>
+    <hook>MediumPriority</hook>
+    <thinkNode Class="ThinkNode_Priority">
+      <subNodes>
+        <li Class="DutyConditional_BuildingAtDesiredLocation">
           <subNodes>
-            <li Class="DutyJob_PerformDutyRecipe">
+            <li Class="ThinkNode_DutyOpComplete">
             </li>
-          </subNodes>
+          </subNodes> 
+          <else_subNodes>
+            <li Class="DutyJob_MoveBuildingToFocus">
+            </li>
+            <li Class="ThinkNode_DutyOpFailed">
+            </li>
+          </else_subNodes>
         </li>
         <li Class="ThinkNode_Logger">
           <subNodes>

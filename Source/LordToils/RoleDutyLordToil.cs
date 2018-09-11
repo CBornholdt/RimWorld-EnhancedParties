@@ -10,14 +10,22 @@ using Harmony;
 
 namespace EnhancedParty
 {
+    //Processes all duty changes via the Notify_ methods or RefreshAllDuties()
+    //  Will call CheckAndUpdateRoles() if
+
     public class RoleDutyLordToil : SimpleLordToil
     {
-        public RoleDutyLordToil(ComplexLordToil parentToil = null, bool cancelExistingJobsOnTransition = false) 
-            : base(parentToil, cancelExistingJobsOnTransition)
+        protected bool checkRolesOnNewPawn;
+        protected bool cancelExistingJobsOnEntry;
+    
+        public RoleDutyLordToil(ComplexLordToil parentToil = null, bool cancelExistingJobsOnEntry = false, bool checkRolesOnNewPawn = true) 
+            : base(parentToil)
         {
+            this.checkRolesOnNewPawn = checkRolesOnNewPawn;
+            this.cancelExistingJobsOnEntry = cancelExistingJobsOnEntry;
         }
 
-        public Dictionary<string, Func<PawnDuty>> roleDutyMap;
+        public Dictionary<string, Func<Pawn, PawnDuty>> roleDutyMap;
 
         public override void Notify_PawnJoinedRole(LordPawnRole role, Pawn pawn, LordPawnRole prevPawnRole)
         {
@@ -36,8 +44,8 @@ namespace EnhancedParty
 
         public void AssignDutyTo(Pawn pawn, LordPawnRole role)
         {   //Might need a guard on the .mindState
-            if (role != null && roleDutyMap.TryGetValue(role.name, out Func<PawnDuty> dutyGen) && dutyGen != null)
-                pawn.mindState.duty = dutyGen();
+            if (role != null && roleDutyMap.TryGetValue(role.name, out Func<Pawn, PawnDuty> dutyGen) && dutyGen != null)
+                pawn.mindState.duty = dutyGen(pawn);
         }
 
         public void AssignDutyTo(Pawn pawn)
@@ -50,12 +58,20 @@ namespace EnhancedParty
             else
                 AssignDutyTo(pawn, role);
         }
+        
+        public override void UpdateAllDuties()
+        {
+            base.UpdateAllDuties();
+            if(!EnhancedLordJob.updateDueToToilChange && this.checkRolesOnNewPawn)
+                LordJob.CheckAndUpdateRoles();
+        }
 
         public override void RefreshAllDuties()
         {
             foreach(var pawn in lord.ownedPawns) 
                 AssignDutyTo(pawn);
-            base.RefreshAllDuties();
+            if(this.cancelExistingJobsOnEntry)
+                lord.CancelAllPawnJobs();
         }
     }
 }

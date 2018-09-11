@@ -17,5 +17,9 @@ namespace EnhancedParty
 
             return thing.PositionHeld.DistanceToSquared(duty.focus.Cell) <= (duty.radius * duty.radius); 
         }
+
+        static public bool HasPower(this Thing thing) =>
+            thing.TryGetComp<CompPowerTrader>()?.PowerOn ?? thing.TryGetComp<CompPowerPlant>()?.PowerOn ?? false;
+        
     }
 }

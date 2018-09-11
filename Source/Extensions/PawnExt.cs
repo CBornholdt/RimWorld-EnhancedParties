@@ -9,6 +9,17 @@ namespace EnhancedParty
 {
     static public class PawnExt
     {
+        static public void SetLordPawnRole(this Pawn pawn, string name)
+        {
+            var role = (pawn.GetLord()?.LordJob as EnhancedLordJob)?.GetRole(name);
+            if(role == null)
+                return;
+            if(role.CurrentPawns.Contains(pawn))
+                Log.Message($"Attempted to add pawn { pawn.Name } to role { name } but was already present");
+            else
+                role.CurrentPawns.Add(pawn);
+        }
+    
         static public LordPawnRole GetLordPawnRole(this Pawn pawn) =>
             (pawn.GetLord()?.LordJob as EnhancedLordJob)?.GetRole(pawn);
 

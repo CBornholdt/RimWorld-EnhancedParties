@@ -8,12 +8,8 @@ using EnhancedParty;
 
 namespace RimWorld
 {
-    public class DutyConditional_HasEnoughThingsAvailable : ThinkNode_Conditional
+    public class DutyConditional_HasEnoughThingsAvailable : ThinkNode_Conditional_Else
     {
-        public DutyConditional_HasEnoughThingsAvailable()
-        {
-        }
-
         protected override bool Satisfied(Pawn pawn)
         {
             EnhancedPawnDuty duty = pawn.mindState?.duty as EnhancedPawnDuty;

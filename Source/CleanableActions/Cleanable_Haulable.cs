@@ -5,12 +5,12 @@ using RimWorld;
 
 namespace EnhancedParty
 {
-    public class CleanableHaulable : ICleanableAction
+    public class Cleanable_Haulable : ICleanableAction
     {
         public Thing haulable;
         string id;
     
-        public CleanableHaulable(Thing haulable)
+        public Cleanable_Haulable(Thing haulable)
         {
             this.haulable = haulable;
             this.id = haulable.GetUniqueLoadID() + "_CA";

@@ -107,13 +107,23 @@
     <Compile Include="EnhancedLordDebugSettings.cs" />
     <Compile Include="Patches\Dialog_DebugSettingsMenu_DoListingItems.cs" />
     <Compile Include="CleanableActions\ICleanableAction.cs" />
-    <Compile Include="CleanableActions\CleanableBill.cs" />
+    <Compile Include="CleanableActions\Cleanable_Bill.cs" />
     <Compile Include="Extensions\EnhancedLordJobExt.cs" />
     <Compile Include="Jobs\DutyJob_MoveThingToCell.cs" />
-    <Compile Include="CleanableActions\CleanableHaulable.cs" />
+    <Compile Include="CleanableActions\Cleanable_Haulable.cs" />
     <Compile Include="JobDrivers\JobDriver_HaulToCell_Cleanup.cs" />
-    <Compile Include="CleanableActions\CleanableReturnBuilding.cs" />
-    <Compile Include="Jobs\DutyJob_BringBuildingToSpot.cs" />
+    <Compile Include="CleanableActions\Cleanable_ReturnBuilding.cs" />
+    <Compile Include="Jobs\DutyJob_MoveBuildingToFocus.cs" />
+    <Compile Include="CleanableActions\Cleanable_Blueprint.cs" />
+    <Compile Include="ThinkNodes\DutyConditional_BuildingAtDesiredLocation.cs" />
+    <Compile Include="ThinkNodes\ThinkNode_Conditional_Else.cs" />
+    <Compile Include="LordJobs\PartyJob_MovieNight.cs" />
+    <Compile Include="GeneralDefs.cs" />
+    <Compile Include="LordToils\MovieNight_PrepareToil.cs" />
+    <Compile Include="LordToils\MovieNight_PartyToil.cs" />
+    <Compile Include="LordToils\MovieNightPartyToilData.cs" />
+    <Compile Include="TransitionActions\TransitionAction_SendMemo.cs" />
+    <Compile Include="Patches\Lord_AddPawn.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Patches\" />
@@ -128,6 +138,7 @@
     <Folder Include="JoyGivers\" />
     <Folder Include="CleanableActions\" />
     <Folder Include="JobDrivers\" />
+    <Folder Include="TransitionActions\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

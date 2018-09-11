@@ -25,11 +25,11 @@ namespace EnhancedParty
         {
             StateGraph graph = new StateGraph();
 
-            RoleDutyLordToil roleToil = new RoleDutyLordToil(this, cancelExistingJobsOnTransition: true) {
-                roleDutyMap = new Dictionary<string, Func<PawnDuty>>(){ 
+            RoleDutyLordToil roleToil = new RoleDutyLordToil(this, cancelExistingJobsOnEntry: true) {
+                roleDutyMap = new Dictionary<string, Func<Pawn, PawnDuty>>(){ 
                     { 
                         PartyGoers, 
-                        () => new EnhancedPawnDuty(EnhancedDutyDefOf.EP_PartyWithAllowedJoyKinds
+                        (Pawn pawn) => new EnhancedPawnDuty(EnhancedDutyDefOf.EP_PartyWithAllowedJoyKinds
                                                         , focus: LordJob.PartySpot){
                             allowedJoyKinds = new List<JoyKindDef>(){ 
                                 DefDatabase<JoyKindDef>.GetNamed("Gaming_Dexterity"),
@@ -50,6 +50,7 @@ namespace EnhancedParty
                 , seekReplacements: true, seekReplenishment: true);
             LordJob.GetRole(PartyGoers).Configure(enabled: true, priority: 1, reassignableFrom: true
                 , seekReplacements: false, seekReplenishment: true);
+            EnhancedLordJob.nextCheckUseRefresh = true;
         }
 
         public override LordToil SelectSubToil()

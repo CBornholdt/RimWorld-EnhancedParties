@@ -37,32 +37,30 @@ namespace RimWorld
             Thing chosenLocation = null;
             EnhancedLordJob lordJob = pawn.GetLord().LordJob as EnhancedLordJob;
             Bill recipeBill = null;
-
+            
+            Func<IBillGiver, bool> billGiverValidator = (IBillGiver bg) =>
+                bg.UsableForBillsAfterFueling()
+                && bg is Thing thing
+                && !thing.IsBurning() && !thing.IsForbidden(pawn)
+                && intWorkGiver.ThingIsUsableBillGiver(thing)
+                && pawn.CanReserveAndReach(thing, PathEndMode.InteractionCell, pawn.NormalMaxDanger()
+                                                        , maxPawns: 1, stackCount: -1, layer: null, ignoreOtherReservations: false);
+                                                        
             if(lordJob != null) {
                 var usableBills = lordJob.CurrentCleanableBills()
-                                          .Where(bill => bill.pawnRestriction == pawn
-                                                    && bill.billStack.billGiver.CurrentlyUsableForBills()
-                                                    && bill.billStack.billGiver is Thing thing
-                                                    && pawn.CanReserveAndReach(thing, PathEndMode.InteractionCell, pawn.NormalMaxDanger()
-                                                        , maxPawns: 1, stackCount: -1, layer: null, ignoreOtherReservations: false));
+                                         .Where(bill => bill.pawnRestriction == pawn && billGiverValidator(bill.billStack.billGiver));
                 if(usableBills.Any()) {
                     recipeBill = usableBills.MinBy(bill => (bill.billStack.billGiver as Thing).Position.DistanceToSquared(pawn.Position));
                     chosenLocation = recipeBill.billStack.billGiver as Thing;
                 }
             }
 
-            if(chosenLocation == null) {
-                var potentialLocations = (pawn.Faction == Faction.OfPlayer) //check and try more performant choice if possible
-                    ? pawn.Map.listerBuildings.allBuildingsColonist
-                    : pawn.Map.listerThings.ThingsMatching(ThingRequest.ForGroup(ThingRequestGroup.BuildingArtificial))
-                              .Cast<Building>()
-                              .Where(building => building.Faction == pawn.Faction);
-
-                potentialLocations = potentialLocations.Where(building => recipe.AllRecipeUsers.Contains(building.def)
-                                                                && ((building as IBillGiver)?.CurrentlyUsableForBills() ?? false)
-                                                                && pawn.CanReserveAndReach(building, PathEndMode.InteractionCell
-                                                                    , pawn.NormalMaxDanger(), maxPawns: 1, stackCount: -1
-                                                                    , layer: null, ignoreOtherReservations: false));
+            if(chosenLocation == null) {    
+                var potentialLocations = recipe.AllRecipeUsers.Where(thingDef => thingDef.IsBuildingArtificial)
+                                               .SelectMany(thingDef => pawn.Map.listerThings.ThingsOfDef(thingDef))
+                                               .Where(thing => thing.Faction == pawn.Faction
+                                                                && thing is IBillGiver bg
+                                                                && billGiverValidator(bg));
 
                 if(!potentialLocations.Any()) {
                     Log.Message($"No potential locations for pawn {pawn.Name}");
@@ -75,7 +73,7 @@ namespace RimWorld
                 recipeBill.pawnRestriction = pawn;
                 (chosenLocation as IBillGiver).BillStack.AddBill(recipeBill);
                 if(duty.registerForCleanup)
-                    lordJob.cleanupActions.Add(new CleanableBill(recipeBill));
+                    lordJob.cleanupActions.Add(new Cleanable_Bill(recipeBill));
             }
 
             IBillGiver billGiver = chosenLocation as IBillGiver;
@@ -92,7 +90,7 @@ namespace RimWorld
         static public void ReplaceBillCreatorWith(EnhancedLordJob job, Pawn replacement, Pawn replaced)
         {
             foreach(var action in job.cleanupActions)
-                if(action is CleanableBill cleanableBill
+                if(action is Cleanable_Bill cleanableBill
                     && cleanableBill.bill is Bill_ProductionWithUft uftBill
                     && uftBill.BoundWorker == replaced)
                     uftBill.BoundUft.Creator = replacement;
@@ -102,7 +100,7 @@ namespace RimWorld
         {
             for(int i = job.cleanupActions.Count - 1 ; i >= 0 ; i--) {
                 var action = job.cleanupActions[i];
-                if(action is CleanableBill cleanableBill
+                if(action is Cleanable_Bill cleanableBill
                     && cleanableBill.bill is Bill_ProductionWithUft uftBill
                     && uftBill.BoundWorker == creator) {
                     if(action.CleanupStillNeeded())

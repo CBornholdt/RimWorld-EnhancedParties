@@ -13,6 +13,7 @@ namespace EnhancedParty
     abstract public class EnhancedLordJob : LordJob_VoluntarilyJoinable
     {
         static public bool nextCheckUseRefresh = false;
+        static public bool updateDueToToilChange = false;
     
         protected List<LordPawnRole> roles = new List<LordPawnRole>();
         protected List<LordPawnRoleData> roleData;
@@ -96,6 +97,7 @@ namespace EnhancedParty
         {
             var graph = CreateGraphAndRoles();
             ConfigureRoleData();
+            Init();
             return graph;
         }
 
@@ -287,6 +289,7 @@ namespace EnhancedParty
                 else {
                     Log.Message("refreshing");
                     toil.RefreshAllDuties();
+                    nextCheckUseRefresh = false;
                 }
             }
 
@@ -312,8 +315,10 @@ namespace EnhancedParty
 
                 Log.Message(builder.ToString());
             }
+        }
 
-            nextCheckUseRefresh = false;
+        public virtual void Init()
+        {
         }
 
         public override void Cleanup()

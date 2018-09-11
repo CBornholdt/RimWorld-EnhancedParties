@@ -25,6 +25,8 @@ namespace EnhancedParty
                 , nameof(Lord_GotoToil.InitNewlyEnclosingToils));
             MethodInfo cleanupFormerlyEnclosingToils = AccessTools.Method(typeof(Lord_GotoToil)
                 , nameof(Lord_GotoToil.CleanupFormerlyEnclosingToils));
+            MethodInfo updateAllDuties = AccessTools.Method(typeof(LordToil), nameof(LordToil.UpdateAllDuties));
+            MethodInfo updateAllDutiesWrapper = AccessTools.Method(typeof(Lord_GotoToil), nameof(Lord_GotoToil.UpdateAllDutiesWrapper));
 
             yield return new CodeInstruction(OpCodes.Ldarg_1);  //Place newLordToil on stack
             yield return new CodeInstruction(OpCodes.Call, selectAppropriateToil);  //find correct toil
@@ -79,6 +81,13 @@ namespace EnhancedParty
 
             foreach(var formerlyEnclosedToil in oldEnclosingToils.Except(newEnclosingToils))
                 formerlyEnclosedToil.Cleanup();
+        }
+
+        static public void UpdateAllDutiesWrapper(LordToil curToil)
+        {
+            EnhancedLordJob.updateDueToToilChange = true;
+            curToil.UpdateAllDuties();
+            EnhancedLordJob.updateDueToToilChange = false;
         }
     }
 }

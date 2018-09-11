@@ -99,7 +99,6 @@ namespace EnhancedParty
 
         public override void Init()
         {
-            EnhancedLordJob.nextCheckUseRefresh = true;
         }
     }
 }

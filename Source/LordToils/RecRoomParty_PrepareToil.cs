@@ -44,24 +44,27 @@ namespace EnhancedParty
             return value;
         }
 
+        EnhancedPawnDuty MakeSnackMakerDuty(Pawn pawn) =>
+            new EnhancedPawnDuty(EnhancedDutyDefOf.EP_MakeAndMoveThingsToFocus, LordJob.PartySpot) {
+                dutyRecipe = RecipeDefOf.CookMealSimple,
+                dutyThingDef = ThingDefOf.MealSimple,
+                thingCount = GetDesiredSnackCount(),
+                taskName = SnackOpName
+            };
+
         public override StateGraph CreateInternalGraph()
         {
             StateGraph graph = new StateGraph();
 
             RoleDutyLordToil roleToil = new RoleDutyLordToil(this, true) {   
-                roleDutyMap = new Dictionary<string, Func<PawnDuty>>(){ 
+                roleDutyMap = new Dictionary<string, Func<Pawn, PawnDuty>>(){ 
                     {   
                         SnackMakers, 
-                        () => new EnhancedPawnDuty(EnhancedDutyDefOf.EP_MakeThingsToFocus, LordJob.PartySpot){   
-                            dutyRecipe = RecipeDefOf.CookMealSimple,
-                            dutyThingDef = ThingDefOf.MealSimple,
-                            thingCount = GetDesiredSnackCount(),
-                            taskName = SnackOpName 
-                        } 
+                        (Pawn pawn) => MakeSnackMakerDuty(pawn)
                     }, 
                     {   
                         PartyGoers, 
-                        () => new EnhancedPawnDuty(EnhancedDutyDefOf.EP_GotoAndCleanFocusRoom, LordJob.PartySpot) 
+                        (Pawn pawn) => new EnhancedPawnDuty(EnhancedDutyDefOf.EP_GotoAndCleanFocusRoom, LordJob.PartySpot) 
                     } 
                 }
             };
@@ -79,6 +82,7 @@ namespace EnhancedParty
                 , seekReplacements: true, seekReplenishment: true);
             LordJob.GetRole(PartyGoers).Configure(enabled: true, priority: 1, reassignableFrom: true
                 , seekReplacements: false, seekReplenishment: true);
+            EnhancedLordJob.nextCheckUseRefresh = true;
         }
 
         public override void Notify_PawnDutyOpComplete(string dutyOp, Pawn pawn)

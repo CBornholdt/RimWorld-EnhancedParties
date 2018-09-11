@@ -37,7 +37,7 @@ namespace EnhancedParty
             var startingPawns = partyDef.forceAddOrganizer
                                         ? new List<Pawn>(1) { organizer }
                                         : null;
-                                        
+
             var lordJob = partyDef.CreateLordJob(organizer, startingSpot);
             Lord lord = LordMaker.MakeNewLord(faction, lordJob, map, startingPawns);
             Log.Message($"Lord owned pawns {lord.ownedPawns.Count}  organizer: {organizer.Name}");

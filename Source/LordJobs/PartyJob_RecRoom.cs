@@ -12,31 +12,20 @@ namespace EnhancedParty
 {
     public class PartyJob_RecRoom : EnhancedLordJob_Party
     {
-        protected RecRoomParty_PrepareToil prepareToil;
-        protected RecRoomParty_PartyToil partyToil;
+        protected RecRoomParty_PrepareToil prepareToil = new RecRoomParty_PrepareToil();
+        protected RecRoomParty_PartyToil partyToil = new RecRoomParty_PartyToil();
 
         public PartyJob_RecRoom(EnhancedPartyDef def, Pawn organizer, IntVec3 spot) : base(def, organizer, spot) 
         {
-            prepareToil = new RecRoomParty_PrepareToil();
-            partyToil = new RecRoomParty_PartyToil();
         }
         
         public PartyJob_RecRoom()
         {
-            prepareToil = new RecRoomParty_PrepareToil();
-            partyToil = new RecRoomParty_PartyToil();
         }
-
-        public override bool AllowStartNewGatherings => base.AllowStartNewGatherings;
 
         protected override EnhancedLordToil_Party PartyToil => partyToil;
 
         protected override EnhancedLordToil_PrepareParty PrepareToil => prepareToil;
-
-        public override bool IsAttendingParty(Pawn pawn)
-        {
-            return base.IsAttendingParty(pawn);
-        }
 
         public override bool AllowRolelessPawnsToReplenish => true;
 
@@ -121,11 +110,6 @@ namespace EnhancedParty
         {
             Map map = this.lord.Map;
             return cell.GetRoom(map) == PartySpot.GetRoom(map);
-        }
-
-        override public void ExposeData()
-        {
-            base.ExposeData();
         }
 
         public override float VoluntaryJoinPriorityFor(Pawn p)
