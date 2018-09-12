@@ -120,8 +120,6 @@ namespace EnhancedParty
                                         .Where(thing => pawn.CanReserveAndReach(thing, PathEndMode.Touch, pawn.NormalMaxDanger()
                                                             , maxPawns: 1, stackCount: -1, layer: null, ignoreOtherReservations: false));
 
-            
-
             if(!availableChairs.Any()) {
                 Log.Message($"Could not find available chair for pawn {pawn.Name}");
                 return null;
@@ -259,7 +257,7 @@ namespace EnhancedParty
             }
         }
 
-        public override void Cleanup()
+        public override void AssignActiveCleanup()
         {
             List<Pawn> pawnsAssignedCleanup = new List<Pawn>();
             for(int i = cleanupActions.Count - 1; i >= 0; i--) {
@@ -271,9 +269,9 @@ namespace EnhancedParty
                     cleanup.AssignCleanupToPawn(pawn);
                     pawnsAssignedCleanup.Add(pawn);
                     cleanupActions.RemoveAt(i);
+                    this.lord.ownedPawns.Remove(pawn);
                 }
             }
-            base.Cleanup();
         }
     }
 }

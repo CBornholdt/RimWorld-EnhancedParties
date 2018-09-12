@@ -165,6 +165,7 @@ namespace EnhancedParty
             partySucceeded.AddTrigger(new Trigger_Memo(PartyCompleteMemo));
             partySucceeded.AddTrigger(new Trigger_TickCondition(
                                 () => partyToil.CurrentPartyStatus() == PartyStatus.Finished));
+            partySucceeded.AddPreAction(new TransitionAction_Custom(() => AssignActiveCleanup()));                                
 
             if(partyTimeout != null && Def.failOnPartyTimeout)
                 partyFailed.AddTrigger(this.partyTimeout);
@@ -225,5 +226,7 @@ namespace EnhancedParty
                                                 : "EP.Prepare.Report".Translate();
 
         public virtual void LogDebuggingInfo() { }
+
+        public virtual void AssignActiveCleanup() { }
     }
 }

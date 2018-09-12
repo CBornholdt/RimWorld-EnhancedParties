@@ -17,7 +17,7 @@ namespace EnhancedParty
             this.id = bill.GetUniqueLoadID() + "_CA";
         }
 
-        public void AssignCleanupToPawn(Pawn pawn) => PerformCleanup();
+        public void AssignCleanupToPawn(Pawn pawn, bool addRemoveDutyWrapper = true) => PerformCleanup();
 
         public bool CleanupStillNeeded()
         {

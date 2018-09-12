@@ -16,7 +16,7 @@ namespace EnhancedParty
             this.id = haulable.GetUniqueLoadID() + "_CA";
         }
 
-        public void AssignCleanupToPawn(Pawn pawn)
+        public void AssignCleanupToPawn(Pawn pawn, bool addRemoveDutyWrapper = true)
         {
             PerformCleanup();
             var job = HaulAIUtility.HaulToStorageJob(pawn, haulable);

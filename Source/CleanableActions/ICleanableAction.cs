@@ -12,6 +12,6 @@ namespace EnhancedParty
     
         void PerformCleanup();
 
-        void AssignCleanupToPawn(Pawn pawn);
+        void AssignCleanupToPawn(Pawn pawn, bool addRemoveDutyWrapper = true);
     }
 }
