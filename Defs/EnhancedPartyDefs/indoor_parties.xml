@@ -15,5 +15,6 @@
 		<enhancedLordJobClass>EnhancedParty.PartyJob_MovieNight</enhancedLordJobClass>
 		<partyPreparationStartLetterTitle>Starting Preparation</partyPreparationStartLetterTitle>
 		<keepPartyInRoom>true</keepPartyInRoom>
+		<preparationTimeout>10000</preparationTimeout>
 	</EnhancedPartyDef>
 </Defs>

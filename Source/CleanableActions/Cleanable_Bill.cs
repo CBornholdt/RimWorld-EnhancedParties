@@ -17,6 +17,8 @@ namespace EnhancedParty
             this.id = bill.GetUniqueLoadID() + "_CA";
         }
 
+        public void AssignCleanupToPawn(Pawn pawn) => PerformCleanup();
+
         public bool CleanupStillNeeded()
         {
             return !this.bill.DeletedOrDereferenced;

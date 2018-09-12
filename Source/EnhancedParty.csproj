@@ -48,10 +48,10 @@
     <Compile Include="Extensions\CellExt.cs" />
     <Compile Include="Patches\HarmonyPatches.cs" />
     <Compile Include="Patches\VoluntarilyJoinableLordsStarter_TryStartParty.cs" />
-    <Compile Include="Jobs\JobGiver_CleanRoom.cs" />
+    <Compile Include="DutyJobs\JobGiver_CleanRoom.cs" />
     <Compile Include="Extensions\PawnExt.cs" />
     <Compile Include="EnhancedPartyJoinPriorities.cs" />
-    <Compile Include="Jobs\DutyJob_WanderInDutyRoom.cs" />
+    <Compile Include="DutyJobs\DutyJob_WanderInDutyRoom.cs" />
     <Compile Include="Extensions\RoomExt.cs" />
     <Compile Include="Roles\LordPawnRole.cs" />
     <Compile Include="Roles\LordPawnRole_Organizer.cs" />
@@ -67,9 +67,9 @@
     <Compile Include="ThinkNodes\DutyConditional_HasEnoughThingsAvailable.cs" />
     <Compile Include="Extensions\ThingExt.cs" />
     <Compile Include="Constants.cs" />
-    <Compile Include="Jobs\DutyJob_WanderNearFocus.cs" />
-    <Compile Include="Jobs\DutyJob_BringThingsToFocus.cs" />
-    <Compile Include="Jobs\DutyJob_PerformDutyRecipe.cs" />
+    <Compile Include="DutyJobs\DutyJob_WanderNearFocus.cs" />
+    <Compile Include="DutyJobs\DutyJob_BringThingsToFocus.cs" />
+    <Compile Include="DutyJobs\DutyJob_PerformDutyRecipe.cs" />
     <Compile Include="ThinkNodes\ThinkNode_DutyOpFailed.cs" />
     <Compile Include="Utilities\ReflectTools.cs" />
     <Compile Include="PreparationStatus.cs" />
@@ -87,9 +87,9 @@
     <Compile Include="LordJobs\EnhancedLordJob_Party.cs" />
     <Compile Include="LordToils\EnhancedLordToil_Party.cs" />
     <Compile Include="LordToils\EnhancedLordToil_PrepareParty.cs" />
-    <Compile Include="Jobs\DutyJob_GetJoyInDutyArea.cs" />
+    <Compile Include="DutyJobs\DutyJob_GetJoyInDutyArea.cs" />
     <Compile Include="Utilities\EnhancedDutyUtility.cs" />
-    <Compile Include="Jobs\DutyJob_EatInDutyArea.cs" />
+    <Compile Include="DutyJobs\DutyJob_EatInDutyArea.cs" />
     <Compile Include="Extensions\JoyGiverExt.cs" />
     <Compile Include="ThinkNodes\DutyConditional_InDutyArea.cs" />
     <Compile Include="Roles\LordPawnRoleData.cs" />
@@ -109,11 +109,11 @@
     <Compile Include="CleanableActions\ICleanableAction.cs" />
     <Compile Include="CleanableActions\Cleanable_Bill.cs" />
     <Compile Include="Extensions\EnhancedLordJobExt.cs" />
-    <Compile Include="Jobs\DutyJob_MoveThingToCell.cs" />
+    <Compile Include="DutyJobs\DutyJob_MoveThingToCell.cs" />
     <Compile Include="CleanableActions\Cleanable_Haulable.cs" />
     <Compile Include="JobDrivers\JobDriver_HaulToCell_Cleanup.cs" />
     <Compile Include="CleanableActions\Cleanable_ReturnBuilding.cs" />
-    <Compile Include="Jobs\DutyJob_MoveBuildingToFocus.cs" />
+    <Compile Include="DutyJobs\DutyJob_MoveBuildingToFocus.cs" />
     <Compile Include="CleanableActions\Cleanable_Blueprint.cs" />
     <Compile Include="ThinkNodes\DutyConditional_BuildingAtDesiredLocation.cs" />
     <Compile Include="ThinkNodes\ThinkNode_Conditional_Else.cs" />
@@ -124,11 +124,19 @@
     <Compile Include="LordToils\MovieNightPartyToilData.cs" />
     <Compile Include="TransitionActions\TransitionAction_SendMemo.cs" />
     <Compile Include="Patches\Lord_AddPawn.cs" />
+    <Compile Include="DutyOpMessageTypes.cs" />
+    <Compile Include="JobDrivers\JobDriver_DutyMessage.cs" />
+    <Compile Include="Jobs\JobWithAdjustment.cs" />
+    <Compile Include="Jobs\JobWithDutyMessage.cs" />
+    <Compile Include="Jobs\JobDriverAdjuster.cs" />
+    <Compile Include="Patches\JobDriver_SetupToils.cs" />
+    <Compile Include="Jobs\JobAdjuster_RemoveDutyWhenFinished.cs" />
+    <Compile Include="ThinkNodes\ThinkNode_EnhancedDuty.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Patches\" />
     <Folder Include="Extensions\" />
-    <Folder Include="Jobs\" />
+    <Folder Include="DutyJobs\" />
     <Folder Include="Roles\" />
     <Folder Include="ThinkNodes\" />
     <Folder Include="Triggers\" />
@@ -139,6 +147,7 @@
     <Folder Include="CleanableActions\" />
     <Folder Include="JobDrivers\" />
     <Folder Include="TransitionActions\" />
+    <Folder Include="Jobs\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -10,6 +10,8 @@ namespace EnhancedParty
 
         bool ReferencesBroken();
     
-        void PerformCleanup(); 	
+        void PerformCleanup();
+
+        void AssignCleanupToPawn(Pawn pawn);
     }
 }

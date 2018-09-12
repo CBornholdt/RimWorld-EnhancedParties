@@ -16,6 +16,8 @@ namespace EnhancedParty
             this.id = blueprint.GetUniqueLoadID() + "_blueprint_CA";
         }
 
+        public void AssignCleanupToPawn(Pawn pawn) => PerformCleanup();
+
         public bool CleanupStillNeeded() => !blueprint.DestroyedOrNull();
 
         public void ExposeData()

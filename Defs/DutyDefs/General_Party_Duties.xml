@@ -49,6 +49,12 @@
           <subNodes>
             <li Class="ThinkNode_DutyOpComplete">
             </li>
+            <li Class="DutyJob_WanderNearFocus">
+              <ticksBetweenWandersRange>
+                <min>50</min>
+                <max>250</max>
+              </ticksBetweenWandersRange>
+            </li>
           </subNodes> 
           <else_subNodes>
             <li Class="DutyJob_MoveBuildingToFocus">
@@ -59,8 +65,6 @@
         </li>
         <li Class="ThinkNode_Logger">
           <subNodes>
-            <li Class="ThinkNode_DutyOpFailed">
-            </li>
             <li Class="DutyJob_WanderNearFocus">
               <ticksBetweenWandersRange>
                 <min>50</min>

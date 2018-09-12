@@ -64,6 +64,10 @@ namespace EnhancedParty
                                                                                     , television.Rotation, television.Map)
                                                             .Select(cell => new Cell_Pawn_Chair_Tuple(cell, null, null)));
             viewingDirection = television.Rotation.Opposite;
+
+            object p = null;
+
+            int n = (int)(p ?? 0);
         }
 
         public IntVec3 GetAssignedSeating(Pawn pawn)
@@ -123,14 +127,15 @@ namespace EnhancedParty
                 return null;
             }
             
-            var t = availableChairs.MinBy(thing => thing.Position.DistanceToSquared(cell));
-            
-            Log.Message($"Trying for { pawn.Name.ToStringShort }   Thing Position { t?.Position.ToString() ?? "NONE"}");
+            var t = availableChairs.MinBy(thing => thing.PositionHeld.DistanceToSquared(cell));
             return t;
         }
 
         public bool IsSeatingAvailable() =>
             seatingAssignments.Any(cellPawnTuple => cellPawnTuple.pawn == null);
+
+        public bool AreAllSeatsInPosition() =>
+            !seatingAssignments.Any(tuple => tuple.pawn != null && tuple.chair != null && (tuple.chair.Position != tuple.cell));
 
         protected override EnhancedLordToil_Party PartyToil => partyToil;
 
@@ -224,6 +229,7 @@ namespace EnhancedParty
         
             var result = base.ShouldBeCalledOff()
                 || television.DestroyedOrNull()
+                || !television.Spawned
                 || television.IsBurning()
                 || !(television.TryGetComp<CompPowerTrader>()?.PowerOn ?? true)
                 || television.Position != this.currentPartySpot;
@@ -251,6 +257,23 @@ namespace EnhancedParty
             foreach(var pawnCellChair in seatingAssignments) {
                 Log.Message($"Pawn { pawnCellChair.pawn?.Name.ToStringShort ?? "None" }   Seat { pawnCellChair.cell }   Chair { pawnCellChair.chair?.PositionHeld.ToString() ?? "NONE"}");
             }
+        }
+
+        public override void Cleanup()
+        {
+            List<Pawn> pawnsAssignedCleanup = new List<Pawn>();
+            for(int i = cleanupActions.Count - 1; i >= 0; i--) {
+                var action = cleanupActions[i];
+                Pawn pawn = null;
+                if(action is Cleanable_ReturnBuilding cleanup && cleanup.thing != null
+                    && (pawn = seatingAssignments.FirstOrDefault(pct => pct.chair == cleanup.thing)?.pawn) != null
+                    && !pawnsAssignedCleanup.Contains(pawn)) {
+                    cleanup.AssignCleanupToPawn(pawn);
+                    pawnsAssignedCleanup.Add(pawn);
+                    cleanupActions.RemoveAt(i);
+                }
+            }
+            base.Cleanup();
         }
     }
 }

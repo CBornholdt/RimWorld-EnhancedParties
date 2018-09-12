@@ -13,6 +13,8 @@ namespace EnhancedParty
     public class MovieNight_PrepareToil : EnhancedLordToil_PrepareParty
     {
         LordToil subToil;
+
+        public static readonly string MoveChairs = "MoveChairs";
     
         public MovieNight_PrepareToil(EnhancedPartyDef partyDef)
         {
@@ -53,7 +55,8 @@ namespace EnhancedParty
         public EnhancedPawnDuty MakeChairMoverDuty(Pawn pawn, Thing chair, IntVec3 destination) =>
             new EnhancedPawnDuty(EnhancedDutyDefOf.EP_MoveBuildingToFocus, chair) {
                 focusSecond = destination,
-                direction = LordJob.viewingDirection
+                direction = LordJob.viewingDirection,
+                taskName = MoveChairs
             };
         
 
@@ -66,5 +69,19 @@ namespace EnhancedParty
         }
 
         public override LordToil SelectSubToil() => subToil;
+
+        public override void Notify_PawnDutyOpComplete(string dutyOp, Pawn pawn)
+        {
+            Log.Message($"DutyOp {dutyOp} complete for pawn {pawn.LabelShort}");
+            if(LordJob.AreAllSeatsInPosition()) {
+                Log.Message("All chairs ready");
+                lord.ReceiveMemo(EnhancedLordJob_Party.PreparationCompleteMemo);
+            }
+        }
+
+        public override void Notify_PawnDutyOpFailed(string dutyOp, Pawn pawn)
+        {
+            Log.Message($"DutyOp {dutyOp} failed for pawn {pawn.LabelShort}");
+        }
     }
 }

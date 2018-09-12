@@ -16,9 +16,9 @@ namespace EnhancedParty
 
             EnhancedLordToil toil = job.CurrentEnhancedToil;
             if(toil != null)
-                toil.RegisterDutyOpComplete(dutyOp, pawn);
+                toil.Notify_PawnDutyOpComplete(dutyOp, pawn);
             else
-                job.RegisterDutyOpComplete(dutyOp, pawn);               
+                job.Notify_PawnDutyOpComplete(dutyOp, pawn);               
         }
         
         static public void Notify_DutyOpFailed(string dutyOp, Pawn pawn)
@@ -31,9 +31,9 @@ namespace EnhancedParty
 
             EnhancedLordToil toil = job.CurrentEnhancedToil;
             if(toil != null)
-                toil.RegisterDutyOpFailed(dutyOp, pawn);
+                toil.Notify_PawnDutyOpFailed(dutyOp, pawn);
             else
-                job.RegisterDutyOpFailed(dutyOp, pawn);               
+                job.Notify_PawnDutyOpFailed(dutyOp, pawn);               
         }
     }
 }

@@ -16,6 +16,16 @@ namespace EnhancedParty
             this.id = haulable.GetUniqueLoadID() + "_CA";
         }
 
+        public void AssignCleanupToPawn(Pawn pawn)
+        {
+            PerformCleanup();
+            var job = HaulAIUtility.HaulToStorageJob(pawn, haulable);
+            if(job != null)
+                pawn.jobs.StartJob(job, lastJobEndCondition: JobCondition.InterruptForced, jobGiver: null
+                                    , resumeCurJobAfterwards: false, cancelBusyStances: true, thinkTree: null
+                                    , tag: JobTag.UnspecifiedLordDuty, fromQueue: false);     
+        }
+
         public bool CleanupStillNeeded()
         {
             return haulable != null && !StoreUtility.IsInValidStorage(haulable);

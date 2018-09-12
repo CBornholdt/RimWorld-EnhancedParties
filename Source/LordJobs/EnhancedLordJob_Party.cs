@@ -122,11 +122,12 @@ namespace EnhancedParty
 
             LordToil_End endToil = new LordToil_End();
             stateGraph.AddToil(endToil);
-            
-            Log.Message($"PreparationScore: {partyToil.PreparationScore}");
 
-            this.preparationTimeout = new Trigger_TicksPassed(Def.preparationTimeout);
-            this.partyTimeout = new Trigger_TicksPassed(Def.partyTimeout);
+            
+            if(Def.preparationTimeout > 0)
+                this.preparationTimeout = new Trigger_TicksPassed(Def.preparationTimeout);
+            if(Def.partyTimeout > 0)
+                this.partyTimeout = new Trigger_TicksPassed(Def.partyTimeout);
 
             preparationSucceeded = new Transition(prepareToil, partyToil);
             preparationSucceeded.AddTrigger(new Trigger_Memo(PreparationCompleteMemo));
@@ -144,7 +145,7 @@ namespace EnhancedParty
             preparationFailed.AddPreAction(new TransitionAction_Message("EP.PreparationFailed.TransitionMessage".Translate()
                                                 , MessageTypeDefOf.NegativeEvent, new TargetInfo(PartySpot, Map)));  //TODO make PartySpot lazily updatable
 
-            if(Def.failOnPreparationTimeout)
+            if(preparationTimeout != null && Def.failOnPreparationTimeout)
                 preparationFailed.AddTrigger(preparationTimeout);
             else
                 preparationSucceeded.AddTrigger(preparationTimeout);
@@ -165,7 +166,7 @@ namespace EnhancedParty
             partySucceeded.AddTrigger(new Trigger_TickCondition(
                                 () => partyToil.CurrentPartyStatus() == PartyStatus.Finished));
 
-            if(Def.failOnPartyTimeout)
+            if(partyTimeout != null && Def.failOnPartyTimeout)
                 partyFailed.AddTrigger(this.partyTimeout);
             else
                 partySucceeded.AddTrigger(this.partyTimeout);

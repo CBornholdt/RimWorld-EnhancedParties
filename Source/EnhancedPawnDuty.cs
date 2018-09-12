@@ -20,9 +20,12 @@ namespace EnhancedParty
         public string taskName;
         public List<JoyKindDef> allowedJoyKinds;
         public Rot4 direction;
+
+    //	public ThinkNode localThinkTreeCopy;
     
         public EnhancedPawnDuty(DutyDef duty, LocalTargetInfo focus, float radius = -1) : base(duty, focus, radius)
         {
+            //localThinkTreeCopy = duty.thinkNode.DeepCopy(true);
         }
 
         public new void ExposeData()
@@ -39,6 +42,7 @@ namespace EnhancedParty
             Scribe_Values.Look<bool>(ref this.registerForCleanup, "RegisterForCleanup", true);
             Scribe_Collections.Look<JoyKindDef>(ref this.allowedJoyKinds, "AllowedJoyKinds", lookMode: LookMode.Def);
             Scribe_Values.Look<Rot4>(ref this.direction, "Direction", Rot4.Invalid);
+        //	Scribe_Deep.Look<ThinkNode>(ref this.localThinkTreeCopy, "LocalThinkTreeCopy");
         }	
     }
 }

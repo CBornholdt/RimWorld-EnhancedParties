@@ -9,4 +9,10 @@ namespace EnhancedParty
     {
         static public JoyKindDef Television;
     }
+
+    [DefOf]
+    static public class MoreJobDefs
+    {
+        static public JobDef DutyMessage;
+    }
 }
