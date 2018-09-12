@@ -14,9 +14,9 @@ namespace EnhancedParty
     {
         LordToil subToil;
     
-        public MovieNight_PrepareToil()
+        public MovieNight_PrepareToil(EnhancedPartyDef partyDef)
         {
-            this.data = new PreparePartyToilData();
+            this.data = new PreparePartyToilData() { def = partyDef };
         }
         
         public new PartyJob_MovieNight LordJob => this.lord?.LordJob as PartyJob_MovieNight;
@@ -58,7 +58,12 @@ namespace EnhancedParty
         
 
         public EnhancedPawnDuty MakeViewersDuty(Pawn pawn, IntVec3 cell) =>
-            new EnhancedPawnDuty(EnhancedDutyDefOf.EP_GotoAndCleanFocusRoom, cell);          
+            new EnhancedPawnDuty(EnhancedDutyDefOf.EP_GotoAndCleanFocusRoom, cell);
+
+        public override void Notify_PawnJoinedLord(Pawn pawn)
+        {
+            AssignRoleAndDuty(pawn);
+        }
 
         public override LordToil SelectSubToil() => subToil;
     }

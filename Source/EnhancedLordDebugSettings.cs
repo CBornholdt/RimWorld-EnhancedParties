@@ -5,7 +5,7 @@ namespace EnhancedParty
     {
         static public bool logRoleChanges = false;
         static public bool logJoinPriorities = false;
-        static public bool disableThinkNodeLogging = false;
+        static public bool disableThinkNodeLogging = true;
         static public bool verboseThinkNodeLogging = false;
     }
 }

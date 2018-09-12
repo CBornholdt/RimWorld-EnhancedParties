@@ -9,7 +9,7 @@ namespace RimWorld
     {
         public DutyJob_WanderNearFocus()
         {
-            this.wanderRadius = 10f; //From JobGiver_WanderCurrentRoom
+            this.wanderRadius = 5f; //From JobGiver_WanderCurrentRoom
             this.locomotionUrgency = LocomotionUrgency.Amble;
         }
     
@@ -20,14 +20,17 @@ namespace RimWorld
                 return null;
 
             this.wanderDestValidator = (Pawn p, IntVec3 c, IntVec3 root) => p.IsCellInDutyArea(c);
-
-         //   Log.Message($"Wandering for {pawn.Name} about { GetWanderRoot(pawn) }");
-            return base.TryGiveJob(pawn);
+            var job = base.TryGiveJob(pawn);
+            if(!EnhancedLordDebugSettings.disableThinkNodeLogging && EnhancedLordDebugSettings.verboseThinkNodeLogging) {
+                IntVec3 dest = GetExactWanderDest(pawn);
+                Log.Message($"Wandering for {pawn.Name} with nextMoveWait { pawn.mindState.nextMoveOrderIsWait } and destination { job.targetA.Cell }");
+            }
+            return job;
         }
 
         protected override IntVec3 GetWanderRoot(Pawn pawn)
         {
-            return pawn.mindState.duty.focus.Cell;
+            return WanderUtility.BestCloseWanderRoot(pawn.mindState.duty.focus.Cell, pawn);
         }
     }
 }

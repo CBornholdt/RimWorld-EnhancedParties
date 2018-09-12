@@ -5,7 +5,7 @@ using EnhancedParty;
 
 namespace RimWorld
 {
-    public class DutyConditional_InDutyArea : ThinkNode_Conditional
+    public class DutyConditional_InDutyArea : ThinkNode_Conditional_Else
     {
         protected override bool Satisfied(Pawn pawn) => pawn.IsInDutyArea();
     }

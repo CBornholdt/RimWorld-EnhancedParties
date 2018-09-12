@@ -16,9 +16,9 @@ namespace EnhancedParty
         static public readonly string SnackMakers = "SnackMakers";
         static public readonly string PartyGoers = "PartyGoers";
     
-        public RecRoomParty_PartyToil()
+        public RecRoomParty_PartyToil(EnhancedPartyDef partyDef)
         {
-            this.data = new PartyToilData(); 
+            this.data = new PartyToilData(){ def = partyDef }; 
         }
 
         public override StateGraph CreateInternalGraph()

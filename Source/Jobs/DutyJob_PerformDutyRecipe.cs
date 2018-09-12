@@ -11,12 +11,12 @@ namespace RimWorld
 {
     public class DutyJob_PerformDutyRecipe : ThinkNode_JobGiver
     {
-        private WorkGiver_DoBill intWorkGiver;
-    
         public DutyJob_PerformDutyRecipe()
         {
-            intWorkGiver = new WorkGiver_DoBill();
         }
+
+        public WorkGiver_DoBill IntWorkGiver =>
+            DutyJob_PerformDutyRecipe_Helper.intWorkGiver;
 
         protected override Job TryGiveJob(Pawn pawn)
         {
@@ -42,7 +42,7 @@ namespace RimWorld
                 bg.UsableForBillsAfterFueling()
                 && bg is Thing thing
                 && !thing.IsBurning() && !thing.IsForbidden(pawn)
-                && intWorkGiver.ThingIsUsableBillGiver(thing)
+                && IntWorkGiver.ThingIsUsableBillGiver(thing)
                 && pawn.CanReserveAndReach(thing, PathEndMode.InteractionCell, pawn.NormalMaxDanger()
                                                         , maxPawns: 1, stackCount: -1, layer: null, ignoreOtherReservations: false);
                                                         
@@ -80,9 +80,7 @@ namespace RimWorld
             if(billGiver.BillStack.IndexOf(recipeBill) != 0)    	
                 billGiver.BillStack.Reorder(recipeBill, billGiver.BillStack.IndexOf(recipeBill) * -1);  //Should make this the top bill
                 
-            var job = intWorkGiver.JobOnThing(pawn, chosenLocation, forced: false);
-
-            Log.Message($"Job is null { job == null }");
+            var job = IntWorkGiver.JobOnThing(pawn, chosenLocation, forced: false);
 
             return job;
         }
@@ -110,5 +108,13 @@ namespace RimWorld
                 }
             }
         }
+    }
+
+    [StaticConstructorOnStartup]
+    static public class DutyJob_PerformDutyRecipe_Helper
+    {
+        static public WorkGiver_DoBill intWorkGiver = new WorkGiver_DoBill() {
+            def = DefDatabase<WorkGiverDef>.GetNamed("DoBillsCook")
+        };
     }
 }

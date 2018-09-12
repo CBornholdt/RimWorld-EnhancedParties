@@ -79,11 +79,6 @@
     <thinkNode Class="ThinkNode_Priority">
       <subNodes>
         <!-- Goto party spot -->
-        <li Class="ThinkNode_Logger"/>
-        <li Class="JobGiver_GotoTravelDestination">
-          <exactCell>true</exactCell>
-          <locomotionUrgency>Jog</locomotionUrgency>
-        </li>
         <li Class="DutyConditional_InDutyArea">
           <subNodes>
             <li Class="JobGiver_CleanRoom">
@@ -95,6 +90,15 @@
               </ticksBetweenWandersRange>
             </li>
           </subNodes>
+          <else_subNodes>
+            <li Class="DutyJob_WanderNearFocus">
+              <ticksBetweenWandersRange>
+                <min>50</min>
+                <max>250</max>
+              </ticksBetweenWandersRange>
+              <locomotionUrgency>Jog</locomotionUrgency>
+            </li>
+          </else_subNodes>
         </li>
       </subNodes>
     </thinkNode>

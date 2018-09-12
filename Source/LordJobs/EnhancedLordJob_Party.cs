@@ -103,11 +103,11 @@ namespace EnhancedParty
             yield return () => startingSpot;
         }
 
-        protected abstract void CreatePartyRoles();    
+        protected abstract void CreatePartyRolesAndToils();    
         
         protected override StateGraph CreateGraphAndRoles()
         {
-            CreatePartyRoles();
+            CreatePartyRolesAndToils();
         
             partySpotGenerators = new List<Func<IntVec3>>(PartySpotProgression());
             UpdatePartySpot();
@@ -186,24 +186,19 @@ namespace EnhancedParty
         }
 
         public virtual bool ShouldBeCalledOff()
-        {   var result = Map.dangerWatcher.DangerRating == StoryDanger.High || !this.PartySpot.Roofed(this.Map);
-            if(result)
-                Log.Message($"Calling off party {def.defName}");
-            return result;
+        {
+            return Map.dangerWatcher.DangerRating == StoryDanger.High || !this.PartySpot.Roofed(this.Map);
         }
 
         public override float VoluntaryJoinPriorityFor(Pawn p)
         {
-            if(!IsInvited(p))
+            if(!this.lord.ownedPawns.Contains(p) && (this.IsPartyAboutToEnd || !IsInvited(p)))
                 return 0f;
 
             if(!EnhancedPartyUtility.CanPawnKeepPartyingBasicChecks(p))
                 return 0f;
 
             if(PartySpot.IsForbidden(p))
-                return 0f;
-                
-            if (!this.lord.ownedPawns.Contains(p) && this.IsPartyAboutToEnd)
                 return 0f;
 
             if(p == Organizer)
@@ -215,7 +210,6 @@ namespace EnhancedParty
         public override void Notify_PawnAdded(Pawn p)
         {
             base.Notify_PawnAdded(p);
-    //		Log.Message($"Gained pawn {p.Name}");
         }
 
         public override void Notify_PawnLost(Pawn p, PawnLostCondition condition)
@@ -228,5 +222,7 @@ namespace EnhancedParty
         public override string GetReport() => PartyHasStarted
                                                 ? "EP.Party.Report".Translate()
                                                 : "EP.Prepare.Report".Translate();
+
+        public virtual void LogDebuggingInfo() { }
     }
 }

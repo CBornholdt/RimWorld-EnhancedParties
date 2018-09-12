@@ -12,14 +12,14 @@ namespace EnhancedParty
 {
     public class PartyJob_RecRoom : EnhancedLordJob_Party
     {
-        protected RecRoomParty_PrepareToil prepareToil = new RecRoomParty_PrepareToil();
-        protected RecRoomParty_PartyToil partyToil = new RecRoomParty_PartyToil();
+        protected RecRoomParty_PrepareToil prepareToil;
+        protected RecRoomParty_PartyToil partyToil;
 
         public PartyJob_RecRoom(EnhancedPartyDef def, Pawn organizer, IntVec3 spot) : base(def, organizer, spot) 
         {
         }
         
-        public PartyJob_RecRoom()
+        public PartyJob_RecRoom() : base()
         {
         }
 
@@ -33,7 +33,7 @@ namespace EnhancedParty
 
         public int SnacksAlreadySetup() => prepareToil.GetSetupSnackCount(); 
 
-        protected override void CreatePartyRoles()
+        protected override void CreatePartyRolesAndToils()
         {
             var partyGoers = new LordPawnRole("PartyGoers", this) {
                 pawnValidator = (Pawn p) => true,
@@ -53,6 +53,9 @@ namespace EnhancedParty
             snackMakers.Configure(enabled: true, priority: 2, reassignableFrom: false
                 , seekReplacements: true, seekReplenishment: true);
             roles.Add(snackMakers);
+
+            prepareToil = new RecRoomParty_PrepareToil(Def);
+            partyToil = new RecRoomParty_PartyToil(Def);
         }
 
         override public bool AllowedToOrganize(Pawn pawn) =>

@@ -39,6 +39,32 @@ namespace EnhancedParty
                 }
                 Find.WindowStack.Add(new Dialog_DebugOptionListLister(list));
             }}).GetValue();
+
+            if(map.lordManager.lords.Any(lord => lord.LordJob is EnhancedLordJob_Party)) {
+                Traverse.Create(__instance).Method("DebugAction", new object[2] { "Stop Party ...", (Action)delegate
+                {
+                    List<DebugMenuOption> list = new List<DebugMenuOption>();
+
+                    foreach(var lord in map.lordManager.lords.Where(lord => lord.LordJob is EnhancedLordJob_Party)){
+                        list.Add(new DebugMenuOption(lord.LordJob.GetType().Name + lord.loadID, DebugMenuOptionMode.Action
+                                                        , () => map.lordManager.RemoveLord(lord)));
+                    }
+                    Find.WindowStack.Add(new Dialog_DebugOptionListLister(list));
+                }}).GetValue();
+            }
+            
+            if(map.lordManager.lords.Any(lord => lord.LordJob is EnhancedLordJob_Party)) {
+                Traverse.Create(__instance).Method("DebugAction", new object[2] { "Log Party Info ...", (Action)delegate
+                {
+                    List<DebugMenuOption> list = new List<DebugMenuOption>();
+
+                    foreach(var lord in map.lordManager.lords.Where(lord => lord.LordJob is EnhancedLordJob_Party)){
+                        list.Add(new DebugMenuOption(lord.LordJob.GetType().Name + lord.loadID, DebugMenuOptionMode.Action
+                                                        , () => (lord.LordJob as EnhancedLordJob_Party).LogDebuggingInfo()));
+                    }
+                    Find.WindowStack.Add(new Dialog_DebugOptionListLister(list));
+                }}).GetValue();
+            }
             
             Traverse.Create(__instance).Method("DebugAction", new object[2] { "Cancel non partier jobs", (Action)delegate
             {

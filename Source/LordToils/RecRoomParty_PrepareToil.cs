@@ -17,9 +17,9 @@ namespace EnhancedParty
         static public readonly string PartyGoers = "PartyGoers";
         RoleDutyLordToil subToil;
     
-        public RecRoomParty_PrepareToil()
+        public RecRoomParty_PrepareToil(EnhancedPartyDef partyDef)
         {
-            this.data = new PreparePartyToilData();
+            this.data = new PreparePartyToilData() { def = partyDef };
         }
 
         public override LordToil SelectSubToil()

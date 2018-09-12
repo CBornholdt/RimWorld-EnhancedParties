@@ -18,8 +18,13 @@ namespace EnhancedParty
             return thing.PositionHeld.DistanceToSquared(duty.focus.Cell) <= (duty.radius * duty.radius); 
         }
 
-        static public bool HasPower(this Thing thing) =>
-            thing.TryGetComp<CompPowerTrader>()?.PowerOn ?? thing.TryGetComp<CompPowerPlant>()?.PowerOn ?? false;
-        
+        static public bool HasPower(this Thing thing, bool defaultIfNoPowerComp = true) =>
+            thing.TryGetComp<CompPowerTrader>()?.PowerOn ?? thing.TryGetComp<CompPowerPlant>()?.PowerOn ?? defaultIfNoPowerComp;
+
+        static public bool IsChair(this Thing thing) =>
+            thing.def.building?.isSittable ?? false;
+
+        static public bool IsTelevision(this Thing thing) =>
+            thing.def.building?.joyKind == MoreJoyKindDefs.Television;
     }
 }

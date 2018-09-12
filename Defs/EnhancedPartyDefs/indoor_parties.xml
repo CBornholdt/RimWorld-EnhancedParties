@@ -8,4 +8,12 @@
 		<partyPreparationStartLetterTitle>Starting Preparation</partyPreparationStartLetterTitle>
 		<keepPartyInRoom>true</keepPartyInRoom>
 	</EnhancedPartyDef>
+	<EnhancedPartyDef>
+		<defName>RecRoom_MovieNight</defName>
+		<label>Movie Night in the RecRoom</label>
+		<dutyHook>MediumPriority</dutyHook>
+		<enhancedLordJobClass>EnhancedParty.PartyJob_MovieNight</enhancedLordJobClass>
+		<partyPreparationStartLetterTitle>Starting Preparation</partyPreparationStartLetterTitle>
+		<keepPartyInRoom>true</keepPartyInRoom>
+	</EnhancedPartyDef>
 </Defs>

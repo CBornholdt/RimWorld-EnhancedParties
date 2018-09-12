@@ -67,8 +67,10 @@ namespace EnhancedParty
                 newlyEnclosedToil.Init();
 
             foreach(var transition in newToil.lord.Graph.transitions)
-                if(transition.sources.Intersect(newlyEnclosedToils).Any())
+                if(transition.sources.Intersect(newlyEnclosedToils).Any()) {
+                    //Log.Message($"Reseting transition {transition.triggers.Any(trigger => trigger is Trigger_TicksPassed)}");
                     transition.SourceToilBecameActive(transition, oldToil);
+                }
 
             newToil.UpdateAllDuties();
         }

@@ -12,8 +12,8 @@ namespace EnhancedParty
 {
     public class PartyJob_MovieNight : EnhancedLordJob_Party
     {
-        protected MovieNight_PrepareToil prepareToil = new MovieNight_PrepareToil();
-        protected MovieNight_PartyToil partyToil = new MovieNight_PartyToil();
+        protected MovieNight_PrepareToil prepareToil;
+        protected MovieNight_PartyToil partyToil;
 
         protected Thing television;
 
@@ -47,8 +47,12 @@ namespace EnhancedParty
 
         public PartyJob_MovieNight(EnhancedPartyDef def, Pawn organizer, IntVec3 spot) : base(def, organizer, spot)
         {
-            this.television = spot.GetThingList(Map).FirstOrDefault(thing => thing.def.building?.joyKind == MoreJoyKindDefs.Television);
+            this.television = spot.GetThingList(organizer.Map).FirstOrDefault(ThingExt.IsTelevision);
             InitializeSeatingAssignments();
+        }
+
+        public PartyJob_MovieNight() : base()
+        {
         }
 
         protected void InitializeSeatingAssignments()
@@ -70,10 +74,19 @@ namespace EnhancedParty
 
         public IntVec3 AssignNewSeatIfPossible(Pawn pawn)
         {
-            var tuple = seatingAssignments.FirstOrDefault(cellPawnTuple => cellPawnTuple.pawn == null);
+            Thing chair = null;
+            var tuple = seatingAssignments.FirstOrDefault(cellPawnTuple => cellPawnTuple.pawn == null
+                                                            && (chair = cellPawnTuple.cell.GetThingList(Map).FirstOrDefault(ThingExt.IsChair))
+                                                                != null);
+            if(tuple != null) {
+                tuple.pawn = pawn;
+                tuple.chair = chair;
+                return tuple.cell;
+            }
+            tuple = seatingAssignments.FirstOrDefault(cellPawnTuple => cellPawnTuple.pawn == null);
             if(tuple != null)
                 tuple.pawn = pawn;
-            return tuple?.cell ?? IntVec3.Invalid;
+            return tuple?.cell ?? IntVec3.Invalid;          
         }
 
         public Thing GetAssignedChair(Pawn pawn)
@@ -84,11 +97,11 @@ namespace EnhancedParty
 
         public Thing AssignNewChairIfPossible(Pawn pawn)
         {
-            var tuple = seatingAssignments.FirstOrDefault(cellPawnTuple => cellPawnTuple.pawn == null);
+            var tuple = seatingAssignments.FirstOrDefault(cellPawnTuple => cellPawnTuple.pawn == pawn);
             if(tuple == null || !tuple.cell.IsValid)
                 return null;
             var chairOnSeatAssignment = tuple.cell.GetThingList(Map).FirstOrDefault(thing => thing.def.building?.isSittable ?? false);
-            if(chairOnSeatAssignment?.Rotation == viewingDirection)
+            if(chairOnSeatAssignment != null)
                 return (tuple.chair = chairOnSeatAssignment);
             return (tuple.chair = FindChairToMove(pawn, tuple.cell));
         }
@@ -103,11 +116,17 @@ namespace EnhancedParty
                                         .Where(thing => pawn.CanReserveAndReach(thing, PathEndMode.Touch, pawn.NormalMaxDanger()
                                                             , maxPawns: 1, stackCount: -1, layer: null, ignoreOtherReservations: false));
 
+            
+
             if(!availableChairs.Any()) {
                 Log.Message($"Could not find available chair for pawn {pawn.Name}");
                 return null;
             }
-            return availableChairs.MinBy(thing => thing.Position.DistanceToSquared(cell));
+            
+            var t = availableChairs.MinBy(thing => thing.Position.DistanceToSquared(cell));
+            
+            Log.Message($"Trying for { pawn.Name.ToStringShort }   Thing Position { t?.Position.ToString() ?? "NONE"}");
+            return t;
         }
 
         public bool IsSeatingAvailable() =>
@@ -187,22 +206,29 @@ namespace EnhancedParty
             return priority;
         }
 
-        protected override void CreatePartyRoles()
+        protected override void CreatePartyRolesAndToils()
         {
             var viewers = new LordPawnRole(Viewers, this);   
             roles.Add(viewers);
 
             var chairMovers = new LordPawnRole(ChairMovers, this);
             roles.Add(chairMovers);
+            
+            prepareToil = new MovieNight_PrepareToil(Def);
+            partyToil = new MovieNight_PartyToil(Def);
         }
 
         public override bool ShouldBeCalledOff()
         {
-            return base.ShouldBeCalledOff()
+            //Log.Message($"Television position { television.Position }  CurrentPartySpot { this.currentPartySpot }   Television Poweron { (television.TryGetComp<CompPowerTrader>()?.PowerOn ?? true) }");
+        
+            var result = base.ShouldBeCalledOff()
                 || television.DestroyedOrNull()
                 || television.IsBurning()
-                || (television.TryGetComp<CompPowerTrader>()?.PowerOn ?? true)
+                || !(television.TryGetComp<CompPowerTrader>()?.PowerOn ?? true)
                 || television.Position != this.currentPartySpot;
+
+            return result;
         }
 
         public bool EnoughChairsAvailable() =>
@@ -213,6 +239,18 @@ namespace EnhancedParty
         public override bool IsInvited(Pawn pawn)
         {
             return base.IsInvited(pawn) && IsSeatingAvailable() && EnoughChairsAvailable();
+        }
+
+        public override void LogDebuggingInfo()
+        {
+            LogChairAssignments();
+        }
+
+        public void LogChairAssignments()
+        {
+            foreach(var pawnCellChair in seatingAssignments) {
+                Log.Message($"Pawn { pawnCellChair.pawn?.Name.ToStringShort ?? "None" }   Seat { pawnCellChair.cell }   Chair { pawnCellChair.chair?.PositionHeld.ToString() ?? "NONE"}");
+            }
         }
     }
 }

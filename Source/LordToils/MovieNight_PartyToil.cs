@@ -1,4 +1,5 @@
 ﻿using System;
+using Verse;
 using Verse.AI.Group;
 
 namespace EnhancedParty
@@ -14,9 +15,9 @@ namespace EnhancedParty
         SimpleLordToil intermission;
         SimpleLordToil watchMovies2;
     
-        public MovieNight_PartyToil()
+        public MovieNight_PartyToil(EnhancedPartyDef partyDef)
         {
-            this.data = new PartyToilData();
+            this.data = new PartyToilData() { def = partyDef };
         }
         
         public new PartyJob_MovieNight LordJob => this.lord?.LordJob as PartyJob_MovieNight;
@@ -34,9 +35,9 @@ namespace EnhancedParty
             watchMovies2 = new SimpleLordToil(this);
             graph.AddToil(watchMovies2);
 
-            this.intermissionTimeout = new Trigger_TicksPassed((int)(PctPartyTimeInIntermission * LordJob.def.partyTimeout));
+            this.intermissionTimeout = new Trigger_TicksPassed((int)(PctPartyTimeInIntermission * Data.def.partyTimeout));
             //2 movie sections
-            this.movieTimeout = new Trigger_TicksPassed((int)((1 - PctPartyTimeInIntermission) * LordJob.def.partyTimeout / 2f) + 2);
+            this.movieTimeout = new Trigger_TicksPassed((int)((1 - PctPartyTimeInIntermission) * Data.def.partyTimeout / 2f) + 2);
 
             var goToIntermission = new Transition(watchMovies1, intermission);
             goToIntermission.AddTrigger(movieTimeout);
