@@ -11,7 +11,7 @@ namespace EnhancedParty
         {
             foreach(var pawn in lord.ownedPawns) {
                 pawn.jobs.ClearQueuedJobs();
-                pawn.jobs.EndCurrentJob(JobCondition.InterruptForced);
+                pawn.jobs.EndCurrentJob(JobCondition.InterruptForced, startNewJob: false);
             }
         }
 

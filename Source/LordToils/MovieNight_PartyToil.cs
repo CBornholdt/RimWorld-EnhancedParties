@@ -1,5 +1,6 @@
 ﻿using System;
 using Verse;
+using Verse.AI;
 using Verse.AI.Group;
 
 namespace EnhancedParty
@@ -56,12 +57,15 @@ namespace EnhancedParty
 
         public void AssignMovieWatchingDuties()
         {
-
+            foreach(var pawn in lord.ownedPawns)
+                pawn.mindState.duty = new EnhancedPawnDuty(EnhancedDutyDefOf.EP_MovieNight_WatchMovie, LordJob.GetAssignedSeating(pawn)
+                                                    , LordJob.television);
         }
 
         public void AssignIntermissionDuties()
         {
-
+            foreach(var pawn in lord.ownedPawns)
+                pawn.mindState.duty = new EnhancedPawnDuty(EnhancedDutyDefOf.EP_MovieNight_Intermission, LordJob.television);
         }
 
         public override LordToil SelectSubToil() => watchMovies1;
@@ -69,10 +73,16 @@ namespace EnhancedParty
         public override void UpdateAllDuties()  //Will be called by UpdateAllDuties on the various subToils
         {
             var toil = lord.CurLordToil;
-            if(toil == watchMovies1 || toil == watchMovies2)
+            if(toil == watchMovies1)
                 AssignMovieWatchingDuties();
-            if(toil == intermission)
+            if(toil == intermission) {
                 AssignIntermissionDuties();
+                lord.CancelAllPawnJobs();
+            }
+            if(toil == watchMovies2) {
+                AssignMovieWatchingDuties();
+                lord.CancelAllPawnJobs();
+            }
         }
     }
 }

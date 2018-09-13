@@ -1,0 +1,42 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Defs>
+  <DutyDef>
+    <defName>EP_MovieNight_WatchMovie</defName>
+    <socialModeMax>Off</socialModeMax>
+    <hook>MediumPriority</hook>
+    <thinkNode Class="ThinkNode_Priority">
+      <subNodes>
+        <!-- Goto party spot -->
+        <li Class="DutyJob_SitOrStandAndWatch">
+        </li>
+      </subNodes>
+    </thinkNode>
+  </DutyDef>
+  <DutyDef>
+    <defName>EP_MovieNight_Intermission</defName>
+    <socialModeMax>Off</socialModeMax>
+    <hook>MediumPriority</hook>
+    <thinkNode Class="ThinkNode_Priority">
+      <subNodes>
+        <li Class="ThinkNode_ConditionalRandom">
+          <chance>0.75</chance>
+          <subNodes>
+            <li Class="JobGiver_StandAndBeSociallyActive">
+              <ticksRange>
+                <min>350</min>
+                <max>750</max>
+              </ticksRange>
+            </li>
+          </subNodes>
+        </li>
+        <li Class="ThinkNode_Logger"/>
+        <li Class="DutyJob_WanderNearFocus">
+          <ticksBetweenWandersRange>
+            <min>50</min>
+            <max>250</max>
+          </ticksBetweenWandersRange>
+        </li>
+      </subNodes>
+    </thinkNode>
+  </DutyDef>
+</Defs>

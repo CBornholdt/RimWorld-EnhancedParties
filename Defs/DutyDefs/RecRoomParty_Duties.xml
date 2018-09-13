@@ -15,7 +15,7 @@
         <li Class="DutyConditional_InDutyArea">
           <subNodes>
             <li Class="DutyConditional_InDutyArea">
-			</li>
+			      </li>
             <li Class="DutyJob_WanderInDutyRoom">
               <ticksBetweenWandersRange>
                 <min>50</min>
@@ -41,7 +41,7 @@
         <li Class="DutyConditional_InDutyArea">
           <subNodes>
             <li Class="JobGiver_CleanRoom"/>
-            <li Class="DutyJob_WanderInDutyRoom">
+            <li Class="DutyJob_WanderNearFocus">
               <ticksBetweenWandersRange>
                 <min>50</min>
                 <max>250</max>

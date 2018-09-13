@@ -218,7 +218,7 @@ namespace EnhancedParty
         {
             base.Notify_PawnLost(p, condition);
 
-    //		Log.Message($"Lost pawn {p.Name}");
+            Log.Message($"Lost pawn {p.Name}");
         }
 
         public override string GetReport() => PartyHasStarted

@@ -21,11 +21,18 @@ namespace EnhancedParty
         public List<JoyKindDef> allowedJoyKinds;
         public Rot4 direction;
 
-    //	public ThinkNode localThinkTreeCopy;
+        //	public ThinkNode localThinkTreeCopy;
+
+        public EnhancedPawnDuty(DutyDef duty) : base(duty) { }
     
         public EnhancedPawnDuty(DutyDef duty, LocalTargetInfo focus, float radius = -1) : base(duty, focus, radius)
         {
             //localThinkTreeCopy = duty.thinkNode.DeepCopy(true);
+        }
+        
+        public EnhancedPawnDuty(DutyDef duty, LocalTargetInfo focus, LocalTargetInfo focusSecond, float radius = -1) 
+            : base(duty, focus, focusSecond, radius)
+        {
         }
 
         public new void ExposeData()

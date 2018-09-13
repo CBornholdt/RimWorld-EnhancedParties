@@ -14,5 +14,6 @@ namespace EnhancedParty
     static public class MoreJobDefs
     {
         static public JobDef DutyMessage;
+        static public JobDef SitOrStandFacingCell;
     }
 }

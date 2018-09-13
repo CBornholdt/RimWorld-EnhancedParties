@@ -15,7 +15,7 @@ namespace EnhancedParty
         protected MovieNight_PrepareToil prepareToil;
         protected MovieNight_PartyToil partyToil;
 
-        protected Thing television;
+        public Thing television;
 
         public static readonly string Viewers = "Viewers";
         public static readonly string ChairMovers = "ChairMovers";

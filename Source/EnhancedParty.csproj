@@ -132,6 +132,8 @@
     <Compile Include="Patches\JobDriver_SetupToils.cs" />
     <Compile Include="Jobs\JobAdjuster_RemoveDutyWhenFinished.cs" />
     <Compile Include="ThinkNodes\ThinkNode_EnhancedDuty.cs" />
+    <Compile Include="JobDrivers\JobDriver_SitOrStandFacingCell.cs" />
+    <Compile Include="DutyJobs\DutyJob_SitOrStandAndWatch.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Patches\" />

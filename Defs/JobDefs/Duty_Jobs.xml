@@ -5,4 +5,9 @@
     <driverClass>EnhancedParty.JobDriver_DutyMessage</driverClass>
     <reportString>messaging lord</reportString>
   </JobDef>
+  <JobDef>
+  	<defName>SitOrStandFacingCell</defName>
+  	<driverClass>EnhancedParty.JobDriver_SitOrStandFacingCell</driverClass>
+  	<reportString>watching</reportString>
+  </JobDef>
 </Defs>

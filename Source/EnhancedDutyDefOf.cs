@@ -12,5 +12,7 @@ namespace EnhancedParty
         static public DutyDef EP_GotoAndCleanFocusRoom;
         static public DutyDef EP_PartyWithAllowedJoyKinds;
         static public DutyDef EP_MoveBuildingToFocus;
+        static public DutyDef EP_MovieNight_WatchMovie;
+        static public DutyDef EP_MovieNight_Intermission;
     }
 }
