@@ -72,11 +72,13 @@ namespace EnhancedParty
             this.checkEncumbrance = baseJob.checkEncumbrance;
             this.followRadius = baseJob.followRadius;
             this.endAfterTendedOnce = baseJob.endAfterTendedOnce;
-            Traverse.Create(this).Field("cachedDriver").SetValue(Traverse.Create(baseJob)
-                                .Field("cachedDriver").GetValue<JobDriver>());
+            JobDriver driver = Traverse.Create(baseJob).Field("cachedDriver").GetValue<JobDriver>();
+            if(driver != null) {
+                driver.job = this;
+                Traverse.Create(this).Field("cachedDriver").SetValue(driver);
+            }
         }
             
-
         public new void ExposeData()
         {
             base.ExposeData();

@@ -11,6 +11,7 @@ namespace EnhancedParty
     {
         protected override IEnumerable<Toil> MakeNewToils()
         {
+            Log.Message("Making Toils");
             var baseToils = base.MakeNewToils().ToList();
             var toilToWrap = baseToils[baseToils.Count - 2];    //magical index
             Action oldInitAction = toilToWrap.initAction;

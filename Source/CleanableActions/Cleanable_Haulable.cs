@@ -18,17 +18,27 @@ namespace EnhancedParty
 
         public void AssignCleanupToPawn(Pawn pawn, bool addRemoveDutyWrapper = true)
         {
-            PerformCleanup();
+            if(haulable.DestroyedOrNull() || !haulable.Spawned)
+                return;
+        
             var job = HaulAIUtility.HaulToStorageJob(pawn, haulable);
-            if(job != null)
+
+            if(job != null) {
+                if(EnhancedLordDebugSettings.verbosePartyLogging)
+                    Log.Message($"Cleanable_Haulable: Pawn { pawn.LabelShort } starting cleanup of { haulable.ThingID }");
+
+                if(addRemoveDutyWrapper)
+                    job = new JobWithAdjustment(job) { adjuster = new JobAdjuster_RemoveDutyWhenFinished() };
+
                 pawn.jobs.StartJob(job, lastJobEndCondition: JobCondition.InterruptForced, jobGiver: null
                                     , resumeCurJobAfterwards: false, cancelBusyStances: true, thinkTree: null
-                                    , tag: JobTag.UnspecifiedLordDuty, fromQueue: false);     
+                                    , tag: JobTag.UnspecifiedLordDuty, fromQueue: false);
+            }
         }
 
         public bool CleanupStillNeeded()
         {
-            return haulable != null && !StoreUtility.IsInValidStorage(haulable);
+            return !haulable.DestroyedOrNull() && haulable.Spawned && !StoreUtility.IsInValidStorage(haulable);
         }
 
         public void ExposeData()

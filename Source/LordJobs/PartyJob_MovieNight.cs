@@ -64,10 +64,6 @@ namespace EnhancedParty
                                                                                     , television.Rotation, television.Map)
                                                             .Select(cell => new Cell_Pawn_Chair_Tuple(cell, null, null)));
             viewingDirection = television.Rotation.Opposite;
-
-            object p = null;
-
-            int n = (int)(p ?? 0);
         }
 
         public IntVec3 GetAssignedSeating(Pawn pawn)
@@ -121,7 +117,8 @@ namespace EnhancedParty
                                                             , maxPawns: 1, stackCount: -1, layer: null, ignoreOtherReservations: false));
 
             if(!availableChairs.Any()) {
-                Log.Message($"Could not find available chair for pawn {pawn.Name}");
+                if(EnhancedLordDebugSettings.verbosePartyLogging)
+                    Log.Message($"PartyJob_MovieNight: Could not find available chair for pawn {pawn.Name}");
                 return null;
             }
             

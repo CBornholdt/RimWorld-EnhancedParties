@@ -113,7 +113,9 @@ namespace EnhancedParty
                 return;
             var job = DutyJob_MoveBuildingToFocus_Helper.intWorkGiver.JobOnThing(pawn, blueprint);
             if(job != null) {
-                Log.Message($"Starting pawn cleanup for {pawn.LabelShort}");
+                if(EnhancedLordDebugSettings.verbosePartyLogging)
+                    Log.Message($"Starting pawn cleanup for {pawn.LabelShort}");
+                    
                 if(addRemoveDutyWrapper)
                     job = new JobWithAdjustment(job) { adjuster = new JobAdjuster_RemoveDutyWhenFinished() };
                 pawn.jobs.StartJob(job, lastJobEndCondition: JobCondition.InterruptForced, jobGiver: null

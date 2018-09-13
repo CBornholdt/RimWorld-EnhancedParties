@@ -19,8 +19,6 @@ namespace RimWorld
                 return false;
             }
 
-        //	Log.Message($"Checking for {duty.thingCount} number of {duty.dutyThingDef.label}");
-
             return pawn.Map.itemAvailability.ThingsAvailableAnywhere(
                 new ThingDefCountClass(duty.dutyThingDef, duty.thingCount), pawn);
         }

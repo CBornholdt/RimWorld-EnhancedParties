@@ -124,5 +124,21 @@ namespace EnhancedParty
 
             return priority;
         }
+
+        public override void AssignActiveCleanup()
+        {
+            Log.Message($"{cleanupActions.Count} cleanup actions");
+            for(int i = cleanupActions.Count - 1; i >= 0; i--) {
+                var action = cleanupActions[i] as Cleanable_Haulable;
+                if(action != null
+                    && !action.haulable.DestroyedOrNull()
+                    && action.haulable.Spawned 
+                    && lord.ownedPawns.TryRandomElement(out Pawn pawn)) {
+                    action.AssignCleanupToPawn(pawn);
+                    cleanupActions.RemoveAt(i);
+                    this.lord.ownedPawns.Remove(pawn);
+                }
+            }
+        }
     }
 }

@@ -18,10 +18,6 @@ namespace EnhancedParty
         protected List<LordPawnRole> roles = new List<LordPawnRole>();
         protected List<LordPawnRoleData> roleData;
         
-        private List<Tuple<string, Pawn>> completeDutyOps = new List<Tuple<string, Pawn>>();
-        
-        private List<Tuple<string, Pawn>> failedDutyOps = new List<Tuple<string, Pawn>>();
-
         public List<ICleanableAction> cleanupActions = new List<ICleanableAction>();
 
         public bool TryGetRole(string name, out LordPawnRole role)
@@ -142,12 +138,6 @@ namespace EnhancedParty
         virtual public void Notify_PawnDutyOpComplete(string dutyOp, Pawn pawn) { }
         
         virtual public void Notify_PawnDutyOpFailed(string dutyOp, Pawn pawn) { }
-        
-        public void RegisterDutyOpComplete(string dutyOp, Pawn pawn) =>
-            completeDutyOps.Add(Tuple.Create(dutyOp, pawn));
-            
-        public void RegisterDutyOpFailed(string dutyOp, Pawn pawn) =>
-            failedDutyOps.Add(Tuple.Create(dutyOp, pawn));
 
         public void RegisterCleanupAction(ICleanableAction action) =>
             cleanupActions.Add(action);
@@ -287,7 +277,8 @@ namespace EnhancedParty
                         this.Notify_PawnJoinedRole(pawnAdded.Item1, pawnAdded.Item2, pawnAdded.Item3);
                 }
                 else {
-                    Log.Message("refreshing");
+                    if(EnhancedLordDebugSettings.verbosePartyLogging)
+                        Log.Message("EnhancedLordJob: Calling RefreshAll()");
                     toil.RefreshAllDuties();
                     nextCheckUseRefresh = false;
                 }

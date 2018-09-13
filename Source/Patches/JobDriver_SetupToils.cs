@@ -28,8 +28,10 @@ namespace EnhancedParty
                     continue;
                 }
                 if(code.opcode == OpCodes.Ret) {
-                    yield return new CodeInstruction(OpCodes.Ldarg_0);  //JobDriver on stack
-                    yield return new CodeInstruction(OpCodes.Call, toilHelper); //Consume JobDriver / stack empty
+                    yield return new CodeInstruction(OpCodes.Ldarg_0) { labels = code.labels };  
+                    yield return new CodeInstruction(OpCodes.Call, actionHelper); 
+                    yield return new CodeInstruction(OpCodes.Ret);
+                    continue;
                 }
                 yield return code;
             }
@@ -46,8 +48,10 @@ namespace EnhancedParty
         static public void ProcessActionsConditionsHelper(JobDriver driver)
         {
             var adjustmentJob = driver?.job as JobWithAdjustment;
+            
             if(adjustmentJob == null || adjustmentJob.adjuster == null)
                 return;
+
             driver.globalFinishActions = adjustmentJob.adjuster.ProcessGlobalFinishActions(driver.globalFinishActions, driver);
             driver.globalFailConditions = adjustmentJob.adjuster.ProcessGlobalFailConditions(driver.globalFailConditions, driver);   
         }

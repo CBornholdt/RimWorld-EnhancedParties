@@ -23,7 +23,6 @@ namespace RimWorld
             int count = pawn.Map.listerThings.ThingsOfDef(duty.dutyThingDef)
                             .Where(thing => pawn.IsCellInDutyArea(thing.PositionHeld))
                             .Sum(thing => thing.stackCount);
-            //Log.Message($"Duty ThingCount for pawn { pawn.Name } is { duty.thingCount } and area count is { count }");
             
             return count
                     >= duty.thingCount;    

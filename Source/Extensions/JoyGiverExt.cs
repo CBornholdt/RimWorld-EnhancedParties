@@ -88,10 +88,6 @@ namespace EnhancedParty
         
         static public Job TryGiveJobInDutyArea(this JoyGiver_InteractBuilding joyGiver, Pawn pawn)
         {
-        /*	if (!joyGiver_InteractBuilding__CanDoDuringParty(joyGiver)) //TODO add support for Duty level solution
-            {
-                return null;
-            }   */
             Thing thing = joyGiver.FindBestDutyGame(pawn);
             if (thing != null)
             {
